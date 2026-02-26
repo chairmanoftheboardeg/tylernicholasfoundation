@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News | Tyler Nicholas Foundation</title>
+    <link rel="icon" type="image/png" href="https://i.ibb.co/wNsNvyRw/TNF-Logo.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        .news-card {
+            background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 30px;
+        }
+        .news-card h3 { color: var(--primary-blue); font-size: 1.8rem; margin-bottom: 10px; }
+        .news-date { color: var(--primary-green); font-size: 0.9rem; font-weight: bold; margin-bottom: 15px; display: block; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="/" class="logo"><img src="https://i.ibb.co/wNsNvyRw/TNF-Logo.png" alt="TNF Logo" style="height: 40px; margin-right: 10px; vertical-align: middle;">Tyler Nicholas <span>Foundation</span></a>
+        <ul class="nav-links">
+            <li><a href="/about/">About Us</a></li>
+            <li><a href="/pillars/">Our Pillars</a></li>
+            <li><a href="/action-board/">Action Board</a></li>
+            <li><a href="/news/" style="color: var(--primary-green);">News</a></li>
+            <li><a href="/volunteer/" class="btn-nav">Join the Movement</a></li>
+        </ul>
+    </nav>
+
+    <section class="hero" style="min-height: 40vh; padding: 60px 5%;">
+        <h1>Latest News</h1>
+        <p>Updates and dispatches from the field.</p>
+    </section>
+
+    <section style="padding: 60px 5%; max-width: 900px; margin: 0 auto;">
+        <div id="news-container">
+            <p id="loading-news" style="text-align: center;">Loading the latest updates...</p>
+        </div>
+    </section>
+
+    <footer class="site-footer">
+        <div class="social-icons">
+            <a href="https://www.linkedin.com/company/tylernicholas-foundation" target="_blank"><i class="fab fa-linkedin"></i></a>
+            <a href="https://x.com/tnfseychelles" target="_blank"><i class="fab fa-x-twitter"></i></a>
+        </div>
+        <div class="footer-contact">
+            Contact: <a href="mailto:nicholasfoundation.sc@gmail.com">nicholasfoundation.sc@gmail.com</a>
+        </div>
+        <div class="admin-link">
+            <a href="/admin/"><i class="fas fa-lock"></i> Admin Dashboard</a>
+        </div>
+        <div class="footer-copyright">
+            &copy; 2026 Copyright Tyler Nicholas Foundation by <a href="https://tylernicholasgroup.com" target="_blank">Tyler Nicholas Group</a>. All rights reserved.
+        </div>
+    </footer>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+        const supabase = createClient('https://hicowukbjsbpuebquqbh.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpY293dWtianNicHVlYnF1cWJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE5NzgyNzQsImV4cCI6MjA4NzU1NDI3NH0.sz7ZNU3-WcsskIaHC5Cjs_-WVmXLtYR15Iy8VGi8ch0')
+
+        async function fetchNews() {
+            const { data, error } = await supabase.from('tnf_news').select('*').order('publish_date', { ascending: false });
+            const container = document.getElementById('news-container');
+            
+            if (data && data.length > 0) {
+                container.innerHTML = '';
+                data.forEach(article => {
+                    const pubDate = new Date(article.publish_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                    const card = document.createElement('div');
+                    card.className = 'news-card';
+                    card.innerHTML = `
+                        <h3>${article.title}</h3>
+                        <span class="news-date">${pubDate}</span>
+                        <p>${article.content.replace(/\n/g, '<br>')}</p>
+                    `;
+                    container.appendChild(card);
+                });
+            } else {
+                container.innerHTML = '<p style="text-align: center;">No news articles published yet.</p>';
+            }
+        }
+        fetchNews();
+    </script>
+</body>
+</html>
