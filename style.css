@@ -1,255 +1,31 @@
-/* --- BASE RESET & VARIABLES --- */
-:root {
-  --primary-blue: #0A3659;
-  --primary-green: #2E8B57;
-  --footer-bg: #031B33; /* Dark navy from your screenshot */
-  --footer-cyan: #00A3FF; /* Cyan from your screenshot */
-  --light-bg: #F8F9FA;
-  --dark-text: #212529;
-  --white: #FFFFFF;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-body {
-  background-color: var(--light-bg);
-  color: var(--dark-text);
-  line-height: 1.6;
-}
-
-/* --- NEW LOADING SCREEN --- */
-#loader {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  background-color: var(--primary-blue);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-  transition: opacity 0.8s ease-out, visibility 0.8s ease-out;
-  color: var(--white);
-  text-align: center;
-}
-
-.loader-content h1 {
-  font-size: 2.5rem;
-  letter-spacing: 1px;
-  margin-bottom: 5px;
-  animation: pulse 2s infinite;
-}
-
-.loader-content p {
-  font-size: 1.2rem;
-  font-weight: 300;
-  color: var(--primary-green);
-  margin-bottom: 20px;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid rgba(255, 255, 255, 0.2);
-  border-top-color: var(--primary-green);
-  border-radius: 50%;
-  margin: 0 auto;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin { to { transform: rotate(360deg); } }
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
-
-/* --- ANNOUNCEMENT BAR --- */
-#announcement-bar {
-  background-color: var(--primary-green);
-  color: var(--white);
-  text-align: center;
-  padding: 10px 20px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  display: none;
-}
-
-/* --- NAVBAR --- */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 5%;
-  background-color: var(--white);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  font-size: 1.4rem;
-  font-weight: 800;
-  color: var(--primary-blue);
-  text-decoration: none;
-}
-
-.logo img {
-  height: 40px;
-  margin-right: 10px;
-}
-
-.logo span {
-  color: var(--primary-green);
-  margin-left: 5px;
-}
-
-.nav-links {
-  list-style: none;
-  display: flex;
-  gap: 25px;
-  align-items: center;
-}
-
-.nav-links a {
-  text-decoration: none;
-  color: var(--dark-text);
-  font-weight: 500;
-  transition: color 0.3s;
-}
-
-.nav-links a:hover { color: var(--primary-green); }
-
-.btn-nav {
-  background-color: var(--primary-blue);
-  color: var(--white) !important;
-  padding: 8px 20px;
-  border-radius: 5px;
-}
-
-/* --- HERO SECTION --- */
-.hero {
-  text-align: center;
-  padding: 100px 5%;
-  /* Using your specific Seychelles background */
-  background: linear-gradient(rgba(10, 54, 89, 0.8), rgba(46, 139, 87, 0.8)), url('https://www.civitatis.com/f/seychelles/seychelles.jpg') center/cover;
-  color: var(--white);
-  min-height: 75vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.hero h1 { font-size: 3.5rem; margin-bottom: 20px; line-height: 1.2; }
-.hero p { font-size: 1.2rem; margin-bottom: 40px; max-width: 600px; }
-
-.cta-buttons { display: flex; gap: 20px; }
-
-.btn-primary, .btn-secondary {
-  padding: 15px 30px;
-  text-decoration: none;
-  font-weight: bold;
-  border-radius: 5px;
-  transition: transform 0.2s, background-color 0.2s;
-}
-
-.btn-primary { background-color: var(--primary-green); color: var(--white); }
-.btn-primary:hover { background-color: #246d44; transform: translateY(-2px); }
-
-.btn-secondary { background-color: transparent; color: var(--white); border: 2px solid var(--white); }
-.btn-secondary:hover { background-color: var(--white); color: var(--primary-blue); transform: translateY(-2px); }
-
-/* --- VOLUNTEERS SECTION --- */
-.volunteers-section {
-  padding: 60px 5%;
-  background-color: var(--white);
-  text-align: center;
-}
-
-.volunteers-section h2 {
-  color: var(--primary-blue);
-  font-size: 2.2rem;
-  margin-bottom: 10px;
-}
-
-.volunteers-section p {
-  color: #666;
-  margin-bottom: 40px;
-}
-
-.volunteers-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-  max-width: 1000px;
-  margin: 0 auto;
-}
-
-.volunteer-card {
-  background: var(--light-bg);
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  border-left: 4px solid var(--primary-green);
-  text-align: left;
-}
-
-.volunteer-card h4 { color: var(--primary-blue); font-size: 1.1rem; }
-.volunteer-card span { color: #666; font-size: 0.9rem; }
-.volunteer-card .passion {
-  display: inline-block;
-  margin-top: 10px;
-  background: #e9ecef;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: bold;
-  color: var(--primary-green);
-}
-
-/* --- FOOTER (Matches your Screenshot) --- */
+/* --- UPDATED FOOTER --- */
 .site-footer {
-  background-color: var(--footer-bg);
+  background-color: var(--primary-blue); /* Updated to theme color */
   color: var(--white);
   padding: 40px 20px 20px;
   text-align: center;
 }
-
-.social-icons {
-  margin-bottom: 20px;
-}
-
+.social-icons { margin-bottom: 20px; }
 .social-icons a {
-  color: var(--footer-cyan);
+  color: var(--white);
   font-size: 1.8rem;
   margin: 0 10px;
   text-decoration: none;
-  transition: opacity 0.3s;
+  transition: color 0.3s;
 }
+.social-icons a:hover { color: var(--primary-green); }
+.footer-contact { font-size: 1rem; margin-bottom: 15px; }
+.footer-contact a { color: var(--white); text-decoration: none; }
+.footer-contact a:hover { color: var(--primary-green); }
+.admin-link { margin-bottom: 15px; }
+.admin-link a { color: var(--primary-green); font-size: 0.85rem; text-decoration: none; font-weight: bold; }
+.footer-copyright { font-size: 0.85rem; color: #a0aab5; }
+.footer-copyright a { color: #a0aab5; text-decoration: underline; }
 
-.social-icons a:hover {
-  opacity: 0.7;
+/* --- 404 PAGE STYLES --- */
+.error-page {
+  text-align: center; padding: 100px 5%; min-height: 80vh;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
 }
-
-.footer-contact {
-  font-size: 1rem;
-  margin-bottom: 20px;
-}
-
-.footer-contact a {
-  color: var(--footer-cyan);
-  text-decoration: none;
-}
-
-.footer-copyright {
-  font-size: 0.85rem;
-  color: #a0aab5;
-}
-
-.footer-copyright a {
-  color: #a0aab5;
-  text-decoration: underline;
-}
+.error-page h1 { font-size: 6rem; color: var(--primary-blue); margin-bottom: 10px; }
+.error-page h2 { color: var(--primary-green); margin-bottom: 30px; }
