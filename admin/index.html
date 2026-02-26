@@ -5,17 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard | Tyler Nicholas Foundation</title>
     <link rel="icon" type="image/png" href="https://i.ibb.co/wNsNvyRw/TNF-Logo.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../style.css">
     <style>
-        .admin-container { max-width: 900px; margin: 40px auto; padding: 20px; }
+        .admin-container { max-width: 1000px; margin: 40px auto; padding: 20px; }
         .admin-card { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 30px; border-top: 4px solid var(--primary-blue); }
-        .admin-card h3 { color: var(--primary-green); margin-bottom: 15px; }
+        .admin-card h3 { color: var(--primary-green); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
         input, textarea { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; font-size: 1rem; }
+        
         .admin-btn { background: var(--primary-blue); color: white; padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; transition: background 0.3s; }
         .admin-btn:hover { background: var(--primary-green); }
-        .logout-btn { background: #dc3545; width: auto; float: right; }
+        
+        .logout-btn { background: #dc3545; width: auto; float: right; padding: 10px 20px; }
         .logout-btn:hover { background: #c82333; }
         
+        .delete-btn { background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 0.85rem; }
+        .delete-btn:hover { background: #c82333; }
+
+        /* Data Tables for Management */
+        .admin-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9rem; }
+        .admin-table th, .admin-table td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        .admin-table th { background-color: var(--light-bg); color: var(--primary-blue); }
+        .admin-table tr:hover { background-color: #fcfcfc; }
+
         /* Layout Toggles */
         #dashboard-section { display: none; }
         #login-section { max-width: 400px; margin: 100px auto; text-align: center; }
@@ -31,7 +43,7 @@
         
         <div id="login-section" class="admin-card">
             <img src="https://i.ibb.co/wNsNvyRw/TNF-Logo.png" alt="TNF Logo" style="height: 60px; margin-bottom: 20px;">
-            <h3 style="color: var(--primary-blue);">Command Center Login</h3>
+            <h3 style="color: var(--primary-blue); justify-content: center;">Command Center Login</h3>
             <p style="margin-bottom: 20px; color: #666; font-size: 0.9rem;">Authorized personnel only.</p>
             <input type="email" id="admin-email" placeholder="Admin Email" required>
             <input type="password" id="admin-password" placeholder="Password" required>
@@ -40,9 +52,29 @@
         </div>
 
         <div id="dashboard-section">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
                 <h1 style="color: var(--primary-blue);">Welcome, Commander.</h1>
-                <button class="admin-btn logout-btn" onclick="logout()">Log Out</button>
+                <button class="admin-btn logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Log Out</button>
+            </div>
+
+            <div class="admin-card">
+                <h3><i class="fas fa-users"></i> Volunteer Roster</h3>
+                <div style="overflow-x: auto;">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Age</th>
+                                <th>District</th>
+                                <th>Passion Area</th>
+                                <th>Date Joined</th>
+                            </tr>
+                        </thead>
+                        <tbody id="volunteer-list">
+                            <tr><td colspan="5" style="text-align: center;">Loading roster...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <div class="admin-card">
@@ -53,82 +85,133 @@
             </div>
 
             <div class="admin-card">
-                <h3><i class="fas fa-newspaper"></i> Publish News</h3>
-                <input type="text" id="news-title" placeholder="News Title">
-                <textarea id="news-content" rows="6" placeholder="News Body..."></textarea>
-                <button class="admin-btn" onclick="postNews()">Publish Article</button>
-                <p id="news-status" style="color: green; margin-top: 10px; display: none;">News published successfully!</p>
+                <h3><i class="fas fa-newspaper"></i> Manage News</h3>
+                <div style="background: var(--light-bg); padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 10px; color: var(--primary-blue);">Publish New Article</h4>
+                    <input type="text" id="news-title" placeholder="News Title">
+                    <textarea id="news-content" rows="4" placeholder="News Body..."></textarea>
+                    <button class="admin-btn" onclick="postNews()">Publish Article</button>
+                    <p id="news-status" style="color: green; margin-top: 10px; display: none;">News published successfully!</p>
+                </div>
+                
+                <h4 style="color: var(--primary-blue); margin-top: 20px;">Published Articles</h4>
+                <div style="overflow-x: auto;">
+                    <table class="admin-table">
+                        <thead><tr><th>Title</th><th>Date</th><th>Action</th></tr></thead>
+                        <tbody id="news-list"><tr><td colspan="3">Loading news...</td></tr></tbody>
+                    </table>
+                </div>
             </div>
 
             <div class="admin-card">
-                <h3><i class="fas fa-calendar-plus"></i> Schedule Action Board Event</h3>
-                <input type="text" id="event-title" placeholder="Event Name (e.g., Mangrove Planting)">
-                <input type="date" id="event-date">
-                <input type="text" id="event-location" placeholder="Location">
-                <button class="admin-btn" onclick="postEvent()">Schedule Event</button>
-                <p id="event-status" style="color: green; margin-top: 10px; display: none;">Event scheduled successfully!</p>
+                <h3><i class="fas fa-calendar-alt"></i> Manage Action Board Events</h3>
+                <div style="background: var(--light-bg); padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 10px; color: var(--primary-blue);">Schedule New Event</h4>
+                    <input type="text" id="event-title" placeholder="Event Name">
+                    <input type="date" id="event-date">
+                    <input type="text" id="event-location" placeholder="Location">
+                    <button class="admin-btn" onclick="postEvent()">Schedule Event</button>
+                    <p id="event-status" style="color: green; margin-top: 10px; display: none;">Event scheduled successfully!</p>
+                </div>
+
+                <h4 style="color: var(--primary-blue); margin-top: 20px;">Scheduled Events</h4>
+                <div style="overflow-x: auto;">
+                    <table class="admin-table">
+                        <thead><tr><th>Event</th><th>Date</th><th>Location</th><th>Action</th></tr></thead>
+                        <tbody id="event-list"><tr><td colspan="4">Loading events...</td></tr></tbody>
+                    </table>
+                </div>
             </div>
+
         </div>
-
     </div>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
         const supabase = createClient('https://hicowukbjsbpuebquqbh.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpY293dWtianNicHVlYnF1cWJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE5NzgyNzQsImV4cCI6MjA4NzU1NDI3NH0.sz7ZNU3-WcsskIaHC5Cjs_-WVmXLtYR15Iy8VGi8ch0')
 
-        // DOM Elements
         const loginSection = document.getElementById('login-section');
         const dashboardSection = document.getElementById('dashboard-section');
-        const loginError = document.getElementById('login-error');
 
-        // 1. Check if user is already logged in on page load
+        // Check Session & Load Data
         async function checkSession() {
             const { data: { session } } = await supabase.auth.getSession();
             if (session) {
                 loginSection.style.display = 'none';
                 dashboardSection.style.display = 'block';
+                loadDashboardData();
             }
         }
         checkSession();
 
-        // 2. Login Function
+        // Login
         window.login = async () => {
             const email = document.getElementById('admin-email').value;
             const password = document.getElementById('admin-password').value;
-            
-            const { data, error } = await supabase.auth.signInWithPassword({
-                email: email,
-                password: password,
-            });
-
+            const { error } = await supabase.auth.signInWithPassword({ email, password });
             if (error) {
-                loginError.innerText = error.message;
-                loginError.style.display = 'block';
+                document.getElementById('login-error').style.display = 'block';
+                document.getElementById('login-error').innerText = error.message;
             } else {
-                loginError.style.display = 'none';
+                document.getElementById('login-error').style.display = 'none';
                 loginSection.style.display = 'none';
                 dashboardSection.style.display = 'block';
+                loadDashboardData();
             }
         };
 
-        // 3. Logout Function
+        // Logout
         window.logout = async () => {
             await supabase.auth.signOut();
             dashboardSection.style.display = 'none';
             loginSection.style.display = 'block';
-            document.getElementById('admin-password').value = ''; // clear password field
+            document.getElementById('admin-password').value = ''; 
         };
 
-        // 4. Dashboard Tools (Only work if logged in due to RLS policies)
+        // ---- LOAD MANAGEMENT DATA ----
+        async function loadDashboardData() {
+            fetchVolunteers();
+            fetchNews();
+            fetchEvents();
+        }
+
+        async function fetchVolunteers() {
+            const { data } = await supabase.from('tnf_volunteers').select('*').order('created_at', { ascending: false });
+            const list = document.getElementById('volunteer-list');
+            list.innerHTML = '';
+            if (!data || data.length === 0) return list.innerHTML = '<tr><td colspan="5">No volunteers yet.</td></tr>';
+            data.forEach(v => {
+                const dateJoined = new Date(v.created_at).toLocaleDateString();
+                list.innerHTML += `<tr><td><strong>${v.name}</strong></td><td>${v.age}</td><td>${v.district}</td><td>${v.passion_area}</td><td>${dateJoined}</td></tr>`;
+            });
+        }
+
+        async function fetchNews() {
+            const { data } = await supabase.from('tnf_news').select('*').order('publish_date', { ascending: false });
+            const list = document.getElementById('news-list');
+            list.innerHTML = '';
+            if (!data || data.length === 0) return list.innerHTML = '<tr><td colspan="3">No articles published.</td></tr>';
+            data.forEach(n => {
+                list.innerHTML += `<tr><td>${n.title}</td><td>${n.publish_date}</td><td><button class="delete-btn" onclick="deleteNews('${n.id}')"><i class="fas fa-trash"></i> Delete</button></td></tr>`;
+            });
+        }
+
+        async function fetchEvents() {
+            const { data } = await supabase.from('tnf_events').select('*').order('event_date', { ascending: true });
+            const list = document.getElementById('event-list');
+            list.innerHTML = '';
+            if (!data || data.length === 0) return list.innerHTML = '<tr><td colspan="4">No events scheduled.</td></tr>';
+            data.forEach(e => {
+                list.innerHTML += `<tr><td>${e.title}</td><td>${e.event_date}</td><td>${e.location}</td><td><button class="delete-btn" onclick="deleteEvent('${e.id}')"><i class="fas fa-trash"></i> Delete</button></td></tr>`;
+            });
+        }
+
+        // ---- ADD & DELETE FUNCTIONS ----
         window.postAnnouncement = async () => {
             const text = document.getElementById('announcement-text').value;
-            if(!text) return alert("Please enter announcement text.");
+            if(!text) return alert("Enter announcement text.");
             await supabase.from('tnf_announcements').update({ is_active: false }).neq('id', '00000000-0000-0000-0000-000000000000'); 
-            const { error } = await supabase.from('tnf_announcements').insert([{ announcement_text: text, is_active: true }]);
-            if(error) return alert(error.message);
-            
+            await supabase.from('tnf_announcements').insert([{ announcement_text: text, is_active: true }]);
             document.getElementById('announce-status').style.display = 'block';
             setTimeout(() => { document.getElementById('announce-status').style.display = 'none'; document.getElementById('announcement-text').value = ''; }, 3000);
         };
@@ -136,26 +219,38 @@
         window.postNews = async () => {
             const title = document.getElementById('news-title').value;
             const content = document.getElementById('news-content').value;
-            if(!title || !content) return alert("Please fill out both title and content.");
-            
-            const { error } = await supabase.from('tnf_news').insert([{ title: title, content: content }]);
-            if(error) return alert(error.message);
-
+            if(!title || !content) return alert("Fill out title and content.");
+            await supabase.from('tnf_news').insert([{ title, content }]);
+            document.getElementById('news-title').value = ''; document.getElementById('news-content').value = '';
             document.getElementById('news-status').style.display = 'block';
-            setTimeout(() => { document.getElementById('news-status').style.display = 'none'; document.getElementById('news-title').value = ''; document.getElementById('news-content').value = ''; }, 3000);
+            setTimeout(() => document.getElementById('news-status').style.display = 'none', 3000);
+            fetchNews(); // Reload table
+        };
+
+        window.deleteNews = async (id) => {
+            if(confirm("Are you sure you want to delete this article?")) {
+                await supabase.from('tnf_news').delete().eq('id', id);
+                fetchNews(); // Reload table
+            }
         };
 
         window.postEvent = async () => {
             const title = document.getElementById('event-title').value;
             const date = document.getElementById('event-date').value;
             const location = document.getElementById('event-location').value;
-            if(!title || !date || !location) return alert("Please fill out all event fields.");
-
-            const { error } = await supabase.from('tnf_events').insert([{ title: title, event_date: date, location: location }]);
-            if(error) return alert(error.message);
-
+            if(!title || !date || !location) return alert("Fill out all fields.");
+            await supabase.from('tnf_events').insert([{ title, event_date: date, location }]);
+            document.getElementById('event-title').value = ''; document.getElementById('event-date').value = ''; document.getElementById('event-location').value = '';
             document.getElementById('event-status').style.display = 'block';
-            setTimeout(() => { document.getElementById('event-status').style.display = 'none'; document.getElementById('event-title').value = ''; document.getElementById('event-date').value = ''; document.getElementById('event-location').value = ''; }, 3000);
+            setTimeout(() => document.getElementById('event-status').style.display = 'none', 3000);
+            fetchEvents(); // Reload table
+        };
+
+        window.deleteEvent = async (id) => {
+            if(confirm("Are you sure you want to delete this event?")) {
+                await supabase.from('tnf_events').delete().eq('id', id);
+                fetchEvents(); // Reload table
+            }
         };
     </script>
 </body>
