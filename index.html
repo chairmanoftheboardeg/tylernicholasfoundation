@@ -4,58 +4,85 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tyler Nicholas Foundation</title>
+    <link rel="icon" type="image/png" href="https://i.ibb.co/wNsNvyRw/TNF-Logo.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div id="loader">
-        <div class="spinner"></div>
+        <div class="loader-content">
+            <h1>Tyler Nicholas Foundation</h1>
+            <p>by the Tyler Nicholas Group</p>
+            <div class="spinner"></div>
+        </div>
     </div>
 
     <div id="announcement-bar"></div>
 
     <nav class="navbar">
-        <a href="/" class="logo">Tyler Nicholas <span>Foundation</span></a>
+        <a href="/" class="logo">
+            <img src="https://i.ibb.co/wNsNvyRw/TNF-Logo.png" alt="TNF Logo">
+            Tyler Nicholas <span>Foundation</span>
+        </a>
         <ul class="nav-links">
             <li><a href="/about/">About Us</a></li>
             <li><a href="/pillars/">Our Pillars</a></li>
             <li><a href="/action-board/">Action Board</a></li>
             <li><a href="/news/">News</a></li>
-            <li><a href="/contact/">Contact</a></li>
             <li><a href="/volunteer/" class="btn-nav">Join the Movement</a></li>
         </ul>
     </nav>
 
     <section class="hero">
         <h1>Empowering the Youth. Protecting Seychelles.</h1>
-        <p>We are a zero-budget, grassroots movement driven entirely by passion and manpower. Join us to take immediate, hands-on action in our communities and environment.</p>
+        <p>We are an unfunded, grassroots movement driven entirely by passion and manpower. Join us to take immediate, hands-on action in our communities and environment.</p>
         <div class="cta-buttons">
-            <a href="/volunteer/" class="btn-primary">Join the Movement</a>
-            <a href="/pillars/" class="btn-secondary">Explore Our Work</a>
-            <a href="#" class="btn-secondary">External Link</a>
-            <a href="#" class="btn-secondary">External Link</a>
-            <a href="#" class="btn-secondary">External Link</a>
+            <a href="/volunteer/" class="btn-primary">Become a Volunteer</a>
+            <a href="/about/" class="btn-secondary">Learn Our Story</a>
         </div>
     </section>
+
+    <section class="volunteers-section">
+        <h2>Our Grassroots Team</h2>
+        <p>Meet the young leaders from across Seychelles who are dedicating their sweat equity to our islands.</p>
+        <div id="volunteers-container" class="volunteers-grid">
+            <p id="loading-volunteers" style="grid-column: 1 / -1; text-align: center;">Loading our team roster...</p>
+        </div>
+    </section>
+
+    <footer class="site-footer">
+        <div class="social-icons">
+            <a href="https://www.linkedin.com/company/tylernicholas-foundation" target="_blank"><i class="fab fa-linkedin"></i></a>
+            <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="https://x.com/tnfseychelles" target="_blank"><i class="fab fa-x-twitter"></i></a>
+            <a href="#" target="_blank"><i class="fab fa-whatsapp"></i></a>
+        </div>
+        <div class="footer-contact">
+            Contact: <a href="mailto:tyler.nicholasefs@gmail.com">tyler.nicholasefs@gmail.com</a>
+        </div>
+        <div class="footer-copyright">
+            &copy; 2026 Copyright Tyler Nicholas Foundation by <a href="https://tylernicholasgroup.com" target="_blank">Tyler Nicholas Group</a>. All rights reserved.
+        </div>
+    </footer>
 
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
 
-        // Your Supabase Credentials
         const supabaseUrl = 'https://hicowukbjsbpuebquqbh.supabase.co'
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpY293dWtianNicHVlYnF1cWJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE5NzgyNzQsImV4cCI6MjA4NzU1NDI3NH0.sz7ZNU3-WcsskIaHC5Cjs_-WVmXLtYR15Iy8VGi8ch0'
         const supabase = createClient(supabaseUrl, supabaseKey)
 
-        // Handle Loading Screen
+        // 1. Handle Loading Screen Fade Out
         window.addEventListener('load', () => {
             const loader = document.getElementById('loader');
-            loader.style.opacity = '0';
             setTimeout(() => {
-                loader.style.display = 'none';
-            }, 500); // Wait for fade-out transition
+                loader.style.opacity = '0';
+                loader.style.visibility = 'hidden';
+            }, 1200); // Slightly longer delay so users can read the text
         });
 
-        // Fetch and Display Announcement Bar
+        // 2. Fetch Announcement
         async function fetchAnnouncement() {
             const { data, error } = await supabase
                 .from('tnf_announcements')
@@ -71,7 +98,40 @@
             }
         }
 
+        // 3. Fetch Volunteers
+        async function fetchVolunteers() {
+            const { data, error } = await supabase
+                .from('tnf_volunteers')
+                .select('name, district, passion_area')
+                .order('created_at', { ascending: false });
+
+            const container = document.getElementById('volunteers-container');
+            
+            if (error) {
+                container.innerHTML = '<p style="grid-column: 1 / -1; color: red;">Could not load team roster at this time.</p>';
+                return;
+            }
+
+            if (data && data.length > 0) {
+                container.innerHTML = ''; // Clear loading text
+                data.forEach(volunteer => {
+                    const card = document.createElement('div');
+                    card.className = 'volunteer-card';
+                    card.innerHTML = `
+                        <h4>${volunteer.name}</h4>
+                        <span><i class="fas fa-map-marker-alt" style="color: var(--primary-blue);"></i> ${volunteer.district}</span><br>
+                        <div class="passion">${volunteer.passion_area}</div>
+                    `;
+                    container.appendChild(card);
+                });
+            } else {
+                container.innerHTML = '<p style="grid-column: 1 / -1;">We are just getting started. Be the first to join the movement!</p>';
+            }
+        }
+
+        // Execute functions
         fetchAnnouncement();
+        fetchVolunteers();
     </script>
 
 </body>
