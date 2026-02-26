@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Page Not Found | Tyler Nicholas Foundation</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="https://i.ibb.co/wNsNvyRw/TNF-Logo.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/style.css">
 </head>
 <body>
 
@@ -16,20 +18,51 @@
         </div>
     </div>
 
+    <nav class="navbar">
+        <a href="/" class="logo"><img src="https://i.ibb.co/wNsNvyRw/TNF-Logo.png" alt="TNF Logo" style="height: 40px; margin-right: 10px; vertical-align: middle;">Tyler Nicholas <span>Foundation</span></a>
+        <ul class="nav-links">
+            <li><a href="/about/">About Us</a></li>
+            <li><a href="/pillars/">Our Pillars</a></li>
+            <li><a href="/action-board/">Action Board</a></li>
+            <li><a href="/news/">News</a></li>
+            <li><a href="/volunteer/" class="btn-nav">Join the Movement</a></li>
+        </ul>
+    </nav>
+
     <section class="error-page">
         <h1>404</h1>
         <h2>This page drifted out to sea.</h2>
         <p style="margin-bottom: 30px;">The page you are looking for doesn't exist or has been moved.</p>
         <div class="cta-buttons" style="justify-content: center;">
             <a href="/" class="btn-primary">Return to Foundation Home</a>
-            <a href="https://tylernicholasgroup.com" class="btn-secondary" style="color: var(--primary-blue); border-color: var(--primary-blue);">Visit Tyler Nicholas Group</a>
+            <a href="https://tylernicholasgroup.com" target="_blank" class="btn-secondary" style="color: var(--primary-blue); border-color: var(--primary-blue);">Visit Tyler Nicholas Group</a>
         </div>
     </section>
 
+    <footer class="site-footer">
+        <div class="social-icons">
+            <a href="https://www.linkedin.com/company/tylernicholas-foundation" target="_blank"><i class="fab fa-linkedin"></i></a>
+            <a href="https://x.com/tnfseychelles" target="_blank"><i class="fab fa-x-twitter"></i></a>
+        </div>
+        <div class="footer-contact">
+            Contact: <a href="mailto:nicholasfoundation.sc@gmail.com">nicholasfoundation.sc@gmail.com</a>
+        </div>
+        <div class="admin-link">
+            <a href="/admin/"><i class="fas fa-lock"></i> Admin Dashboard</a>
+        </div>
+        <div class="footer-copyright">
+            &copy; 2026 Copyright Tyler Nicholas Foundation by <a href="https://tylernicholasgroup.com" target="_blank">Tyler Nicholas Group</a>. All rights reserved.
+        </div>
+    </footer>
+
     <script>
+        // Handle Loader Fade Out
         window.addEventListener('load', () => {
             const loader = document.getElementById('loader');
-            setTimeout(() => { loader.style.opacity = '0'; loader.style.visibility = 'hidden'; }, 1000);
+            setTimeout(() => { 
+                loader.style.opacity = '0'; 
+                loader.style.visibility = 'hidden'; 
+            }, 1000);
         });
     </script>
 </body>
