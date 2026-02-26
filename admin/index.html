@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | TNF</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        .admin-container { max-width: 900px; margin: 40px auto; padding: 20px; }
+        .admin-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 30px; border-top: 4px solid var(--primary-blue); }
+        .admin-card h3 { color: var(--primary-green); margin-bottom: 15px; }
+        input, textarea { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .admin-btn { background: var(--primary-blue); color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <nav class="navbar" style="background: var(--primary-blue);">
+        <a href="/" class="logo" style="color: white;">TNF <span style="color: var(--primary-green);">Admin</span></a>
+        <a href="/" style="color: white; text-decoration: none;">&larr; Back to Site</a>
+    </nav>
+
+    <div class="admin-container">
+        <h1 style="margin-bottom: 20px;">Command Center</h1>
+
+        <div class="admin-card">
+            <h3>Update Homepage Announcement</h3>
+            <input type="text" id="announcement-text" placeholder="E.g., Join our next beach cleanup this Saturday!">
+            <button class="admin-btn" onclick="postAnnouncement()">Set Active Announcement</button>
+            <p id="announce-status" style="color: green; margin-top: 10px; display: none;">Announcement updated!</p>
+        </div>
+
+        <div class="admin-card">
+            <h3>Publish News</h3>
+            <input type="text" id="news-title" placeholder="News Title">
+            <textarea id="news-content" rows="4" placeholder="News Body..."></textarea>
+            <button class="admin-btn" onclick="postNews()">Publish Article</button>
+            <p id="news-status" style="color: green; margin-top: 10px; display: none;">News published!</p>
+        </div>
+
+        <div class="admin-card">
+            <h3>Schedule Action Board Event</h3>
+            <input type="text" id="event-title" placeholder="Event Name (e.g., Mangrove Planting)">
+            <input type="date" id="event-date">
+            <input type="text" id="event-location" placeholder="Location">
+            <button class="admin-btn" onclick="postEvent()">Schedule Event</button>
+            <p id="event-status" style="color: green; margin-top: 10px; display: none;">Event scheduled!</p>
+        </div>
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+        const supabase = createClient('https://hicowukbjsbpuebquqbh.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpY293dWtianNicHVlYnF1cWJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE5NzgyNzQsImV4cCI6MjA4NzU1NDI3NH0.sz7ZNU3-WcsskIaHC5Cjs_-WVmXLtYR15Iy8VGi8ch0')
+
+        window.postAnnouncement = async () => {
+            const text = document.getElementById('announcement-text').value;
+            // First set all old announcements to inactive, then insert the new active one
+            await supabase.from('tnf_announcements').update({ is_active: false }).neq('id', '00000000-0000-0000-0000-000000000000'); 
+            await supabase.from('tnf_announcements').insert([{ announcement_text: text, is_active: true }]);
+            document.getElementById('announce-status').style.display = 'block';
+            setTimeout(() => { document.getElementById('announce-status').style.display = 'none'; document.getElementById('announcement-text').value = ''; }, 3000);
+        };
+
+        window.postNews = async () => {
+            const title = document.getElementById('news-title').value;
+            const content = document.getElementById('news-content').value;
+            await supabase.from('tnf_news').insert([{ title: title, content: content }]);
+            document.getElementById('news-status').style.display = 'block';
+            setTimeout(() => { document.getElementById('news-status').style.display = 'none'; document.getElementById('news-title').value = ''; document.getElementById('news-content').value = ''; }, 3000);
+        };
+
+        window.postEvent = async () => {
+            const title = document.getElementById('event-title').value;
+            const date = document.getElementById('event-date').value;
+            const location = document.getElementById('event-location').value;
+            await supabase.from('tnf_events').insert([{ title: title, event_date: date, location: location }]);
+            document.getElementById('event-status').style.display = 'block';
+            setTimeout(() => { document.getElementById('event-status').style.display = 'none'; document.getElementById('event-title').value = ''; document.getElementById('event-date').value = ''; document.getElementById('event-location').value = ''; }, 3000);
+        };
+    </script>
+</body>
+</html>
