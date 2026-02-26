@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found | Tyler Nicholas Foundation</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="loader">
+        <div class="loader-content">
+            <h1>Tyler Nicholas Foundation</h1>
+            <p>by the Tyler Nicholas Group</p>
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+    <section class="error-page">
+        <h1>404</h1>
+        <h2>This page drifted out to sea.</h2>
+        <p style="margin-bottom: 30px;">The page you are looking for doesn't exist or has been moved.</p>
+        <div class="cta-buttons" style="justify-content: center;">
+            <a href="/" class="btn-primary">Return to Foundation Home</a>
+            <a href="https://tylernicholasgroup.com" class="btn-secondary" style="color: var(--primary-blue); border-color: var(--primary-blue);">Visit Tyler Nicholas Group</a>
+        </div>
+    </section>
+
+    <script>
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
+            setTimeout(() => { loader.style.opacity = '0'; loader.style.visibility = 'hidden'; }, 1000);
+        });
+    </script>
+</body>
+</html>
