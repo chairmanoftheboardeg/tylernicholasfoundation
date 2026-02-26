@@ -21,10 +21,7 @@
     <div id="announcement-bar"></div>
 
     <nav class="navbar">
-        <a href="/" class="logo">
-            <img src="https://i.ibb.co/wNsNvyRw/TNF-Logo.png" alt="TNF Logo">
-            Tyler Nicholas <span>Foundation</span>
-        </a>
+        <a href="/" class="logo"><img src="https://i.ibb.co/wNsNvyRw/TNF-Logo.png" alt="TNF Logo">Tyler Nicholas <span>Foundation</span></a>
         <ul class="nav-links">
             <li><a href="/about/">About Us</a></li>
             <li><a href="/pillars/">Our Pillars</a></li>
@@ -36,7 +33,7 @@
 
     <section class="hero">
         <h1>Empowering the Youth. Protecting Seychelles.</h1>
-        <p>We are an unfunded, grassroots movement driven entirely by passion and manpower. Join us to take immediate, hands-on action in our communities and environment.</p>
+        <p>We are an unfunded, grassroots movement driven entirely by passion and manpower.</p>
         <div class="cta-buttons">
             <a href="/volunteer/" class="btn-primary">Become a Volunteer</a>
             <a href="/about/" class="btn-secondary">Learn Our Story</a>
@@ -45,21 +42,24 @@
 
     <section class="volunteers-section">
         <h2>Our Grassroots Team</h2>
-        <p>Meet the young leaders from across Seychelles who are dedicating their sweat equity to our islands.</p>
         <div id="volunteers-container" class="volunteers-grid">
-            <p id="loading-volunteers" style="grid-column: 1 / -1; text-align: center;">Loading our team roster...</p>
-        </div>
+            <div class="volunteer-card" style="border-left-color: var(--primary-blue); background-color: #eef5fb;">
+                <h4 style="color: var(--primary-blue);">Tyler Nicholas</h4>
+                <div class="passion" style="background-color: var(--primary-blue); color: white;">Founder</div>
+            </div>
+            </div>
     </section>
 
     <footer class="site-footer">
         <div class="social-icons">
             <a href="https://www.linkedin.com/company/tylernicholas-foundation" target="_blank"><i class="fab fa-linkedin"></i></a>
-            <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
             <a href="https://x.com/tnfseychelles" target="_blank"><i class="fab fa-x-twitter"></i></a>
-            <a href="#" target="_blank"><i class="fab fa-whatsapp"></i></a>
         </div>
         <div class="footer-contact">
-            Contact: <a href="mailto:tyler.nicholasefs@gmail.com">tyler.nicholasefs@gmail.com</a>
+            Contact: <a href="mailto:nicholasfoundation.sc@gmail.com">nicholasfoundation.sc@gmail.com</a>
+        </div>
+        <div class="admin-link">
+            <a href="/admin/"><i class="fas fa-lock"></i> Admin Dashboard</a>
         </div>
         <div class="footer-copyright">
             &copy; 2026 Copyright Tyler Nicholas Foundation by <a href="https://tylernicholasgroup.com" target="_blank">Tyler Nicholas Group</a>. All rights reserved.
@@ -68,71 +68,33 @@
 
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+        const supabase = createClient('https://hicowukbjsbpuebquqbh.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpY293dWtianNicHVlYnF1cWJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE5NzgyNzQsImV4cCI6MjA4NzU1NDI3NH0.sz7ZNU3-WcsskIaHC5Cjs_-WVmXLtYR15Iy8VGi8ch0')
 
-        const supabaseUrl = 'https://hicowukbjsbpuebquqbh.supabase.co'
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpY293dWtianNicHVlYnF1cWJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE5NzgyNzQsImV4cCI6MjA4NzU1NDI3NH0.sz7ZNU3-WcsskIaHC5Cjs_-WVmXLtYR15Iy8VGi8ch0'
-        const supabase = createClient(supabaseUrl, supabaseKey)
-
-        // 1. Handle Loading Screen Fade Out
         window.addEventListener('load', () => {
             const loader = document.getElementById('loader');
-            setTimeout(() => {
-                loader.style.opacity = '0';
-                loader.style.visibility = 'hidden';
-            }, 1200); // Slightly longer delay so users can read the text
+            setTimeout(() => { loader.style.opacity = '0'; loader.style.visibility = 'hidden'; }, 1200);
         });
 
-        // 2. Fetch Announcement
         async function fetchAnnouncement() {
-            const { data, error } = await supabase
-                .from('tnf_announcements')
-                .select('announcement_text')
-                .eq('is_active', true)
-                .order('created_at', { ascending: false })
-                .limit(1);
-
+            const { data } = await supabase.from('tnf_announcements').select('announcement_text').eq('is_active', true).order('created_at', { ascending: false }).limit(1);
             if (data && data.length > 0) {
-                const announcementBar = document.getElementById('announcement-bar');
-                announcementBar.innerText = data[0].announcement_text;
-                announcementBar.style.display = 'block';
+                const bar = document.getElementById('announcement-bar');
+                bar.innerText = data[0].announcement_text; bar.style.display = 'block';
             }
         }
 
-        // 3. Fetch Volunteers
         async function fetchVolunteers() {
-            const { data, error } = await supabase
-                .from('tnf_volunteers')
-                .select('name, district, passion_area')
-                .order('created_at', { ascending: false });
-
+            const { data } = await supabase.from('tnf_volunteers').select('name, district, passion_area').order('created_at', { ascending: false });
             const container = document.getElementById('volunteers-container');
-            
-            if (error) {
-                container.innerHTML = '<p style="grid-column: 1 / -1; color: red;">Could not load team roster at this time.</p>';
-                return;
-            }
-
             if (data && data.length > 0) {
-                container.innerHTML = ''; // Clear loading text
-                data.forEach(volunteer => {
-                    const card = document.createElement('div');
-                    card.className = 'volunteer-card';
-                    card.innerHTML = `
-                        <h4>${volunteer.name}</h4>
-                        <span><i class="fas fa-map-marker-alt" style="color: var(--primary-blue);"></i> ${volunteer.district}</span><br>
-                        <div class="passion">${volunteer.passion_area}</div>
-                    `;
+                data.forEach(v => {
+                    const card = document.createElement('div'); card.className = 'volunteer-card';
+                    card.innerHTML = `<h4>${v.name}</h4><span><i class="fas fa-map-marker-alt"></i> ${v.district}</span><br><div class="passion">${v.passion_area}</div>`;
                     container.appendChild(card);
                 });
-            } else {
-                container.innerHTML = '<p style="grid-column: 1 / -1;">We are just getting started. Be the first to join the movement!</p>';
             }
         }
-
-        // Execute functions
-        fetchAnnouncement();
-        fetchVolunteers();
+        fetchAnnouncement(); fetchVolunteers();
     </script>
-
 </body>
 </html>
