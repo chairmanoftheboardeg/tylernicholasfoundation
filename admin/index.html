@@ -3,59 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard | TNF</title>
+    <title>Admin Dashboard | Tyler Nicholas Foundation</title>
+    <link rel="icon" type="image/png" href="https://i.ibb.co/wNsNvyRw/TNF-Logo.png">
     <link rel="stylesheet" href="../style.css">
     <style>
         .admin-container { max-width: 900px; margin: 40px auto; padding: 20px; }
-        .admin-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 30px; border-top: 4px solid var(--primary-blue); }
+        .admin-card { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 30px; border-top: 4px solid var(--primary-blue); }
         .admin-card h3 { color: var(--primary-green); margin-bottom: 15px; }
-        input, textarea { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; }
-        .admin-btn { background: var(--primary-blue); color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+        input, textarea { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; font-size: 1rem; }
+        .admin-btn { background: var(--primary-blue); color: white; padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; transition: background 0.3s; }
+        .admin-btn:hover { background: var(--primary-green); }
+        .logout-btn { background: #dc3545; width: auto; float: right; }
+        .logout-btn:hover { background: #c82333; }
+        
+        /* Layout Toggles */
+        #dashboard-section { display: none; }
+        #login-section { max-width: 400px; margin: 100px auto; text-align: center; }
     </style>
 </head>
 <body>
     <nav class="navbar" style="background: var(--primary-blue);">
         <a href="/" class="logo" style="color: white;">TNF <span style="color: var(--primary-green);">Admin</span></a>
-        <a href="/" style="color: white; text-decoration: none;">&larr; Back to Site</a>
+        <a href="/" style="color: white; text-decoration: none; font-weight: bold;">&larr; Back to Site</a>
     </nav>
 
     <div class="admin-container">
-        <h1 style="margin-bottom: 20px;">Command Center</h1>
-
-        <div class="admin-card">
-            <h3>Update Homepage Announcement</h3>
-            <input type="text" id="announcement-text" placeholder="E.g., Join our next beach cleanup this Saturday!">
-            <button class="admin-btn" onclick="postAnnouncement()">Set Active Announcement</button>
-            <p id="announce-status" style="color: green; margin-top: 10px; display: none;">Announcement updated!</p>
+        
+        <div id="login-section" class="admin-card">
+            <img src="https://i.ibb.co/wNsNvyRw/TNF-Logo.png" alt="TNF Logo" style="height: 60px; margin-bottom: 20px;">
+            <h3 style="color: var(--primary-blue);">Command Center Login</h3>
+            <p style="margin-bottom: 20px; color: #666; font-size: 0.9rem;">Authorized personnel only.</p>
+            <input type="email" id="admin-email" placeholder="Admin Email" required>
+            <input type="password" id="admin-password" placeholder="Password" required>
+            <button class="admin-btn" onclick="login()">Secure Login</button>
+            <p id="login-error" style="color: red; margin-top: 15px; display: none;">Invalid login credentials.</p>
         </div>
 
-        <div class="admin-card">
-            <h3>Publish News</h3>
-            <input type="text" id="news-title" placeholder="News Title">
-            <textarea id="news-content" rows="4" placeholder="News Body..."></textarea>
-            <button class="admin-btn" onclick="postNews()">Publish Article</button>
-            <p id="news-status" style="color: green; margin-top: 10px; display: none;">News published!</p>
+        <div id="dashboard-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h1 style="color: var(--primary-blue);">Welcome, Commander.</h1>
+                <button class="admin-btn logout-btn" onclick="logout()">Log Out</button>
+            </div>
+
+            <div class="admin-card">
+                <h3><i class="fas fa-bullhorn"></i> Update Homepage Announcement</h3>
+                <input type="text" id="announcement-text" placeholder="E.g., Join our next beach cleanup this Saturday!">
+                <button class="admin-btn" onclick="postAnnouncement()">Set Active Announcement</button>
+                <p id="announce-status" style="color: green; margin-top: 10px; display: none;">Announcement updated successfully!</p>
+            </div>
+
+            <div class="admin-card">
+                <h3><i class="fas fa-newspaper"></i> Publish News</h3>
+                <input type="text" id="news-title" placeholder="News Title">
+                <textarea id="news-content" rows="6" placeholder="News Body..."></textarea>
+                <button class="admin-btn" onclick="postNews()">Publish Article</button>
+                <p id="news-status" style="color: green; margin-top: 10px; display: none;">News published successfully!</p>
+            </div>
+
+            <div class="admin-card">
+                <h3><i class="fas fa-calendar-plus"></i> Schedule Action Board Event</h3>
+                <input type="text" id="event-title" placeholder="Event Name (e.g., Mangrove Planting)">
+                <input type="date" id="event-date">
+                <input type="text" id="event-location" placeholder="Location">
+                <button class="admin-btn" onclick="postEvent()">Schedule Event</button>
+                <p id="event-status" style="color: green; margin-top: 10px; display: none;">Event scheduled successfully!</p>
+            </div>
         </div>
 
-        <div class="admin-card">
-            <h3>Schedule Action Board Event</h3>
-            <input type="text" id="event-title" placeholder="Event Name (e.g., Mangrove Planting)">
-            <input type="date" id="event-date">
-            <input type="text" id="event-location" placeholder="Location">
-            <button class="admin-btn" onclick="postEvent()">Schedule Event</button>
-            <p id="event-status" style="color: green; margin-top: 10px; display: none;">Event scheduled!</p>
-        </div>
     </div>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
         const supabase = createClient('https://hicowukbjsbpuebquqbh.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpY293dWtianNicHVlYnF1cWJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE5NzgyNzQsImV4cCI6MjA4NzU1NDI3NH0.sz7ZNU3-WcsskIaHC5Cjs_-WVmXLtYR15Iy8VGi8ch0')
 
+        // DOM Elements
+        const loginSection = document.getElementById('login-section');
+        const dashboardSection = document.getElementById('dashboard-section');
+        const loginError = document.getElementById('login-error');
+
+        // 1. Check if user is already logged in on page load
+        async function checkSession() {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                loginSection.style.display = 'none';
+                dashboardSection.style.display = 'block';
+            }
+        }
+        checkSession();
+
+        // 2. Login Function
+        window.login = async () => {
+            const email = document.getElementById('admin-email').value;
+            const password = document.getElementById('admin-password').value;
+            
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: email,
+                password: password,
+            });
+
+            if (error) {
+                loginError.innerText = error.message;
+                loginError.style.display = 'block';
+            } else {
+                loginError.style.display = 'none';
+                loginSection.style.display = 'none';
+                dashboardSection.style.display = 'block';
+            }
+        };
+
+        // 3. Logout Function
+        window.logout = async () => {
+            await supabase.auth.signOut();
+            dashboardSection.style.display = 'none';
+            loginSection.style.display = 'block';
+            document.getElementById('admin-password').value = ''; // clear password field
+        };
+
+        // 4. Dashboard Tools (Only work if logged in due to RLS policies)
         window.postAnnouncement = async () => {
             const text = document.getElementById('announcement-text').value;
-            // First set all old announcements to inactive, then insert the new active one
+            if(!text) return alert("Please enter announcement text.");
             await supabase.from('tnf_announcements').update({ is_active: false }).neq('id', '00000000-0000-0000-0000-000000000000'); 
-            await supabase.from('tnf_announcements').insert([{ announcement_text: text, is_active: true }]);
+            const { error } = await supabase.from('tnf_announcements').insert([{ announcement_text: text, is_active: true }]);
+            if(error) return alert(error.message);
+            
             document.getElementById('announce-status').style.display = 'block';
             setTimeout(() => { document.getElementById('announce-status').style.display = 'none'; document.getElementById('announcement-text').value = ''; }, 3000);
         };
@@ -63,7 +136,11 @@
         window.postNews = async () => {
             const title = document.getElementById('news-title').value;
             const content = document.getElementById('news-content').value;
-            await supabase.from('tnf_news').insert([{ title: title, content: content }]);
+            if(!title || !content) return alert("Please fill out both title and content.");
+            
+            const { error } = await supabase.from('tnf_news').insert([{ title: title, content: content }]);
+            if(error) return alert(error.message);
+
             document.getElementById('news-status').style.display = 'block';
             setTimeout(() => { document.getElementById('news-status').style.display = 'none'; document.getElementById('news-title').value = ''; document.getElementById('news-content').value = ''; }, 3000);
         };
@@ -72,7 +149,11 @@
             const title = document.getElementById('event-title').value;
             const date = document.getElementById('event-date').value;
             const location = document.getElementById('event-location').value;
-            await supabase.from('tnf_events').insert([{ title: title, event_date: date, location: location }]);
+            if(!title || !date || !location) return alert("Please fill out all event fields.");
+
+            const { error } = await supabase.from('tnf_events').insert([{ title: title, event_date: date, location: location }]);
+            if(error) return alert(error.message);
+
             document.getElementById('event-status').style.display = 'block';
             setTimeout(() => { document.getElementById('event-status').style.display = 'none'; document.getElementById('event-title').value = ''; document.getElementById('event-date').value = ''; document.getElementById('event-location').value = ''; }, 3000);
         };
