@@ -46,17 +46,21 @@
         .read-area { transition: all 0.3s ease; }
         .read-area.high-contrast { background-color: #111827 !important; color: #F9FAFB !important; border-color: #374151 !important; }
         .read-area.high-contrast h2, .read-area.high-contrast h3, .read-area.high-contrast h4, .read-area.high-contrast p, .read-area.high-contrast span { color: #F9FAFB !important; }
-        .read-area.text-lvl-1 p { font-size: 1rem; line-height: 1.75; }
-        .read-area.text-lvl-2 p { font-size: 1.125rem; line-height: 1.8; }
-        .read-area.text-lvl-3 p { font-size: 1.25rem; line-height: 1.9; }
 
         #search-overlay { transition: opacity 0.3s ease; }
         #search-overlay.hidden { opacity: 0; pointer-events: none; }
         #search-overlay.active { opacity: 1; pointer-events: auto; }
 
-        /* Editorial Pillar Card */
+        /* Toast Notification */
+        #toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+        .toast { background: white; color: #111827; padding: 16px 24px; border-radius: 8px; box-shadow: 0 10px 30px -5px rgba(0,0,0,0.1); border-left: 4px solid #059669; font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600; text-transform: uppercase; transform: translateX(120%); transition: transform 0.4s ease; display: flex; align-items: center; gap: 12px; }
+        .toast.show { transform: translateX(0); }
+        .toast.error { border-left-color: #EF4444; }
+
         .editorial-card { border-top: 4px solid #059669; background-color: #F9FAFB; transition: all 0.3s ease; }
         .editorial-card:hover { background-color: #FFFFFF; box-shadow: 0 10px 30px rgba(0,0,0,0.05); transform: translateY(-5px); }
+        
+        .stat-counter { background: linear-gradient(135deg, #059669 0%, #047857 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     </style>
 </head>
 <body class="flex flex-col min-h-screen text-brand-dark">
@@ -67,7 +71,6 @@
 
     <nav class="bg-white py-4 px-6 md:px-12 sticky top-0 z-50 transition-shadow duration-300 shadow-sm" id="navbar">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
-            
             <a href="/" class="flex items-center gap-3 group">
                 <img src="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" alt="TNF Logo" class="w-10 h-10 rounded-full object-cover shadow-sm group-hover:scale-105 transition-transform duration-300">
                 <h1 class="font-heading font-bold text-xl tracking-tight text-brand-dark hidden sm:block">Tyler Nicholas <span class="text-eco-green">Foundation</span></h1>
@@ -130,6 +133,26 @@
         <div class="acc-btn" onclick="toggleHighContrast()" title="Toggle High Contrast"><i class="fa-solid fa-circle-half-stroke text-lg"></i></div>
     </div>
 
+    <div id="mobile-menu-overlay" class="fixed inset-0 bg-white z-[100] transform translate-x-full transition-transform duration-300 flex flex-col lg:hidden overflow-y-auto">
+        <div class="p-6 flex justify-between items-center border-b border-gray-100">
+            <div class="flex items-center gap-3">
+                <img src="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" alt="TNF Logo" class="w-8 h-8 rounded-full">
+                <h1 class="font-heading font-bold text-xl text-brand-dark">TNF</h1>
+            </div>
+            <button id="mobile-menu-close" class="text-brand-dark text-3xl"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="p-8 flex flex-col space-y-6 text-brand-dark flex-grow font-heading font-semibold text-2xl">
+            <a href="/" class="text-eco-green transition-colors" data-i18n="navHome">Home</a>
+            <a href="/programs/" class="hover:text-eco-green transition-colors" data-i18n="navPrograms">Programs</a>
+            <a href="/about/" class="hover:text-eco-green transition-colors" data-i18n="navAboutUs">About Us</a>
+            <a href="/get-involved/" class="hover:text-eco-green transition-colors" data-i18n="navInvolved">Get Involved</a>
+            <a href="/legal/" class="hover:text-eco-green transition-colors" data-i18n="navLegal">Legal</a>
+            <a href="/partners/" class="hover:text-eco-green transition-colors" data-i18n="navPartners">Our Partners</a>
+            <a href="/team/" class="hover:text-eco-green transition-colors" data-i18n="navTeam">Meet the Team</a>
+            <a href="/get-involved/" class="mt-4 inline-block bg-eco-green text-white text-center py-4 rounded-xl font-bold text-lg shadow-soft" data-i18n="btnDonate">Donate</a>
+        </div>
+    </div>
+
     <main class="flex-grow">
         
         <section class="relative h-[85vh] min-h-[600px] flex items-center justify-center overflow-hidden">
@@ -156,16 +179,18 @@
                     <a href="/contact/" class="w-full sm:w-auto bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/30 text-white font-heading font-semibold py-4 px-10 rounded-xl transition-all text-center text-lg" data-i18n="btnAction2">Partner With Us</a>
                 </div>
             </div>
+            
+            <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-10 animate-bounce">
+                <i class="fa-solid fa-arrow-down text-white/50 text-2xl"></i>
+            </div>
         </section>
 
         <section class="py-24 bg-white overflow-hidden">
             <div class="max-w-7xl mx-auto px-6 md:px-12 flex flex-col lg:flex-row items-center gap-16 relative z-10">
-                
                 <div class="w-full lg:w-[40%] relative fade-up flex justify-center">
                     <div class="absolute top-[50%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-eco-light rounded-full z-0"></div>
                     <img src="https://i.ibb.co/Q34Wycc7/dr9jgfmhq5rmt0cx5marskkg94-preview-0-ezremove-removebg-preview.png" alt="Tyler Nicholas" class="relative z-10 w-[80%] h-auto object-contain drop-shadow-xl">
                 </div>
-
                 <div class="w-full lg:w-[60%] read-area text-lvl-1 fade-up delay-100">
                     <h2 class="text-sm font-heading font-bold text-eco-green uppercase tracking-widest mb-3" data-i18n="msgSub">A Message From The Chairman</h2>
                     <h3 class="text-3xl md:text-4xl font-heading font-bold text-brand-dark mb-6 leading-tight" data-i18n="msgTitle">
@@ -184,7 +209,6 @@
                         <p class="font-heading font-bold text-brand-dark mt-4">Tyler Nicholas</p>
                     </div>
                 </div>
-
             </div>
         </section>
 
@@ -199,43 +223,66 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 read-area text-lvl-1">
-                    
                     <div class="editorial-card p-8 rounded-b-2xl flex flex-col h-full">
                         <h4 class="text-xl font-heading font-bold text-brand-dark mb-3" data-i18n="pilPlacementTitle">Career & Opportunity Placement</h4>
                         <p class="text-brand-muted text-sm leading-relaxed mb-4 flex-grow" data-i18n="pilPlacementDesc">We actively source and secure customized work attachments, long-term internships, and international holiday opportunities for Seychellois youth by contacting organizations and leveraging our corporate network directly on their behalf.</p>
                         <a href="/get-involved/" class="text-eco-green font-bold text-sm hover:underline mt-auto" data-i18n="applyBtn">Apply for Placement &rarr;</a>
                     </div>
-
                     <div class="editorial-card p-8 rounded-b-2xl flex flex-col h-full">
                         <h4 class="text-xl font-heading font-bold text-brand-dark mb-3" data-i18n="pilEcoTitle">Environmental Stewardship & Climate Action</h4>
                         <p class="text-brand-muted text-sm leading-relaxed mb-4 flex-grow" data-i18n="pilEcoDesc">Executing grassroots coastal protection, organizing massive youth-led mangrove restoration projects, and providing micro-grants for local eco-innovation and sustainability startups.</p>
                     </div>
-
                     <div class="editorial-card p-8 rounded-b-2xl flex flex-col h-full">
                         <h4 class="text-xl font-heading font-bold text-brand-dark mb-3" data-i18n="pilDigiTitle">Digital Literacy & Enterprise Incubator</h4>
                         <p class="text-brand-muted text-sm leading-relaxed mb-4 flex-grow" data-i18n="pilDigiDesc">Through "The Artisan Initiative" and our corporate partners, we provide free websites, digital branding, and coding workshops to local vendors and underprivileged youth to transition Seychelles into a creator economy.</p>
                     </div>
-
                     <div class="editorial-card p-8 rounded-b-2xl flex flex-col h-full">
                         <h4 class="text-xl font-heading font-bold text-brand-dark mb-3" data-i18n="pilHealthTitle">Health, Mental Wellness & Food Security</h4>
                         <p class="text-brand-muted text-sm leading-relaxed mb-4 flex-grow" data-i18n="pilHealthDesc">Maintaining the National Mental Health Directory, organizing preventative wellness campaigns, and partnering closely with FoodShare Seychelles to manage community food logistics for vulnerable demographics.</p>
                     </div>
-
                     <div class="editorial-card p-8 rounded-b-2xl flex flex-col h-full">
                         <h4 class="text-xl font-heading font-bold text-brand-dark mb-3" data-i18n="pilCivicTitle">Civic Education & Policy Research Lab</h4>
                         <p class="text-brand-muted text-sm leading-relaxed mb-4 flex-grow" data-i18n="pilCivicDesc">Operating an Open-Access Education Library for students, conducting youth parliament simulations, and aggregating community data to support evidence-based, data-driven national policymaking.</p>
                     </div>
-
                     <div class="editorial-card p-8 rounded-b-2xl flex flex-col h-full">
                         <h4 class="text-xl font-heading font-bold text-brand-dark mb-3" data-i18n="pilCultureTitle">Cultural Heritage & Social Inclusion</h4>
                         <p class="text-brand-muted text-sm leading-relaxed mb-4 flex-grow" data-i18n="pilCultureDesc">Running "The Generations Archive" to digitally preserve the folklore of our elderly, while providing strict advocacy and support networks for persons with disabilities and marginalized groups.</p>
                     </div>
+                </div>
+            </div>
+        </section>
 
+        <section class="py-24 bg-white border-t border-gray-100 relative">
+            <div class="max-w-7xl mx-auto px-6 md:px-12 fade-up delay-100">
+                <div class="text-center mb-16">
+                    <h2 class="text-sm font-heading font-bold text-eco-green uppercase tracking-widest mb-2" data-i18n="impactSub">Our Footprint</h2>
+                    <h3 class="text-3xl md:text-4xl font-heading font-bold text-brand-dark" data-i18n="impactTitle">Measurable Impact</h3>
+                </div>
+                <div id="impact-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="col-span-full text-center text-gray-400 py-10"><i class="fa-solid fa-circle-notch fa-spin text-3xl mb-4 text-eco-green"></i><br>Syncing Live Data...</div>
                 </div>
             </div>
         </section>
 
         <section class="py-24 bg-[#F9FAFB] border-t border-gray-100">
+            <div class="max-w-7xl mx-auto px-6 md:px-12 fade-up">
+                <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+                    <div>
+                        <h2 class="text-sm font-heading font-bold text-eco-green uppercase tracking-widest mb-2" data-i18n="newsSub">Latest Updates</h2>
+                        <h3 class="text-3xl md:text-4xl font-heading font-bold text-brand-dark" data-i18n="newsTitle">Foundation Newsroom</h3>
+                    </div>
+                    <a href="/news/" class="text-sm font-heading font-semibold text-brand-blue hover:text-brand-dark transition-colors flex items-center">
+                        <span data-i18n="newsViewAll">View All Articles</span> <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+
+                <div id="news-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="col-span-full text-center text-gray-400 py-10"><i class="fa-solid fa-circle-notch fa-spin text-3xl mb-4 text-eco-green"></i><br>Loading news...</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-24 bg-white border-t border-gray-100">
             <div class="max-w-7xl mx-auto px-6 md:px-12 fade-up delay-100">
                 <div class="text-center mb-16 max-w-3xl mx-auto">
                     <h2 class="text-sm font-heading font-bold text-eco-green uppercase tracking-widest mb-2" data-i18n="boardSub">Leadership</h2>
@@ -243,8 +290,7 @@
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                    
-                    <div class="bg-white rounded-3xl p-8 border border-gray-100 text-center shadow-sm hover:shadow-card transition-shadow">
+                    <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100 text-center shadow-sm hover:shadow-card transition-shadow">
                         <div class="w-28 h-28 mx-auto rounded-full overflow-hidden mb-5 border-4 border-white shadow-md">
                             <img src="https://tyler.tylernicholasgroup.com/tyler%20n.jpg" alt="Tyler Nicholas" class="w-full h-full object-cover">
                         </div>
@@ -252,35 +298,49 @@
                         <p class="text-[10px] font-bold text-eco-green uppercase tracking-widest mb-4" data-i18n="boardRole1">Founder & Chairman</p>
                         <p class="text-xs text-brand-muted leading-relaxed" data-i18n="boardDesc1">Directing the foundation's strategic vision, partnerships, and overall commitment to the Seychellois community.</p>
                     </div>
-
-                    <div class="bg-white rounded-3xl p-8 border border-gray-100 text-center shadow-sm hover:shadow-card transition-shadow">
-                        <div class="w-28 h-28 mx-auto rounded-full overflow-hidden mb-5 border-4 border-white shadow-md bg-gray-100">
+                    <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100 text-center shadow-sm hover:shadow-card transition-shadow">
+                        <div class="w-28 h-28 mx-auto rounded-full overflow-hidden mb-5 border-4 border-white shadow-md bg-gray-200">
                             <img src="https://media.istockphoto.com/id/521573873/vector/unknown-person-silhouette-whith-blue-tie.jpg?s=612x612&w=0&k=20&c=5Ax4LbSxC0swuxzNmRarYD5R0bxE5u7p31AHfy9Iqd8=" alt="Vacant Seat" class="w-full h-full object-cover opacity-70 filter grayscale">
                         </div>
                         <h4 class="font-heading font-bold text-lg text-gray-500 mb-1">N/A</h4>
                         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4" data-i18n="boardRole2">Vice Chairman</p>
                         <p class="text-xs text-gray-400 leading-relaxed" data-i18n="boardDesc2">Supporting the Chairman in executive decisions and operational oversight.</p>
                     </div>
-
-                    <div class="bg-white rounded-3xl p-8 border border-gray-100 text-center shadow-sm hover:shadow-card transition-shadow">
-                        <div class="w-28 h-28 mx-auto rounded-full overflow-hidden mb-5 border-4 border-white shadow-md bg-gray-100">
+                    <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100 text-center shadow-sm hover:shadow-card transition-shadow">
+                        <div class="w-28 h-28 mx-auto rounded-full overflow-hidden mb-5 border-4 border-white shadow-md bg-gray-200">
                             <img src="https://media.istockphoto.com/id/521573873/vector/unknown-person-silhouette-whith-blue-tie.jpg?s=612x612&w=0&k=20&c=5Ax4LbSxC0swuxzNmRarYD5R0bxE5u7p31AHfy9Iqd8=" alt="Vacant Seat" class="w-full h-full object-cover opacity-70 filter grayscale">
                         </div>
                         <h4 class="font-heading font-bold text-lg text-gray-500 mb-1">N/A</h4>
                         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4" data-i18n="boardRole3">Treasurer</p>
                         <p class="text-xs text-gray-400 leading-relaxed" data-i18n="boardDesc3">Managing the foundation's financial health, transparency, and resource allocation.</p>
                     </div>
-
-                    <div class="bg-white rounded-3xl p-8 border border-gray-100 text-center shadow-sm hover:shadow-card transition-shadow">
-                        <div class="w-28 h-28 mx-auto rounded-full overflow-hidden mb-5 border-4 border-white shadow-md bg-gray-100">
+                    <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100 text-center shadow-sm hover:shadow-card transition-shadow">
+                        <div class="w-28 h-28 mx-auto rounded-full overflow-hidden mb-5 border-4 border-white shadow-md bg-gray-200">
                             <img src="https://media.istockphoto.com/id/521573873/vector/unknown-person-silhouette-whith-blue-tie.jpg?s=612x612&w=0&k=20&c=5Ax4LbSxC0swuxzNmRarYD5R0bxE5u7p31AHfy9Iqd8=" alt="Vacant Seat" class="w-full h-full object-cover opacity-70 filter grayscale">
                         </div>
                         <h4 class="font-heading font-bold text-lg text-gray-500 mb-1">N/A</h4>
                         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4" data-i18n="boardRole4">Executive Director</p>
                         <p class="text-xs text-gray-400 leading-relaxed" data-i18n="boardDesc4">Leading the day-to-day execution of our community programs and volunteer coordination.</p>
                     </div>
-
                 </div>
+            </div>
+        </section>
+
+        <section class="py-20 bg-brand-dark text-center relative overflow-hidden">
+            <div class="absolute inset-0 z-0 opacity-10">
+                <div class="absolute -top-40 -left-40 w-96 h-96 bg-eco-green rounded-full blur-3xl"></div>
+                <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-eco-green rounded-full blur-3xl"></div>
+            </div>
+            <div class="max-w-2xl mx-auto px-6 relative z-10 fade-up">
+                <h3 class="text-3xl font-heading font-bold text-white mb-4" data-i18n="nlTitle">Join the Movement</h3>
+                <p class="text-gray-400 mb-8 leading-relaxed" data-i18n="nlDesc">Subscribe to the official Tyler Nicholas Foundation newsletter to receive live updates on our projects, volunteer opportunities, and community impact reports.</p>
+                
+                <form onsubmit="subscribeNewsletter(event)" class="flex flex-col sm:flex-row gap-3 justify-center max-w-lg mx-auto">
+                    <input type="email" id="nl-email" required data-i18n-placeholder="nlPlaceholder" placeholder="Enter your email address..." class="w-full sm:w-2/3 px-5 py-4 rounded-xl bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-eco-green transition-colors text-sm">
+                    <button type="submit" id="btn-subscribe" class="w-full sm:w-1/3 bg-eco-green hover:bg-eco-dark text-white font-heading font-bold py-4 rounded-xl transition-all shadow-md text-sm">
+                        <span data-i18n="nlBtn">Subscribe</span>
+                    </button>
+                </form>
             </div>
         </section>
 
@@ -288,7 +348,6 @@
 
     <footer class="bg-white border-t border-gray-200 pt-20 pb-10 px-6 md:px-12 mt-auto">
         <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
-            
             <div class="md:col-span-4">
                 <div class="flex items-center gap-3 mb-4">
                     <img src="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" alt="TNF Logo" class="w-10 h-10 rounded-full object-cover">
@@ -343,6 +402,8 @@
         </div>
     </footer>
 
+    <div id="toast-container"></div>
+
     <script>
         // --- I18N DICTIONARY FOR FOUNDATION HOME PAGE ---
         const translations = {
@@ -365,11 +426,14 @@
                 pilHealthTitle: "Health, Mental Wellness & Food Security", pilHealthDesc: "Maintaining the National Mental Health Directory, organizing preventative wellness campaigns, and partnering closely with FoodShare Seychelles to manage community food logistics for vulnerable demographics.",
                 pilCivicTitle: "Civic Education & Policy Research Lab", pilCivicDesc: "Operating an Open-Access Education Library for students, conducting youth parliament simulations, and aggregating community data to support evidence-based, data-driven national policymaking.",
                 pilCultureTitle: "Cultural Heritage & Social Inclusion", pilCultureDesc: "Running \"The Generations Archive\" to digitally preserve the folklore of our elderly, while providing strict advocacy and support networks for persons with disabilities and marginalized groups.",
+                impactSub: "Our Footprint", impactTitle: "Measurable Impact",
+                newsSub: "Latest Updates", newsTitle: "Foundation Newsroom", newsViewAll: "View All Articles", newsReadMore: "Read Article", newsEmpty: "No updates published yet. Check back soon.",
                 boardSub: "Leadership", boardTitle: "Meet the Board of Directors",
                 boardRole1: "Founder & Chairman", boardDesc1: "Directing the foundation's strategic vision, partnerships, and overall commitment to the Seychellois community.",
                 boardRole2: "Vice Chairman", boardDesc2: "Supporting the Chairman in executive decisions and operational oversight.",
                 boardRole3: "Treasurer", boardDesc3: "Managing the foundation's financial health, transparency, and resource allocation.",
                 boardRole4: "Executive Director", boardDesc4: "Leading the day-to-day execution of our community programs and volunteer coordination.",
+                nlTitle: "Join the Movement", nlDesc: "Subscribe to the official Tyler Nicholas Foundation newsletter to receive live updates on our projects, volunteer opportunities, and community impact reports.", nlPlaceholder: "Enter your email address...", nlBtn: "Subscribe", nlSuccess: "Successfully subscribed to the newsletter!", nlError: "Failed to subscribe. Please try again.", nlExists: "You are already subscribed!",
                 footerSlogan: "\"For the Youth. For the Islands. For Tomorrow.\"",
                 footerTNG: "The Tyler Nicholas Foundation is a proud member of <br><a href='https://tylernicholasgroup.com/' target='_blank' class='text-brand-dark hover:text-eco-green transition-colors'>The Tyler Nicholas Group</a>",
                 footerDir: "Directory", footerAffil: "Network Partners", footerContact: "Contact Us",
@@ -395,11 +459,14 @@
                 pilHealthTitle: "Santé, Bien-être Mental et Sécurité Alimentaire", pilHealthDesc: "Maintien de l'Annuaire National de la Santé Mentale et partenariat avec FoodShare Seychelles pour gérer la logistique alimentaire communautaire.",
                 pilCivicTitle: "Éducation Civique et Laboratoire de Recherche", pilCivicDesc: "Exploitation d'une bibliothèque d'éducation en libre accès pour les étudiants et collecte de données communautaires pour soutenir les politiques publiques.",
                 pilCultureTitle: "Patrimoine Culturel et Inclusion Sociale", pilCultureDesc: "Gérer \"Les Archives des Générations\" pour préserver le folklore de nos aînés, tout en offrant un soutien strict aux groupes marginalisés.",
+                impactSub: "Notre Empreinte", impactTitle: "Impact Mesurable",
+                newsSub: "Dernières Mises à Jour", newsTitle: "Actualités de la Fondation", newsViewAll: "Voir Tous les Articles", newsReadMore: "Lire l'Article", newsEmpty: "Aucune mise à jour publiée pour le moment.",
                 boardSub: "Direction", boardTitle: "Rencontrez le Conseil d'Administration",
                 boardRole1: "Fondateur & Président", boardDesc1: "Dirige la vision stratégique de la fondation et son engagement global envers la communauté seychelloise.",
                 boardRole2: "Vice-président", boardDesc2: "Soutient le Président dans les décisions exécutives et la supervision opérationnelle.",
                 boardRole3: "Trésorier", boardDesc3: "Gère la santé financière de la fondation, la transparence et l'allocation des ressources.",
                 boardRole4: "Directeur Exécutif", boardDesc4: "Dirige l'exécution quotidienne de nos programmes communautaires et la coordination des bénévoles.",
+                nlTitle: "Rejoignez le Mouvement", nlDesc: "Abonnez-vous à la newsletter officielle pour recevoir des mises à jour en direct sur nos projets et notre impact.", nlPlaceholder: "Entrez votre adresse e-mail...", nlBtn: "S'abonner", nlSuccess: "Abonnement réussi !", nlError: "Échec de l'abonnement.", nlExists: "Vous êtes déjà abonné !",
                 footerSlogan: "\"Pour les Jeunes. Pour les Îles. Pour Demain.\"",
                 footerTNG: "La Fondation Tyler Nicholas est fière d'être membre de <br><a href='https://tylernicholasgroup.com/' target='_blank' class='text-brand-dark hover:text-eco-green transition-colors'>The Tyler Nicholas Group</a>",
                 footerDir: "Annuaire", footerAffil: "Partenaires du Réseau", footerContact: "Nous Contacter",
@@ -419,17 +486,20 @@
                 msgP2: "Sa Fondasyon i travay lo plizyer keksoz. Bann defi ki nou zil i fer fas avek i konekte. Ou pa kapab protez lanvironnman san donn lafors sa bann zenn ki pou erit li.",
                 msgP3: "Sorti kot rod staz aletranze pour etidyan, ziska ed bann artizan lokal avek zot biznes lo lenternet—nou travay i la pour asire ki personn pa ganny kit deryer dan Sesel.",
                 mandateSub: "Nou Travay", mandateTitle: "En Plan Nasyonal Konple", mandateDesc: "Nou travay dan plizyer sekter pour donn en sipor total pour Repiblik. Dekouver nou bann pilye prensipal anba.",
-                pilPlacementTitle: "Karyer ek Plasman", pilPlacementDesc: "Nou rod e sekirize bann staz (internships) ek lezot loportinite travay aletranze pour lazenes Seselwa par pran kontak direk avek bann lorganizasyon pour zot.", applyBtn: "Aplik pour en Plasman &rarr;",
+                pilPlacementTitle: "Karyer ek Plasman", pilPlacementDesc: "Nou rod e sekirize bann staz ek lezot loportinite travay aletranze pour lazenes Seselwa par pran kontak direk avek bann lorganizasyon pour zot.", applyBtn: "Aplik pour en Plasman &rarr;",
                 pilEcoTitle: "Aksyon pour Lanvironnman ek Klima", pilEcoDesc: "Siport proze netway lans, restorasyon mangliye par lazenes, ek donn led finansyer pour bann nouvo lide ekolozik.",
                 pilDigiTitle: "Ledikasyon Dizital ek Biznes", pilDigiDesc: "A traver \"The Artisan Initiative\", nou donn sitweb gratis ek kour teknolozi pour bann pti biznes ek bann zenn pour prepar zot pour lavenir.",
                 pilHealthTitle: "Lasante, Byen-et Mantal ek Manze", pilHealthDesc: "Gard Lalis Lasante Mantal Nasyonal a-zour e travay avek FoodShare Seychelles pour asire ki bann fanmir i ganny manze.",
                 pilCivicTitle: "Ledikasyon Sivik ek Resers", pilCivicDesc: "Gard en libreri ledikasyon ouver pour etidyan e anrezistre bann lenformasyon dan kominote pour ed gouvernman pran bann bon desizyon.",
                 pilCultureTitle: "Kiltir ek Lenklizyon Sosyal", pilCultureDesc: "Gard \"Larsiv bann Zenerasyon\" pour prezerv nou listwar, e donn sipor pour bann dimoun andikape ek lezot group ki dan bezwen.",
+                impactSub: "Nou Rasin", impactTitle: "Lenpak Ki Ou Kapab Mezire",
+                newsSub: "Bann Dernyen Nouvel", newsTitle: "Lasal Nouvel Fondasyon", newsViewAll: "Vwar Tou Lartik", newsReadMore: "Lir Lartik", newsEmpty: "Napa okenn nouvel ofisyel pibliye pour lemanman.",
                 boardSub: "Ledersip", boardTitle: "Rankontre nou Board",
                 boardRole1: "Fonder ek Tyermenn", boardDesc1: "Diriz vizyon stratezik sa fondasyon ek son devouman pour kominote Seselwa.",
                 boardRole2: "Vays Tyermenn", boardDesc2: "Siport Tyermenn dan bann desizyon enportan ek louvraz fondasyon.",
                 boardRole3: "Trezorye", boardDesc3: "Zer larzan fondasyon, transparans, ek koman nou resours i ganny depanse.",
                 boardRole4: "Direkter Egzekitif", boardDesc4: "Anmenn devan louvraz toulezour lo nou bann proze kominote e zer nou bann volonter.",
+                nlTitle: "Zwenn Nou Mouvman", nlDesc: "Abone avek nou newsletter pour ganny bann nouvel lo nou proze ek loportinite volonter.", nlPlaceholder: "Met ou email isi...", nlBtn: "Abone", nlSuccess: "Ou'n abone avek sikse!", nlError: "I annan en lerer. Silvouple re-eseye.", nlExists: "Ou'n deza abone!",
                 footerSlogan: "\"Pour Lazenes. Pour Bann Zil. Pour Demen.\"",
                 footerTNG: "Fondasyon Tyler Nicholas i fyer pour fer par <br><a href='https://tylernicholasgroup.com/' target='_blank' class='text-brand-dark hover:text-eco-green transition-colors'>The Tyler Nicholas Group</a>",
                 footerDir: "Lalis", footerAffil: "Nou Bann Partener", footerContact: "Kontak Nou",
@@ -438,7 +508,10 @@
             }
         };
 
+        let currentLangCode = 'en';
+
         function changeLang(lang) {
+            currentLangCode = lang;
             document.getElementById('current-lang').innerText = lang.toUpperCase();
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
@@ -448,6 +521,7 @@
                 const key = el.getAttribute('data-i18n-placeholder');
                 if (translations[lang] && translations[lang][key]) el.placeholder = translations[lang][key];
             });
+            if (window.fetchLatestNews) fetchLatestNews(window.supabaseClient); // Re-render news to update buttons
         }
 
         function toggleSearch() {
@@ -467,6 +541,17 @@
         document.getElementById('mobile-menu-btn').addEventListener('click', () => mobileMenu.classList.toggle('translate-x-full'));
         document.getElementById('mobile-menu-close').addEventListener('click', () => mobileMenu.classList.toggle('translate-x-full'));
 
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            const icon = type === 'success' ? '<i class="fa-solid fa-circle-check text-[#10B981] text-xl"></i>' : '<i class="fa-solid fa-circle-exclamation text-[#EF4444] text-xl"></i>';
+            toast.innerHTML = `${icon} <span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 400); }, 4000);
+        }
+
         let currentTextLevel = 1; let isHighContrast = false;
         function adjustTextSize(step) {
             const newLevel = currentTextLevel + step;
@@ -484,6 +569,118 @@
                 if(isHighContrast) area.classList.add('high-contrast');
                 else area.classList.remove('high-contrast');
             });
+        }
+
+        // --- SUPABASE LOGIC (Metrics, News, Newsletter) ---
+        const SUPABASE_URL = 'https://eeqgfchvchpdulfybsjg.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVlcWdmY2h2Y2hwZHVsZnlic2pnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3MDEyMzYsImV4cCI6MjA5MDI3NzIzNn0.2Psw_X2TB1r8iLb46WWWANhVuDvoDPnUMjaWykvqd1s';
+        
+        document.addEventListener("DOMContentLoaded", () => {
+            const checkSupabase = setInterval(() => {
+                if (window.supabase) {
+                    clearInterval(checkSupabase); 
+                    window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                    fetchImpactMetrics(window.supabaseClient);
+                    fetchLatestNews(window.supabaseClient);
+                }
+            }, 100);
+        });
+
+        // 1. Fetch Metrics
+        async function fetchImpactMetrics(supabase) {
+            try {
+                const { data, error } = await supabase.from('tnf_impact_metrics').select('*').order('metric_value', { ascending: false }).limit(3);
+                const grid = document.getElementById('impact-grid');
+                
+                if (error || !data || data.length === 0) {
+                    grid.innerHTML = `
+                        <div class="bg-[#F9FAFB] rounded-2xl p-8 border border-gray-100 shadow-sm">
+                            <div class="w-16 h-16 bg-white text-eco-green rounded-full flex items-center justify-center text-2xl mx-auto mb-4 shadow-sm"><i class="fa-solid fa-users"></i></div>
+                            <h4 class="text-4xl font-heading font-black text-brand-dark mb-2 stat-counter">50+</h4>
+                            <p class="text-sm font-bold text-gray-500 uppercase tracking-widest">Active Volunteers</p>
+                        </div>
+                        <div class="bg-[#F9FAFB] rounded-2xl p-8 border border-gray-100 shadow-sm">
+                            <div class="w-16 h-16 bg-white text-eco-green rounded-full flex items-center justify-center text-2xl mx-auto mb-4 shadow-sm"><i class="fa-solid fa-laptop-code"></i></div>
+                            <h4 class="text-4xl font-heading font-black text-brand-dark mb-2 stat-counter">3</h4>
+                            <p class="text-sm font-bold text-gray-500 uppercase tracking-widest">Websites Donated</p>
+                        </div>
+                        <div class="bg-[#F9FAFB] rounded-2xl p-8 border border-gray-100 shadow-sm">
+                            <div class="w-16 h-16 bg-white text-eco-green rounded-full flex items-center justify-center text-2xl mx-auto mb-4 shadow-sm"><i class="fa-solid fa-book-open"></i></div>
+                            <h4 class="text-4xl font-heading font-black text-brand-dark mb-2 stat-counter">12</h4>
+                            <p class="text-sm font-bold text-gray-500 uppercase tracking-widest">Courses Published</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                grid.innerHTML = data.map(metric => `
+                    <div class="bg-[#F9FAFB] rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-card transition-shadow">
+                        <div class="w-16 h-16 bg-white text-eco-green rounded-full flex items-center justify-center text-2xl mx-auto mb-4 shadow-sm"><i class="fa-solid ${metric.icon_class || 'fa-chart-simple'}"></i></div>
+                        <h4 class="text-4xl font-heading font-black text-brand-dark mb-2 stat-counter">${metric.metric_value.toLocaleString()}+</h4>
+                        <p class="text-sm font-bold text-gray-500 uppercase tracking-widest">${metric.metric_label}</p>
+                    </div>
+                `).join('');
+            } catch(e) { console.error(e); }
+        }
+
+        // 2. Fetch News
+        async function fetchLatestNews(supabase) {
+            try {
+                const { data, error } = await supabase.from('tnf_news').select('*').order('published_at', { ascending: false }).limit(3);
+                const grid = document.getElementById('news-grid');
+                const dict = translations[currentLangCode];
+                
+                if (error || !data || data.length === 0) {
+                    grid.innerHTML = `<div class="col-span-full text-center text-gray-400 py-10 bg-white rounded-3xl border border-gray-100">${dict.newsEmpty || translations.en.newsEmpty}</div>`;
+                    return;
+                }
+
+                grid.innerHTML = data.map(news => `
+                    <div class="bg-white border border-gray-100 rounded-3xl shadow-sm p-8 flex flex-col h-full hover:shadow-card transition-all duration-300">
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="bg-gray-50 text-gray-500 text-[10px] font-bold px-3 py-1 rounded-md uppercase tracking-widest border border-gray-100">${new Date(news.published_at).toLocaleDateString()}</span>
+                        </div>
+                        <h4 class="font-heading font-bold text-xl text-brand-dark mb-3 leading-snug hover:text-eco-green transition-colors cursor-pointer">${news.title}</h4>
+                        <p class="text-sm text-gray-500 line-clamp-3 mb-6 flex-grow leading-relaxed">${news.short_summary}</p>
+                        <a href="/news/" class="text-eco-green font-bold text-sm hover:underline mt-auto flex items-center">${dict.newsReadMore || translations.en.newsReadMore} <i class="fa-solid fa-arrow-right ml-1 text-xs"></i></a>
+                    </div>
+                `).join('');
+            } catch(e) { console.error(e); }
+        }
+
+        // 3. Handle Newsletter Subscribe
+        async function subscribeNewsletter(e) {
+            e.preventDefault();
+            if (!window.supabaseClient) return;
+
+            const email = document.getElementById('nl-email').value.trim();
+            const btn = document.getElementById('btn-subscribe');
+            const dict = translations[currentLangCode];
+
+            btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i>`;
+            btn.disabled = true;
+
+            try {
+                const { error } = await window.supabaseClient.from('tnf_subscribers').insert({ email: email });
+                
+                if (error) {
+                    // Check for unique constraint violation (already subscribed)
+                    if (error.code === '23505') {
+                        showToast(dict.nlExists || translations.en.nlExists, 'error');
+                    } else {
+                        throw error;
+                    }
+                } else {
+                    showToast(dict.nlSuccess || translations.en.nlSuccess, 'success');
+                    document.getElementById('nl-email').value = '';
+                }
+            } catch (err) {
+                console.error(err);
+                showToast(dict.nlError || translations.en.nlError, 'error');
+            } finally {
+                btn.innerHTML = `<span data-i18n="nlBtn">${dict.nlBtn || translations.en.nlBtn}</span>`;
+                btn.disabled = false;
+            }
         }
     </script>
 </body>
