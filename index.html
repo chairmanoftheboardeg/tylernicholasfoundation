@@ -19,14 +19,8 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { 
-                        sans: ['Inter', 'sans-serif'], 
-                        heading: ['Poppins', 'sans-serif'] 
-                    },
-                    colors: { 
-                        brand: { dark: '#111827', muted: '#6B7280' },
-                        eco: { green: '#059669', light: '#D1FAE5', dark: '#065F46', sand: '#FDFBF7' }
-                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'], heading: ['Poppins', 'sans-serif'] },
+                    colors: { brand: { dark: '#111827', muted: '#6B7280' }, eco: { green: '#059669', light: '#D1FAE5', dark: '#065F46', sand: '#FDFBF7' } },
                     boxShadow: { 'soft': '0 10px 40px -10px rgba(5, 150, 105, 0.15)', 'card': '0 4px 20px rgba(0,0,0,0.04)' }
                 }
             }
@@ -49,7 +43,6 @@
         #accessibility-panel.closed { transform: translate(-100%, -50%); }
         .acc-btn { @apply w-10 h-10 flex items-center justify-center bg-white border-b border-gray-100 text-brand-dark hover:bg-eco-light hover:text-eco-green transition-colors cursor-pointer; }
         
-        /* Accessibility Reading Classes */
         .read-area { transition: all 0.3s ease; }
         .read-area.high-contrast { background-color: #111827 !important; color: #F9FAFB !important; border-color: #374151 !important; }
         .read-area.high-contrast h2, .read-area.high-contrast h3, .read-area.high-contrast h4, .read-area.high-contrast p, .read-area.high-contrast span { color: #F9FAFB !important; }
@@ -57,24 +50,19 @@
         .read-area.text-lvl-2 p { font-size: 1.125rem; line-height: 1.8; }
         .read-area.text-lvl-3 p { font-size: 1.25rem; line-height: 1.9; }
 
-        /* Search Overlay */
         #search-overlay { transition: opacity 0.3s ease; }
         #search-overlay.hidden { opacity: 0; pointer-events: none; }
         #search-overlay.active { opacity: 1; pointer-events: auto; }
-        
-        /* Discord Popup */
-        #discord-popup { transition: opacity 0.4s ease, transform 0.4s ease; }
-        #discord-popup.show { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
-        #discord-popup.hide { opacity: 0; transform: translateY(20px) scale(0.95); pointer-events: none; }
 
-        /* Stat Counter Animation */
-        .stat-counter { background: linear-gradient(135deg, #059669 0%, #047857 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        /* Editorial Pillar Card */
+        .editorial-card { border-top: 4px solid #059669; background-color: #F9FAFB; transition: all 0.3s ease; }
+        .editorial-card:hover { background-color: #FFFFFF; box-shadow: 0 10px 30px rgba(0,0,0,0.05); transform: translateY(-5px); }
     </style>
 </head>
 <body class="flex flex-col min-h-screen text-brand-dark">
 
     <div class="bg-eco-green text-white text-[11px] md:text-xs font-medium py-2.5 px-4 text-center tracking-wide" data-i18n="banner">
-        <i class="fa-solid fa-leaf mr-2"></i> Empowering the youth and protecting the environment of the Republic of Seychelles
+        Empowering the youth and protecting the environment of the Republic of Seychelles
     </div>
 
     <nav class="bg-white py-4 px-6 md:px-12 sticky top-0 z-50 transition-shadow duration-300 shadow-sm" id="navbar">
@@ -110,10 +98,10 @@
                     <button class="flex items-center text-sm font-heading font-semibold text-brand-dark hover:text-eco-green">
                         <i class="fa-solid fa-globe mr-1.5 text-brand-muted"></i> <span id="current-lang">EN</span> <i class="fa-solid fa-chevron-down ml-1 text-[10px]"></i>
                     </button>
-                    <div class="absolute top-full right-0 w-32 bg-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all border border-gray-100 overflow-hidden transform translate-y-2 group-hover:translate-y-0">
-                        <button onclick="changeLang('en')" class="w-full text-left px-4 py-3 hover:bg-eco-light text-sm font-medium text-brand-dark hover:text-eco-green transition-colors">English</button>
-                        <button onclick="changeLang('fr')" class="w-full text-left px-4 py-3 hover:bg-eco-light text-sm font-medium text-brand-dark hover:text-eco-green transition-colors">Français</button>
-                        <button onclick="changeLang('crs')" class="w-full text-left px-4 py-3 hover:bg-eco-light text-sm font-medium text-brand-dark hover:text-eco-green transition-colors">Seselwa</button>
+                    <div class="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all border border-gray-100 overflow-hidden transform translate-y-2 group-hover:translate-y-0">
+                        <button onclick="changeLang('en')" class="w-full text-left px-4 py-3 hover:bg-eco-light text-sm font-medium text-eco-dark">English</button>
+                        <button onclick="changeLang('fr')" class="w-full text-left px-4 py-3 hover:bg-eco-light text-sm font-medium text-eco-dark">Français</button>
+                        <button onclick="changeLang('crs')" class="w-full text-left px-4 py-3 hover:bg-eco-light text-sm font-medium text-eco-dark">Seselwa</button>
                     </div>
                 </div>
 
@@ -135,18 +123,6 @@
         </div>
     </div>
 
-    <div id="discord-popup" class="fixed bottom-6 left-6 z-[90] w-[350px] bg-white rounded-2xl shadow-2xl border border-gray-100 p-6 hide">
-        <button onclick="closeDiscordPopup()" class="absolute top-4 right-4 text-gray-400 hover:text-brand-dark"><i class="fa-solid fa-xmark"></i></button>
-        <div class="w-12 h-12 bg-[#5865F2]/10 text-[#5865F2] rounded-xl flex items-center justify-center text-2xl mb-4">
-            <i class="fa-brands fa-discord"></i>
-        </div>
-        <h4 class="font-heading font-bold text-lg text-brand-dark mb-2" data-i18n="discordTitle">Join the Community</h4>
-        <p class="text-sm text-brand-muted mb-4 leading-relaxed" data-i18n="discordDesc">Engage with our volunteers, join discussions on sustainability, and get live updates on our projects.</p>
-        <a href="https://discord.gg/DMaJmWChP4" target="_blank" onclick="closeDiscordPopup()" class="block w-full bg-[#5865F2] hover:bg-[#4752C4] text-white text-center font-heading font-bold py-3 rounded-lg transition-colors text-sm" data-i18n="discordBtn">
-            Join Discord Server
-        </a>
-    </div>
-
     <div id="accessibility-panel" class="shadow-lg rounded-r-xl overflow-hidden bg-white border border-l-0 border-gray-200">
         <div class="bg-eco-dark text-white text-[9px] font-bold uppercase tracking-widest py-1.5 px-2 text-center w-12" data-i18n="accRead">Read</div>
         <div class="acc-btn" onclick="adjustTextSize(1)" title="Increase Text Size"><i class="fa-solid fa-a text-lg"></i><i class="fa-solid fa-plus text-[10px] ml-0.5"></i></div>
@@ -154,38 +130,17 @@
         <div class="acc-btn" onclick="toggleHighContrast()" title="Toggle High Contrast"><i class="fa-solid fa-circle-half-stroke text-lg"></i></div>
     </div>
 
-    <div id="mobile-menu-overlay" class="fixed inset-0 bg-white z-[100] transform translate-x-full transition-transform duration-300 flex flex-col lg:hidden overflow-y-auto">
-        <div class="p-6 flex justify-between items-center border-b border-gray-100">
-            <div class="flex items-center gap-3">
-                <img src="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" alt="TNF Logo" class="w-8 h-8 rounded-full">
-                <h1 class="font-heading font-bold text-xl text-brand-dark">TNF</h1>
-            </div>
-            <button id="mobile-menu-close" class="text-brand-dark text-3xl"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div class="p-8 flex flex-col space-y-6 text-brand-dark flex-grow font-heading font-semibold text-2xl">
-            <a href="/" class="hover:text-eco-green transition-colors" data-i18n="navHome">Home</a>
-            <a href="/programs/" class="hover:text-eco-green transition-colors" data-i18n="navPrograms">Programs</a>
-            <a href="/about/" class="hover:text-eco-green transition-colors" data-i18n="navAboutUs">About Us</a>
-            <a href="/get-involved/" class="hover:text-eco-green transition-colors" data-i18n="navInvolved">Get Involved</a>
-            <a href="/legal/" class="hover:text-eco-green transition-colors" data-i18n="navLegal">Legal</a>
-            <a href="/partners/" class="hover:text-eco-green transition-colors" data-i18n="navPartners">Our Partners</a>
-            <a href="/team/" class="hover:text-eco-green transition-colors" data-i18n="navTeam">Meet the Team</a>
-            <a href="/get-involved/" class="mt-4 inline-block bg-eco-green text-white text-center py-4 rounded-xl font-bold text-lg shadow-soft" data-i18n="btnDonate">Donate</a>
-        </div>
-    </div>
-
     <main class="flex-grow">
         
         <section class="relative h-[85vh] min-h-[600px] flex items-center justify-center overflow-hidden">
             <div class="absolute inset-0 z-0">
                 <img src="https://robbreport.com/wp-content/uploads/2025/08/Cheval-Blanc-Seychelles-Beach-Anse-Intendance-Romain-Reglade-2024-copy.jpg" alt="Seychelles Beach" class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-gradient-to-r from-[#065F46]/90 to-brand-dark/70 mix-blend-multiply"></div>
-                <div class="absolute inset-0 bg-black/40"></div>
+                <div class="absolute inset-0 bg-gradient-to-b from-[#065F46]/80 via-brand-dark/60 to-brand-dark/90 mix-blend-multiply"></div>
             </div>
 
             <div class="relative z-10 text-center px-6 max-w-5xl mx-auto fade-up">
                 <div class="inline-block bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-5 py-2 mb-6">
-                    <p class="text-white text-xs font-heading font-bold uppercase tracking-widest"><i class="fa-solid fa-earth-africa mr-2 text-eco-light"></i> <span data-i18n="heroBadge">Official Non-Profit Organization</span></p>
+                    <p class="text-white text-xs font-heading font-bold uppercase tracking-widest"><span data-i18n="heroBadge">Official Non-Profit Organization</span></p>
                 </div>
                 
                 <h2 class="text-5xl md:text-6xl lg:text-[80px] font-heading font-black text-white leading-[1.1] mb-8 tracking-tight" data-i18n="heroSlogan">
@@ -193,95 +148,95 @@
                 </h2>
                 
                 <p class="text-lg md:text-xl text-gray-200 mb-10 max-w-2xl mx-auto font-medium leading-relaxed" data-i18n="heroDesc">
-                    We are dedicated to building robust community safety nets, providing digital lifelines, and empowering the next generation of Seychellois.
+                    Bridging the gaps in our social infrastructure. We build community safety nets, secure life-changing youth placements, and execute environmental action across Seychelles.
                 </p>
                 
                 <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-                    <a href="/get-involved/" class="w-full sm:w-auto bg-eco-green hover:bg-eco-dark text-white font-heading font-semibold py-4 px-10 rounded-xl transition-all shadow-lg text-center text-lg" data-i18n="btnVolunteer">Become a Volunteer</a>
-                    <a href="/contact/" class="w-full sm:w-auto bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/30 text-white font-heading font-semibold py-4 px-10 rounded-xl transition-all text-center text-lg" data-i18n="btnPartner">Partner With Us</a>
-                </div>
-            </div>
-            
-            <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-10 animate-bounce">
-                <i class="fa-solid fa-arrow-down text-white/50 text-2xl"></i>
-            </div>
-        </section>
-
-        <section class="py-24 bg-eco-sand relative overflow-hidden">
-            <div class="absolute top-0 right-0 w-64 h-64 bg-eco-green rounded-full mix-blend-multiply filter blur-3xl opacity-5 transform translate-x-1/2 -translate-y-1/2"></div>
-            
-            <div class="max-w-7xl mx-auto px-6 md:px-12 relative z-10 flex flex-col md:flex-row items-center gap-16 fade-up">
-                <div class="w-full md:w-1/2">
-                    <h2 class="text-sm font-heading font-bold text-eco-green uppercase tracking-widest mb-2" data-i18n="whySub">The Mandate</h2>
-                    <h3 class="text-4xl lg:text-5xl font-heading font-bold text-brand-dark mb-6 leading-tight" data-i18n="whyTitle">Community support. Real impact.</h3>
-                </div>
-                <div class="w-full md:w-1/2 read-area text-lvl-1 space-y-6 text-brand-muted text-lg leading-relaxed">
-                    <p data-i18n="whyP1">
-                        The Tyler Nicholas Foundation was established to bridge the gaps in our social infrastructure. We believe that true empowerment comes from providing people with the exact tools they need—whether that is a platform to record their history, the digital assets to launch their business, or the educational resources to improve their minds.
-                    </p>
-                    <p data-i18n="whyP2">
-                        Operating independently from political boundaries, our mission is to execute grassroots projects that drive tangible, immediate change across Seychelles for absolutely no fee.
-                    </p>
-                    <a href="/about/" class="inline-flex items-center text-eco-green font-heading font-bold hover:text-eco-dark transition-colors mt-2">
-                        <span data-i18n="readMission">Read our full mission</span> <i class="fa-solid fa-arrow-right ml-2 text-sm"></i>
-                    </a>
+                    <a href="/get-involved/" class="w-full sm:w-auto bg-eco-green hover:bg-eco-dark text-white font-heading font-semibold py-4 px-10 rounded-xl transition-all shadow-lg text-center text-lg" data-i18n="btnAction1">Find an Opportunity</a>
+                    <a href="/contact/" class="w-full sm:w-auto bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/30 text-white font-heading font-semibold py-4 px-10 rounded-xl transition-all text-center text-lg" data-i18n="btnAction2">Partner With Us</a>
                 </div>
             </div>
         </section>
 
-        <section class="py-24 bg-white border-t border-gray-100 relative">
-            <div class="max-w-7xl mx-auto px-6 md:px-12 fade-up delay-100">
-                <div class="text-center mb-16">
-                    <h2 class="text-sm font-heading font-bold text-eco-green uppercase tracking-widest mb-2" data-i18n="impactSub">Our Footprint</h2>
-                    <h3 class="text-3xl md:text-4xl font-heading font-bold text-brand-dark" data-i18n="impactTitle">Measurable Impact</h3>
+        <section class="py-24 bg-white overflow-hidden">
+            <div class="max-w-7xl mx-auto px-6 md:px-12 flex flex-col lg:flex-row items-center gap-16 relative z-10">
+                
+                <div class="w-full lg:w-[40%] relative fade-up flex justify-center">
+                    <div class="absolute top-[50%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-eco-light rounded-full z-0"></div>
+                    <img src="https://i.ibb.co/Q34Wycc7/dr9jgfmhq5rmt0cx5marskkg94-preview-0-ezremove-removebg-preview.png" alt="Tyler Nicholas" class="relative z-10 w-[80%] h-auto object-contain drop-shadow-xl">
                 </div>
 
-                <div id="impact-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div class="col-span-full text-center text-gray-400 py-10"><i class="fa-solid fa-circle-notch fa-spin text-3xl mb-4 text-eco-green"></i><br>Syncing Live Data...</div>
+                <div class="w-full lg:w-[60%] read-area text-lvl-1 fade-up delay-100">
+                    <h2 class="text-sm font-heading font-bold text-eco-green uppercase tracking-widest mb-3" data-i18n="msgSub">A Message From The Chairman</h2>
+                    <h3 class="text-3xl md:text-4xl font-heading font-bold text-brand-dark mb-6 leading-tight" data-i18n="msgTitle">
+                        "Philanthropy must evolve beyond awareness. It must become infrastructure."
+                    </h3>
+                    <div class="space-y-5 text-brand-muted text-lg leading-relaxed">
+                        <p data-i18n="msgP1">
+                            The Tyler Nicholas Foundation was not built to simply talk about the problems facing Seychelles; it was built to aggressively solve them. During my time in public service, I realized that while government policy is essential for the future, our communities and our youth need tangible help <strong>today</strong>.
+                        </p>
+                        <p data-i18n="msgP2">
+                            This Foundation is a multi-disciplinary action group. We do not restrict ourselves to one single issue because the challenges facing our islands are deeply interconnected. You cannot solve economic stagnation without addressing digital literacy; you cannot protect our coastal environments without empowering the youth who will inherit them.
+                        </p>
+                        <p data-i18n="msgP3">
+                            From securing international work attachments for ambitious students, to funding grassroots climate action, to providing free digital lifelines for local artisans—our mandate is vast, but our methodology is precise. We are here to act as a shadow-infrastructure for the Republic, providing the tools, the network, and the capital to ensure no Seychellois is left behind.
+                        </p>
+                        <p class="font-heading font-bold text-brand-dark mt-4">Tyler Nicholas</p>
+                    </div>
                 </div>
-            </div>
-        </section>
 
-        <section class="py-24 bg-brand-dark text-white">
-            <div class="max-w-7xl mx-auto px-6 md:px-12 fade-up delay-200">
-                <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-                    <div>
-                        <h2 class="text-sm font-heading font-bold text-eco-green uppercase tracking-widest mb-2" data-i18n="progSub">Active Work</h2>
-                        <h3 class="text-3xl md:text-4xl font-heading font-bold text-white" data-i18n="progTitle">Featured Initiatives</h3>
-                    </div>
-                    <a href="/programs/" class="text-sm font-heading font-semibold text-eco-light hover:text-white transition-colors flex items-center">
-                        <span data-i18n="viewPrograms">View All Programs</span> <i class="fa-solid fa-arrow-right ml-2"></i>
-                    </a>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 read-area text-lvl-1">
-                    
-                    <div class="bg-[#1F2937] rounded-2xl p-10 hover:bg-[#273242] transition-colors border border-gray-700 border-l-4 hover:border-l-eco-green">
-                        <h4 class="text-2xl font-heading font-bold text-white mb-4" data-i18n="prog1Title">The Generations Archive</h4>
-                        <p class="text-gray-400 leading-relaxed" data-i18n="prog1Desc">Preserving the rich cultural history and folklore of Seychelles by recording and archiving the stories, traditional recipes, and lived experiences of our elderly citizens before they are lost to time.</p>
-                    </div>
-                    
-                    <div class="bg-[#1F2937] rounded-2xl p-10 hover:bg-[#273242] transition-colors border border-gray-700 border-l-4 hover:border-l-eco-green">
-                        <h4 class="text-2xl font-heading font-bold text-white mb-4" data-i18n="prog2Title">The Artisan Initiative</h4>
-                        <p class="text-gray-400 leading-relaxed" data-i18n="prog2Desc">In exclusive partnership with BlueWave Digital, we provide free digital lifelines—including complete websites, basic branding, and online setup—to local Seychellois artisans and micro-vendors at absolutely no cost to them.</p>
-                    </div>
-                    
-                    <div class="bg-[#1F2937] rounded-2xl p-10 hover:bg-[#273242] transition-colors border border-gray-700 border-l-4 hover:border-l-eco-green">
-                        <h4 class="text-2xl font-heading font-bold text-white mb-4" data-i18n="prog3Title">National Mental Health Directory</h4>
-                        <p class="text-gray-400 leading-relaxed" data-i18n="prog3Desc">Maintaining a centralized, accessible online hub that aggregates every counselor, crisis hotline, clinic, and support group available in Seychelles to ensure no one has to struggle in the dark.</p>
-                    </div>
-                    
-                    <div class="bg-[#1F2937] rounded-2xl p-10 hover:bg-[#273242] transition-colors border border-gray-700 border-l-4 hover:border-l-eco-green">
-                        <h4 class="text-2xl font-heading font-bold text-white mb-4" data-i18n="prog4Title">Open-Access Education Library</h4>
-                        <p class="text-gray-400 leading-relaxed" data-i18n="prog4Desc">Providing free course books, guides, and digital resources that teach effective study habits, civic responsibility, and personal motivation for both students and adults looking to better themselves.</p>
-                    </div>
-
-                </div>
             </div>
         </section>
 
         <section class="py-24 bg-white border-t border-gray-100">
             <div class="max-w-7xl mx-auto px-6 md:px-12 fade-up">
+                <div class="text-center mb-16 max-w-3xl mx-auto">
+                    <h2 class="text-sm font-heading font-bold text-eco-green uppercase tracking-widest mb-2" data-i18n="mandateSub">Our Scope of Work</h2>
+                    <h3 class="text-3xl md:text-4xl font-heading font-bold text-brand-dark mb-6" data-i18n="mandateTitle">A Comprehensive National Mandate</h3>
+                    <p class="text-brand-muted text-lg leading-relaxed" data-i18n="mandateDesc">
+                        We operate across multiple sectors to provide a holistic safety net for the Republic. Explore our primary pillars of action below.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 read-area text-lvl-1">
+                    
+                    <div class="editorial-card p-8 rounded-b-2xl flex flex-col h-full">
+                        <h4 class="text-xl font-heading font-bold text-brand-dark mb-3" data-i18n="pilPlacementTitle">Career & Opportunity Placement</h4>
+                        <p class="text-brand-muted text-sm leading-relaxed mb-4 flex-grow" data-i18n="pilPlacementDesc">We actively source and secure customized work attachments, long-term internships, and international holiday opportunities for Seychellois youth by contacting organizations and leveraging our corporate network directly on their behalf.</p>
+                        <a href="/get-involved/" class="text-eco-green font-bold text-sm hover:underline mt-auto" data-i18n="applyBtn">Apply for Placement &rarr;</a>
+                    </div>
+
+                    <div class="editorial-card p-8 rounded-b-2xl flex flex-col h-full">
+                        <h4 class="text-xl font-heading font-bold text-brand-dark mb-3" data-i18n="pilEcoTitle">Environmental Stewardship & Climate Action</h4>
+                        <p class="text-brand-muted text-sm leading-relaxed mb-4 flex-grow" data-i18n="pilEcoDesc">Executing grassroots coastal protection, organizing massive youth-led mangrove restoration projects, and providing micro-grants for local eco-innovation and sustainability startups.</p>
+                    </div>
+
+                    <div class="editorial-card p-8 rounded-b-2xl flex flex-col h-full">
+                        <h4 class="text-xl font-heading font-bold text-brand-dark mb-3" data-i18n="pilDigiTitle">Digital Literacy & Enterprise Incubator</h4>
+                        <p class="text-brand-muted text-sm leading-relaxed mb-4 flex-grow" data-i18n="pilDigiDesc">Through "The Artisan Initiative" and our corporate partners, we provide free websites, digital branding, and coding workshops to local vendors and underprivileged youth to transition Seychelles into a creator economy.</p>
+                    </div>
+
+                    <div class="editorial-card p-8 rounded-b-2xl flex flex-col h-full">
+                        <h4 class="text-xl font-heading font-bold text-brand-dark mb-3" data-i18n="pilHealthTitle">Health, Mental Wellness & Food Security</h4>
+                        <p class="text-brand-muted text-sm leading-relaxed mb-4 flex-grow" data-i18n="pilHealthDesc">Maintaining the National Mental Health Directory, organizing preventative wellness campaigns, and partnering closely with FoodShare Seychelles to manage community food logistics for vulnerable demographics.</p>
+                    </div>
+
+                    <div class="editorial-card p-8 rounded-b-2xl flex flex-col h-full">
+                        <h4 class="text-xl font-heading font-bold text-brand-dark mb-3" data-i18n="pilCivicTitle">Civic Education & Policy Research Lab</h4>
+                        <p class="text-brand-muted text-sm leading-relaxed mb-4 flex-grow" data-i18n="pilCivicDesc">Operating an Open-Access Education Library for students, conducting youth parliament simulations, and aggregating community data to support evidence-based, data-driven national policymaking.</p>
+                    </div>
+
+                    <div class="editorial-card p-8 rounded-b-2xl flex flex-col h-full">
+                        <h4 class="text-xl font-heading font-bold text-brand-dark mb-3" data-i18n="pilCultureTitle">Cultural Heritage & Social Inclusion</h4>
+                        <p class="text-brand-muted text-sm leading-relaxed mb-4 flex-grow" data-i18n="pilCultureDesc">Running "The Generations Archive" to digitally preserve the folklore of our elderly, while providing strict advocacy and support networks for persons with disabilities and marginalized groups.</p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section class="py-24 bg-[#F9FAFB] border-t border-gray-100">
+            <div class="max-w-7xl mx-auto px-6 md:px-12 fade-up delay-100">
                 <div class="text-center mb-16 max-w-3xl mx-auto">
                     <h2 class="text-sm font-heading font-bold text-eco-green uppercase tracking-widest mb-2" data-i18n="boardSub">Leadership</h2>
                     <h3 class="text-3xl md:text-4xl font-heading font-bold text-brand-dark mb-4" data-i18n="boardTitle">Meet the Board of Directors</h3>
@@ -289,7 +244,7 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                     
-                    <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100 text-center shadow-sm hover:shadow-card transition-shadow">
+                    <div class="bg-white rounded-3xl p-8 border border-gray-100 text-center shadow-sm hover:shadow-card transition-shadow">
                         <div class="w-28 h-28 mx-auto rounded-full overflow-hidden mb-5 border-4 border-white shadow-md">
                             <img src="https://tyler.tylernicholasgroup.com/tyler%20n.jpg" alt="Tyler Nicholas" class="w-full h-full object-cover">
                         </div>
@@ -298,27 +253,27 @@
                         <p class="text-xs text-brand-muted leading-relaxed" data-i18n="boardDesc1">Directing the foundation's strategic vision, partnerships, and overall commitment to the Seychellois community.</p>
                     </div>
 
-                    <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100 text-center shadow-sm hover:shadow-card transition-shadow">
-                        <div class="w-28 h-28 mx-auto rounded-full overflow-hidden mb-5 border-4 border-white shadow-md bg-gray-200">
-                            <img src="https://media.istockphoto.com/id/521573873/vector/unknown-person-silhouette-whith-blue-tie.jpg?s=612x612&w=0&k=20&c=5Ax4LbSxC0swuxzNmRarYD5R0bxE5u7p31AHfy9Iqd8=" alt="Vacant Seat" class="w-full h-full object-cover opacity-80">
+                    <div class="bg-white rounded-3xl p-8 border border-gray-100 text-center shadow-sm hover:shadow-card transition-shadow">
+                        <div class="w-28 h-28 mx-auto rounded-full overflow-hidden mb-5 border-4 border-white shadow-md bg-gray-100">
+                            <img src="https://media.istockphoto.com/id/521573873/vector/unknown-person-silhouette-whith-blue-tie.jpg?s=612x612&w=0&k=20&c=5Ax4LbSxC0swuxzNmRarYD5R0bxE5u7p31AHfy9Iqd8=" alt="Vacant Seat" class="w-full h-full object-cover opacity-70 filter grayscale">
                         </div>
                         <h4 class="font-heading font-bold text-lg text-gray-500 mb-1">N/A</h4>
                         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4" data-i18n="boardRole2">Vice Chairman</p>
                         <p class="text-xs text-gray-400 leading-relaxed" data-i18n="boardDesc2">Supporting the Chairman in executive decisions and operational oversight.</p>
                     </div>
 
-                    <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100 text-center shadow-sm hover:shadow-card transition-shadow">
-                        <div class="w-28 h-28 mx-auto rounded-full overflow-hidden mb-5 border-4 border-white shadow-md bg-gray-200">
-                            <img src="https://media.istockphoto.com/id/521573873/vector/unknown-person-silhouette-whith-blue-tie.jpg?s=612x612&w=0&k=20&c=5Ax4LbSxC0swuxzNmRarYD5R0bxE5u7p31AHfy9Iqd8=" alt="Vacant Seat" class="w-full h-full object-cover opacity-80">
+                    <div class="bg-white rounded-3xl p-8 border border-gray-100 text-center shadow-sm hover:shadow-card transition-shadow">
+                        <div class="w-28 h-28 mx-auto rounded-full overflow-hidden mb-5 border-4 border-white shadow-md bg-gray-100">
+                            <img src="https://media.istockphoto.com/id/521573873/vector/unknown-person-silhouette-whith-blue-tie.jpg?s=612x612&w=0&k=20&c=5Ax4LbSxC0swuxzNmRarYD5R0bxE5u7p31AHfy9Iqd8=" alt="Vacant Seat" class="w-full h-full object-cover opacity-70 filter grayscale">
                         </div>
                         <h4 class="font-heading font-bold text-lg text-gray-500 mb-1">N/A</h4>
                         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4" data-i18n="boardRole3">Treasurer</p>
                         <p class="text-xs text-gray-400 leading-relaxed" data-i18n="boardDesc3">Managing the foundation's financial health, transparency, and resource allocation.</p>
                     </div>
 
-                    <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100 text-center shadow-sm hover:shadow-card transition-shadow">
-                        <div class="w-28 h-28 mx-auto rounded-full overflow-hidden mb-5 border-4 border-white shadow-md bg-gray-200">
-                            <img src="https://media.istockphoto.com/id/521573873/vector/unknown-person-silhouette-whith-blue-tie.jpg?s=612x612&w=0&k=20&c=5Ax4LbSxC0swuxzNmRarYD5R0bxE5u7p31AHfy9Iqd8=" alt="Vacant Seat" class="w-full h-full object-cover opacity-80">
+                    <div class="bg-white rounded-3xl p-8 border border-gray-100 text-center shadow-sm hover:shadow-card transition-shadow">
+                        <div class="w-28 h-28 mx-auto rounded-full overflow-hidden mb-5 border-4 border-white shadow-md bg-gray-100">
+                            <img src="https://media.istockphoto.com/id/521573873/vector/unknown-person-silhouette-whith-blue-tie.jpg?s=612x612&w=0&k=20&c=5Ax4LbSxC0swuxzNmRarYD5R0bxE5u7p31AHfy9Iqd8=" alt="Vacant Seat" class="w-full h-full object-cover opacity-70 filter grayscale">
                         </div>
                         <h4 class="font-heading font-bold text-lg text-gray-500 mb-1">N/A</h4>
                         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4" data-i18n="boardRole4">Executive Director</p>
@@ -388,30 +343,28 @@
         </div>
     </footer>
 
-    <div id="toast-container"></div>
-
     <script>
         // --- I18N DICTIONARY FOR FOUNDATION HOME PAGE ---
         const translations = {
             en: {
-                banner: "<i class='fa-solid fa-leaf mr-2'></i> Empowering the youth and protecting the environment of the Republic of Seychelles",
+                banner: "Empowering the youth and protecting the environment of the Republic of Seychelles",
                 navHome: "Home", navPrograms: "Programs", navMore: "More", navAboutUs: "About Us", navInvolved: "Get Involved", navLegal: "Legal", navPartners: "Our Partners", navTeam: "Meet the Team", btnDonate: "Donate",
                 searchTitle: "Search Foundation Directory", searchHint1: "Press", searchHint2: "to search.", searchPlaceholder: "Search programs, news, and initiatives...",
-                discordTitle: "Join the Community", discordDesc: "Engage with our volunteers, join discussions on sustainability, and get live updates on our projects.", discordBtn: "Join Discord Server",
                 accRead: "Read",
                 heroBadge: "Official Non-Profit Organization", heroSlogan: "For the Youth.<br>For the Islands.<br>For Tomorrow.",
-                heroDesc: "We are dedicated to building robust community safety nets, providing digital lifelines, and empowering the next generation of Seychellois.",
-                btnVolunteer: "Become a Volunteer", btnPartner: "Partner With Us",
-                whySub: "The Mandate", whyTitle: "Community support. Real impact.",
-                whyP1: "The Tyler Nicholas Foundation was established to bridge the gaps in our social infrastructure. We believe that true empowerment comes from providing people with the exact tools they need—whether that is a platform to record their history, the digital assets to launch their business, or the educational resources to improve their minds.",
-                whyP2: "Operating independently from political boundaries, our mission is to execute grassroots projects that drive tangible, immediate change across Seychelles for absolutely no fee.",
-                readMission: "Read our full mission",
-                impactSub: "Our Footprint", impactTitle: "Measurable Impact",
-                progSub: "Active Work", progTitle: "Featured Initiatives", viewPrograms: "View All Programs",
-                prog1Title: "The Generations Archive", prog1Desc: "Preserving the rich cultural history and folklore of Seychelles by recording and archiving the stories, traditional recipes, and lived experiences of our elderly citizens before they are lost to time.",
-                prog2Title: "The Artisan Initiative", prog2Desc: "In exclusive partnership with BlueWave Digital, we provide free digital lifelines—including complete websites, basic branding, and online setup—to local Seychellois artisans and micro-vendors at absolutely no cost to them.",
-                prog3Title: "National Mental Health Directory", prog3Desc: "Maintaining a centralized, accessible online hub that aggregates every counselor, crisis hotline, clinic, and support group available in Seychelles to ensure no one has to struggle in the dark.",
-                prog4Title: "Open-Access Education Library", prog4Desc: "Providing free course books, guides, and digital resources that teach effective study habits, civic responsibility, and personal motivation for both students and adults looking to better themselves.",
+                heroDesc: "Bridging the gaps in our social infrastructure. We build community safety nets, secure life-changing youth placements, and execute environmental action across Seychelles.",
+                btnAction1: "Find an Opportunity", btnAction2: "Partner With Us",
+                msgSub: "A Message From The Chairman", msgTitle: "\"Philanthropy must evolve beyond awareness. It must become infrastructure.\"",
+                msgP1: "The Tyler Nicholas Foundation was not built to simply talk about the problems facing Seychelles; it was built to aggressively solve them. During my time in public service, I realized that while government policy is essential for the future, our communities and our youth need tangible help <strong>today</strong>.",
+                msgP2: "This Foundation is a multi-disciplinary action group. We do not restrict ourselves to one single issue because the challenges facing our islands are deeply interconnected. You cannot solve economic stagnation without addressing digital literacy; you cannot protect our coastal environments without empowering the youth who will inherit them.",
+                msgP3: "From securing international work attachments for ambitious students, to funding grassroots climate action, to providing free digital lifelines for local artisans—our mandate is vast, but our methodology is precise. We are here to act as a shadow-infrastructure for the Republic, providing the tools, the network, and the capital to ensure no Seychellois is left behind.",
+                mandateSub: "Our Scope of Work", mandateTitle: "A Comprehensive National Mandate", mandateDesc: "We operate across multiple sectors to provide a holistic safety net for the Republic. Explore our primary pillars of action below.",
+                pilPlacementTitle: "Career & Opportunity Placement", pilPlacementDesc: "We actively source and secure customized work attachments, long-term internships, and international holiday opportunities for Seychellois youth by contacting organizations and leveraging our corporate network directly on their behalf.", applyBtn: "Apply for Placement &rarr;",
+                pilEcoTitle: "Environmental Stewardship & Climate Action", pilEcoDesc: "Executing grassroots coastal protection, organizing massive youth-led mangrove restoration projects, and providing micro-grants for local eco-innovation and sustainability startups.",
+                pilDigiTitle: "Digital Literacy & Enterprise Incubator", pilDigiDesc: "Through \"The Artisan Initiative\" and our corporate partners, we provide free websites, digital branding, and coding workshops to local vendors and underprivileged youth to transition Seychelles into a creator economy.",
+                pilHealthTitle: "Health, Mental Wellness & Food Security", pilHealthDesc: "Maintaining the National Mental Health Directory, organizing preventative wellness campaigns, and partnering closely with FoodShare Seychelles to manage community food logistics for vulnerable demographics.",
+                pilCivicTitle: "Civic Education & Policy Research Lab", pilCivicDesc: "Operating an Open-Access Education Library for students, conducting youth parliament simulations, and aggregating community data to support evidence-based, data-driven national policymaking.",
+                pilCultureTitle: "Cultural Heritage & Social Inclusion", pilCultureDesc: "Running \"The Generations Archive\" to digitally preserve the folklore of our elderly, while providing strict advocacy and support networks for persons with disabilities and marginalized groups.",
                 boardSub: "Leadership", boardTitle: "Meet the Board of Directors",
                 boardRole1: "Founder & Chairman", boardDesc1: "Directing the foundation's strategic vision, partnerships, and overall commitment to the Seychellois community.",
                 boardRole2: "Vice Chairman", boardDesc2: "Supporting the Chairman in executive decisions and operational oversight.",
@@ -424,24 +377,24 @@
                 footerRights: "Copyright 2026 &copy; Tyler Nicholas Foundation. All Rights Reserved."
             },
             fr: {
-                banner: "<i class='fa-solid fa-leaf mr-2'></i> Autonomiser la jeunesse et protéger l'environnement de la République des Seychelles",
+                banner: "Autonomiser la jeunesse et protéger l'environnement de la République des Seychelles",
                 navHome: "Accueil", navPrograms: "Programmes", navMore: "Plus", navAboutUs: "À Propos", navInvolved: "S'impliquer", navLegal: "Légal", navPartners: "Nos Partenaires", navTeam: "L'Équipe", btnDonate: "Faire un Don",
                 searchTitle: "Rechercher dans l'Annuaire", searchHint1: "Appuyez sur", searchHint2: "pour rechercher.", searchPlaceholder: "Rechercher des programmes, des actualités...",
-                discordTitle: "Rejoignez la Communauté", discordDesc: "Échangez avec nos bénévoles et suivez nos projets de durabilité en direct.", discordBtn: "Rejoindre le Serveur",
                 accRead: "Lire",
                 heroBadge: "Organisation à But Non Lucratif", heroSlogan: "Pour les Jeunes.<br>Pour les Îles.<br>Pour Demain.",
-                heroDesc: "Nous sommes dédiés à la construction de filets de sécurité communautaires robustes et à l'autonomisation de la prochaine génération de Seychellois.",
-                btnVolunteer: "Devenir Bénévole", btnPartner: "Devenir Partenaire",
-                whySub: "Le Mandat", whyTitle: "Soutien communautaire. Impact réel.",
-                whyP1: "La Fondation Tyler Nicholas a été créée pour combler les lacunes de notre infrastructure sociale. Nous croyons que la véritable autonomisation consiste à fournir aux gens les outils dont ils ont besoin—que ce soit une plateforme pour enregistrer leur histoire, des actifs numériques ou des ressources éducatives.",
-                whyP2: "Opérant indépendamment des frontières politiques, notre mission est d'exécuter des projets de base qui génèrent des changements tangibles et immédiats à travers les Seychelles, et ce, gratuitement.",
-                readMission: "Lire notre mission complète",
-                impactSub: "Notre Empreinte", impactTitle: "Impact Mesurable",
-                progSub: "Travail Actif", progTitle: "Initiatives en Vedette", viewPrograms: "Voir Tous les Programmes",
-                prog1Title: "Les Archives des Générations", prog1Desc: "Préserver la riche histoire culturelle et le folklore des Seychelles en enregistrant et archivant les histoires et expériences vécues de nos personnes âgées.",
-                prog2Title: "L'Initiative Artisanale", prog2Desc: "En partenariat exclusif avec BlueWave Digital, nous fournissons gratuitement des sites web et une image de marque de base aux artisans et micro-vendeurs seychellois.",
-                prog3Title: "Annuaire National de la Santé Mentale", prog3Desc: "Maintenir un centre en ligne accessible qui regroupe tous les conseillers, lignes d'assistance, cliniques et groupes de soutien disponibles aux Seychelles.",
-                prog4Title: "Bibliothèque d'Éducation en Libre Accès", prog4Desc: "Fournir des livres de cours et des ressources numériques gratuits pour enseigner des méthodes d'étude efficaces et la responsabilité civique.",
+                heroDesc: "Nous comblons les lacunes de notre infrastructure sociale en créant des filets de sécurité, en garantissant des stages pour les jeunes et en menant des actions environnementales.",
+                btnAction1: "Trouver une Opportunité", btnAction2: "Devenir Partenaire",
+                msgSub: "Un Message du Président", msgTitle: "\"La philanthropie doit devenir une infrastructure.\"",
+                msgP1: "La Fondation Tyler Nicholas n'a pas été créée simplement pour parler des problèmes, mais pour les résoudre. Nos communautés et notre jeunesse ont besoin d'une aide tangible <strong>aujourd'hui</strong>.",
+                msgP2: "Cette fondation est un groupe d'action multidisciplinaire. Les défis de nos îles sont interconnectés. Vous ne pouvez pas protéger nos côtes sans responsabiliser les jeunes qui en hériteront.",
+                msgP3: "Qu'il s'agisse d'obtenir des stages internationaux pour les étudiants, de financer l'action climatique ou de fournir une aide numérique gratuite aux artisans, notre mandat est vaste. Nous sommes ici pour agir comme une infrastructure de soutien pour la République.",
+                mandateSub: "Notre Champ d'Action", mandateTitle: "Un Mandat National Complet", mandateDesc: "Nous opérons dans de multiples secteurs pour fournir un filet de sécurité holistique. Découvrez nos principaux piliers d'action.",
+                pilPlacementTitle: "Carrière et Placement", pilPlacementDesc: "Nous recherchons et sécurisons activement des stages et des opportunités internationales pour la jeunesse seychelloise en contactant directement les organisations en leur nom.", applyBtn: "Postuler pour un Placement &rarr;",
+                pilEcoTitle: "Gérance Environnementale et Action Climatique", pilEcoDesc: "Exécution de la protection côtière, projets de restauration des mangroves dirigés par les jeunes et micro-subventions pour l'éco-innovation locale.",
+                pilDigiTitle: "Alphabétisation Numérique et Incubateur d'Entreprises", pilDigiDesc: "Grâce à \"L'Initiative Artisanale\", nous fournissons des sites web gratuits et des ateliers de codage aux vendeurs locaux et aux jeunes défavorisés.",
+                pilHealthTitle: "Santé, Bien-être Mental et Sécurité Alimentaire", pilHealthDesc: "Maintien de l'Annuaire National de la Santé Mentale et partenariat avec FoodShare Seychelles pour gérer la logistique alimentaire communautaire.",
+                pilCivicTitle: "Éducation Civique et Laboratoire de Recherche", pilCivicDesc: "Exploitation d'une bibliothèque d'éducation en libre accès pour les étudiants et collecte de données communautaires pour soutenir les politiques publiques.",
+                pilCultureTitle: "Patrimoine Culturel et Inclusion Sociale", pilCultureDesc: "Gérer \"Les Archives des Générations\" pour préserver le folklore de nos aînés, tout en offrant un soutien strict aux groupes marginalisés.",
                 boardSub: "Direction", boardTitle: "Rencontrez le Conseil d'Administration",
                 boardRole1: "Fondateur & Président", boardDesc1: "Dirige la vision stratégique de la fondation et son engagement global envers la communauté seychelloise.",
                 boardRole2: "Vice-président", boardDesc2: "Soutient le Président dans les décisions exécutives et la supervision opérationnelle.",
@@ -454,24 +407,24 @@
                 footerRights: "Copyright 2026 &copy; Fondation Tyler Nicholas. Tous droits réservés."
             },
             crs: {
-                banner: "<i class='fa-solid fa-leaf mr-2'></i> Donn lafors lazenes e protez lanvironnman Repiblik Sesel",
+                banner: "Donn lafors lazenes e protez lanvironnman Repiblik Sesel",
                 navHome: "Akey", navPrograms: "Progranm", navMore: "Plis", navAboutUs: "Apropo Nou", navInvolved: "Partisipe", navLegal: "Legal", navPartners: "Nou Partener", navTeam: "Lekip", btnDonate: "Fer en Donasyon",
                 searchTitle: "Rod dan Lalis", searchHint1: "Pese", searchHint2: "pour rode.", searchPlaceholder: "Rod bann progranm ek nouvel...",
-                discordTitle: "Zwenn Kominote", discordDesc: "Koz avek nou bann volonter e ganny bann nouvel an direk lo nou bann proze.", discordBtn: "Zwenn Servir Discord",
                 accRead: "Lir",
                 heroBadge: "Lorganizasyon Non-Profit Ofisyel", heroSlogan: "Pour Lazenes.<br>Pour Bann Zil.<br>Pour Demen.",
-                heroDesc: "Nou devwe pour batir en meyer sipor pour kominote e donn lafors fitir lider Seselwa.",
-                btnVolunteer: "Vin en Volonter", btnPartner: "Travay avek Nou",
-                whySub: "Nou Lobzektif", whyTitle: "Sipor kominote. Vre lenpak.",
-                whyP1: "Fondasyon Tyler Nicholas ti ganny kree pour ed rezourd bann mankman dan nou kominote. Nou krwar vre lafors i ganny donnen ler dimoun i ganny bann zouti ki zot bezwen—ki swa pour gard zot lari, lans zot biznes, oubyen meyer zot ledikasyon.",
-                whyP2: "Nou travay i andeor okenn politik, e nou misyon se pour egzekit bann proze ki anmenn vre sanzman pozitif e ki gratis pour tou Seselwa.",
-                readMission: "Lir nou misyon an antye",
-                impactSub: "Nou Rasin", impactTitle: "Lenpak Ki Ou Kapab Mezire",
-                progSub: "Travay Aktif", progTitle: "Bann Inisyativ Prensipal", viewPrograms: "Vwar Tou Progranm",
-                prog1Title: "Larsiv bann Zenerasyon", prog1Desc: "Prezerv nou listwar kiltirel ek tradisyon Sesel par anrezistre bann zistwar ek leksperyans nou bann dimoun aze avan i tro tar.",
-                prog2Title: "Inisyativ bann Artizan", prog2Desc: "Ansanm avek BlueWave Digital, nou ofer bann sitweb ek branding gratis pour bann pti biznes ek artizan Seselwa.",
-                prog3Title: "Direkter Lasante Mantal Nasyonal", prog3Desc: "Gard en platform an liny ki donn akse avek tou bann konseye, klinik, ek group sipor dan Sesel pour asire ki personn pa soufer tousel.",
-                prog4Title: "Libreri Ledikasyon Ouver", prog4Desc: "Donn akse avek bann liv ek resours dizital gratis ki ansenny bann bon fason pour etidye, leresponsabilite sivik, ek motivasyon.",
+                heroDesc: "Nou ed komble bann mankman dan kominote par anmenn vre sanzman, ganny bann staz pour lazenes, e protez nou lanvironnman.",
+                btnAction1: "Rod en Loportinite", btnAction2: "Travay avek Nou",
+                msgSub: "En Mesaz Sorti Kot Tyermenn", msgTitle: "\"Travay sarite i bezwen vin en sipor serye pour pei.\"",
+                msgP1: "Fondasyon Tyler Nicholas pa'n ganny kree zis pour koz lo problenm Sesel; in ganny kree pour rezourd zot. Nou kominote ek nou lazenes i bezwen ed <strong>ozordi</strong>.",
+                msgP2: "Sa Fondasyon i travay lo plizyer keksoz. Bann defi ki nou zil i fer fas avek i konekte. Ou pa kapab protez lanvironnman san donn lafors sa bann zenn ki pou erit li.",
+                msgP3: "Sorti kot rod staz aletranze pour etidyan, ziska ed bann artizan lokal avek zot biznes lo lenternet—nou travay i la pour asire ki personn pa ganny kit deryer dan Sesel.",
+                mandateSub: "Nou Travay", mandateTitle: "En Plan Nasyonal Konple", mandateDesc: "Nou travay dan plizyer sekter pour donn en sipor total pour Repiblik. Dekouver nou bann pilye prensipal anba.",
+                pilPlacementTitle: "Karyer ek Plasman", pilPlacementDesc: "Nou rod e sekirize bann staz (internships) ek lezot loportinite travay aletranze pour lazenes Seselwa par pran kontak direk avek bann lorganizasyon pour zot.", applyBtn: "Aplik pour en Plasman &rarr;",
+                pilEcoTitle: "Aksyon pour Lanvironnman ek Klima", pilEcoDesc: "Siport proze netway lans, restorasyon mangliye par lazenes, ek donn led finansyer pour bann nouvo lide ekolozik.",
+                pilDigiTitle: "Ledikasyon Dizital ek Biznes", pilDigiDesc: "A traver \"The Artisan Initiative\", nou donn sitweb gratis ek kour teknolozi pour bann pti biznes ek bann zenn pour prepar zot pour lavenir.",
+                pilHealthTitle: "Lasante, Byen-et Mantal ek Manze", pilHealthDesc: "Gard Lalis Lasante Mantal Nasyonal a-zour e travay avek FoodShare Seychelles pour asire ki bann fanmir i ganny manze.",
+                pilCivicTitle: "Ledikasyon Sivik ek Resers", pilCivicDesc: "Gard en libreri ledikasyon ouver pour etidyan e anrezistre bann lenformasyon dan kominote pour ed gouvernman pran bann bon desizyon.",
+                pilCultureTitle: "Kiltir ek Lenklizyon Sosyal", pilCultureDesc: "Gard \"Larsiv bann Zenerasyon\" pour prezerv nou listwar, e donn sipor pour bann dimoun andikape ek lezot group ki dan bezwen.",
                 boardSub: "Ledersip", boardTitle: "Rankontre nou Board",
                 boardRole1: "Fonder ek Tyermenn", boardDesc1: "Diriz vizyon stratezik sa fondasyon ek son devouman pour kominote Seselwa.",
                 boardRole2: "Vays Tyermenn", boardDesc2: "Siport Tyermenn dan bann desizyon enportan ek louvraz fondasyon.",
@@ -497,7 +450,6 @@
             });
         }
 
-        // --- UI UTILITIES ---
         function toggleSearch() {
             const overlay = document.getElementById('search-overlay');
             overlay.classList.toggle('hidden'); overlay.classList.toggle('active');
@@ -515,21 +467,6 @@
         document.getElementById('mobile-menu-btn').addEventListener('click', () => mobileMenu.classList.toggle('translate-x-full'));
         document.getElementById('mobile-menu-close').addEventListener('click', () => mobileMenu.classList.toggle('translate-x-full'));
 
-        window.addEventListener('load', () => {
-            if (!localStorage.getItem('discordPopupSeen')) {
-                setTimeout(() => {
-                    const popup = document.getElementById('discord-popup');
-                    popup.classList.remove('hide'); popup.classList.add('show');
-                }, 3000); 
-            }
-        });
-        function closeDiscordPopup() {
-            const popup = document.getElementById('discord-popup');
-            popup.classList.remove('show'); popup.classList.add('hide');
-            localStorage.setItem('discordPopupSeen', 'true');
-        }
-
-        // ACCESSIBILITY
         let currentTextLevel = 1; let isHighContrast = false;
         function adjustTextSize(step) {
             const newLevel = currentTextLevel + step;
@@ -547,56 +484,6 @@
                 if(isHighContrast) area.classList.add('high-contrast');
                 else area.classList.remove('high-contrast');
             });
-        }
-
-        // --- SUPABASE DATA FETCHING ---
-        const SUPABASE_URL = 'https://eeqgfchvchpdulfybsjg.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVlcWdmY2h2Y2hwZHVsZnlic2pnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3MDEyMzYsImV4cCI6MjA5MDI3NzIzNn0.2Psw_X2TB1r8iLb46WWWANhVuDvoDPnUMjaWykvqd1s';
-        
-        document.addEventListener("DOMContentLoaded", () => {
-            const checkSupabase = setInterval(() => {
-                if (window.supabase) {
-                    clearInterval(checkSupabase); 
-                    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                    fetchImpactMetrics(supabase);
-                }
-            }, 100);
-        });
-
-        async function fetchImpactMetrics(supabase) {
-            try {
-                const { data, error } = await supabase.from('tnf_impact_metrics').select('*').order('metric_value', { ascending: false }).limit(3);
-                const grid = document.getElementById('impact-grid');
-                
-                if (error || !data || data.length === 0) {
-                    grid.innerHTML = `
-                        <div class="bg-[#F9FAFB] rounded-2xl p-8 border border-gray-100 shadow-sm">
-                            <div class="w-16 h-16 bg-white text-eco-green rounded-full flex items-center justify-center text-2xl mx-auto mb-4 shadow-sm"><i class="fa-solid fa-users"></i></div>
-                            <h4 class="text-4xl font-heading font-black text-brand-dark mb-2 stat-counter">50+</h4>
-                            <p class="text-sm font-bold text-gray-500 uppercase tracking-widest">Active Volunteers</p>
-                        </div>
-                        <div class="bg-[#F9FAFB] rounded-2xl p-8 border border-gray-100 shadow-sm">
-                            <div class="w-16 h-16 bg-white text-eco-green rounded-full flex items-center justify-center text-2xl mx-auto mb-4 shadow-sm"><i class="fa-solid fa-laptop-code"></i></div>
-                            <h4 class="text-4xl font-heading font-black text-brand-dark mb-2 stat-counter">3</h4>
-                            <p class="text-sm font-bold text-gray-500 uppercase tracking-widest">Websites Donated</p>
-                        </div>
-                        <div class="bg-[#F9FAFB] rounded-2xl p-8 border border-gray-100 shadow-sm">
-                            <div class="w-16 h-16 bg-white text-eco-green rounded-full flex items-center justify-center text-2xl mx-auto mb-4 shadow-sm"><i class="fa-solid fa-book-open"></i></div>
-                            <h4 class="text-4xl font-heading font-black text-brand-dark mb-2 stat-counter">12</h4>
-                            <p class="text-sm font-bold text-gray-500 uppercase tracking-widest">Courses Published</p>
-                        </div>
-                    `;
-                    return;
-                }
-
-                grid.innerHTML = data.map(metric => `
-                    <div class="bg-[#F9FAFB] rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-card transition-shadow">
-                        <div class="w-16 h-16 bg-white text-eco-green rounded-full flex items-center justify-center text-2xl mx-auto mb-4 shadow-sm"><i class="fa-solid ${metric.icon_class || 'fa-chart-simple'}"></i></div>
-                        <h4 class="text-4xl font-heading font-black text-brand-dark mb-2 stat-counter">${metric.metric_value.toLocaleString()}+</h4>
-                        <p class="text-sm font-bold text-gray-500 uppercase tracking-widest">${metric.metric_label}</p>
-                    </div>
-                `).join('');
-            } catch(e) { console.error(e); }
         }
     </script>
 </body>
