@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Involved | Tyler Nicholas Foundation</title>
+    
+    <link rel="icon" href="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" type="image/jpeg" />
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.min.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], heading: ['Poppins', 'sans-serif'] },
+                    colors: { brand: { dark: '#111827', muted: '#6B7280' }, eco: { green: '#059669', light: '#D1FAE5', dark: '#065F46', sand: '#FDFBF7' } },
+                    boxShadow: { 'soft': '0 10px 40px -10px rgba(5, 150, 105, 0.15)', 'card': '0 4px 20px rgba(0,0,0,0.04)' }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #FFFFFF; -webkit-font-smoothing: antialiased; }
+        .fade-up { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; transform: translateY(20px); }
+        .delay-100 { animation-delay: 100ms; } .delay-200 { animation-delay: 200ms; }
+        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+
+        .nav-link { position: relative; cursor: pointer; }
+        .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -4px; left: 0; background-color: #059669; transition: width 0.3s ease; }
+        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
+        .nav-link.active { color: #059669; }
+
+        /* Floating Accessibility Panel */
+        #accessibility-panel { position: fixed; left: 0; top: 50%; transform: translateY(-50%); z-index: 80; transition: transform 0.3s ease; }
+        #accessibility-panel.closed { transform: translate(-100%, -50%); }
+        .acc-btn { @apply w-10 h-10 flex items-center justify-center bg-white border-b border-gray-100 text-brand-dark hover:bg-eco-light hover:text-eco-green transition-colors cursor-pointer; }
+        
+        .read-area { transition: all 0.3s ease; }
+        .read-area.high-contrast { background-color: #111827 !important; color: #F9FAFB !important; border-color: #374151 !important; }
+        .read-area.high-contrast h2, .read-area.high-contrast h3, .read-area.high-contrast h4, .read-area.high-contrast p, .read-area.high-contrast span, .read-area.high-contrast label { color: #F9FAFB !important; }
+        .read-area.high-contrast input, .read-area.high-contrast textarea, .read-area.high-contrast select { background-color: #1F2937 !important; color: #FFFFFF !important; border-color: #4B5563 !important; }
+        
+        .read-area.text-lvl-1 p, .read-area.text-lvl-1 label, .read-area.text-lvl-1 input, .read-area.text-lvl-1 textarea, .read-area.text-lvl-1 select { font-size: 1rem; line-height: 1.75; }
+        .read-area.text-lvl-2 p, .read-area.text-lvl-2 label, .read-area.text-lvl-2 input, .read-area.text-lvl-2 textarea, .read-area.text-lvl-2 select { font-size: 1.125rem; line-height: 1.8; }
+        .read-area.text-lvl-3 p, .read-area.text-lvl-3 label, .read-area.text-lvl-3 input, .read-area.text-lvl-3 textarea, .read-area.text-lvl-3 select { font-size: 1.25rem; line-height: 1.9; }
+
+        #search-overlay { transition: opacity 0.3s ease; }
+        #search-overlay.hidden { opacity: 0; pointer-events: none; }
+        #search-overlay.active { opacity: 1; pointer-events: auto; }
+        
+        #discord-popup { transition: opacity 0.4s ease, transform 0.4s ease; }
+        #discord-popup.show { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+        #discord-popup.hide { opacity: 0; transform: translateY(20px) scale(0.95); pointer-events: none; }
+
+        /* Form Inputs */
+        .saas-input { @apply w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-xl text-sm transition-all outline-none focus:bg-white focus:border-eco-green focus:ring-2 focus:ring-eco-green/20; }
+        
+        /* Custom Toast Notification */
+        #toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+        .toast { background: white; color: #111827; padding: 16px 24px; border-radius: 8px; box-shadow: 0 10px 30px -5px rgba(0,0,0,0.1); border-left: 4px solid #059669; font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600; text-transform: uppercase; transform: translateX(120%); transition: transform 0.4s ease; display: flex; align-items: center; gap: 12px; }
+        .toast.show { transform: translateX(0); }
+        .toast.error { border-left-color: #EF4444; }
+
+        /* FAQ Accordion */
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; opacity: 0; }
+        .faq-item.active .faq-answer { max-height: 200px; padding-top: 1rem; opacity: 1; }
+        .faq-item.active .faq-icon { transform: rotate(180deg); }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen text-brand-dark">
+
+    <div class="bg-eco-green text-white text-[11px] md:text-xs font-medium py-2.5 px-4 text-center tracking-wide" data-i18n="banner">
+        Empowering the youth and protecting the environment of the Republic of Seychelles
+    </div>
+
+    <nav class="bg-white py-4 px-6 md:px-12 sticky top-0 z-50 transition-shadow duration-300 shadow-sm" id="navbar">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            
+            <a href="/" class="flex items-center gap-3 group">
+                <img src="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" alt="TNF Logo" class="w-10 h-10 rounded-full object-cover shadow-sm group-hover:scale-105 transition-transform duration-300">
+                <h1 class="font-heading font-bold text-xl tracking-tight text-brand-dark hidden sm:block">Tyler Nicholas <span class="text-eco-green">Foundation</span></h1>
+            </a>
+
+            <button id="mobile-menu-btn" class="lg:hidden text-brand-dark text-2xl focus:outline-none"><i class="fa-solid fa-bars"></i></button>
+
+            <div class="hidden lg:flex space-x-6 lg:space-x-8 text-sm font-heading font-medium text-brand-muted items-center">
+                <a href="/" class="nav-link hover:text-brand-dark transition-colors" data-i18n="navHome">Home</a>
+                <a href="/programs/" class="nav-link hover:text-brand-dark transition-colors" data-i18n="navPrograms">Programs</a>
+                
+                <div class="relative group py-2">
+                    <span class="nav-link active flex items-center gap-1 hover:text-brand-dark transition-colors"><span data-i18n="navMore">More</span> <i class="fa-solid fa-chevron-down text-[10px] mt-0.5"></i></span>
+                    <div class="absolute top-full left-0 w-48 bg-white rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 border border-gray-100 flex flex-col py-2 transform translate-y-2 group-hover:translate-y-0">
+                        <a href="/about/" class="px-5 py-2.5 text-sm font-medium text-brand-dark hover:bg-eco-light hover:text-eco-green transition-colors" data-i18n="navAboutUs">About Us</a>
+                        <a href="/get-involved/" class="px-5 py-2.5 text-sm font-medium text-eco-green bg-eco-light transition-colors" data-i18n="navInvolved">Get Involved</a>
+                        <a href="/legal/" class="px-5 py-2.5 text-sm font-medium text-brand-dark hover:bg-eco-light hover:text-eco-green transition-colors" data-i18n="navLegal">Legal</a>
+                        <a href="/partners/" class="px-5 py-2.5 text-sm font-medium text-brand-dark hover:bg-eco-light hover:text-eco-green transition-colors" data-i18n="navPartners">Our Partners</a>
+                        <a href="/team/" class="px-5 py-2.5 text-sm font-medium text-brand-dark hover:bg-eco-light hover:text-eco-green transition-colors" data-i18n="navTeam">Meet the Team</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hidden lg:flex items-center space-x-6">
+                <button onclick="toggleSearch()" class="text-brand-muted hover:text-eco-green transition-colors text-lg"><i class="fa-solid fa-magnifying-glass"></i></button>
+                
+                <div class="relative group py-2">
+                    <button class="flex items-center text-sm font-heading font-semibold text-brand-dark hover:text-eco-green">
+                        <i class="fa-solid fa-globe mr-1.5 text-brand-muted"></i> <span id="current-lang">EN</span> <i class="fa-solid fa-chevron-down ml-1 text-[10px]"></i>
+                    </button>
+                    <div class="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all border border-gray-100 overflow-hidden transform translate-y-2 group-hover:translate-y-0">
+                        <button onclick="changeLang('en')" class="w-full text-left px-4 py-3 hover:bg-eco-light text-sm font-medium text-eco-dark">English</button>
+                        <button onclick="changeLang('fr')" class="w-full text-left px-4 py-3 hover:bg-eco-light text-sm font-medium text-eco-dark">Français</button>
+                        <button onclick="changeLang('crs')" class="w-full text-left px-4 py-3 hover:bg-eco-light text-sm font-medium text-eco-dark">Seselwa</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div id="search-overlay" class="fixed inset-0 bg-white/95 backdrop-blur-md z-[200] hidden flex flex-col items-center justify-center p-6">
+        <button onclick="toggleSearch()" class="absolute top-8 right-8 text-4xl text-brand-muted hover:text-brand-dark"><i class="fa-solid fa-xmark"></i></button>
+        <div class="w-full max-w-3xl">
+            <h3 class="text-2xl font-heading font-bold text-brand-dark mb-4" data-i18n="searchTitle">Search Foundation Directory</h3>
+            <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-6 top-1/2 transform -translate-y-1/2 text-2xl text-brand-muted"></i>
+                <input type="text" id="search-input" data-i18n-placeholder="searchPlaceholder" onkeydown="executeSearch(event)" placeholder="Search programs, news, and initiatives..." class="w-full bg-gray-100 border-2 border-transparent focus:border-eco-green rounded-2xl py-6 pl-16 pr-6 text-xl md:text-2xl font-heading outline-none transition-all shadow-inner">
+            </div>
+        </div>
+    </div>
+
+    <div id="discord-popup" class="fixed bottom-6 left-6 z-[90] w-[350px] bg-white rounded-2xl shadow-2xl border border-gray-100 p-6 hide">
+        <button onclick="closeDiscordPopup()" class="absolute top-4 right-4 text-gray-400 hover:text-brand-dark"><i class="fa-solid fa-xmark"></i></button>
+        <div class="w-12 h-12 bg-[#5865F2]/10 text-[#5865F2] rounded-xl flex items-center justify-center text-2xl mb-4">
+            <i class="fa-brands fa-discord"></i>
+        </div>
+        <h4 class="font-heading font-bold text-lg text-brand-dark mb-2" data-i18n="discordTitle">Join the Community</h4>
+        <p class="text-sm text-brand-muted mb-4 leading-relaxed" data-i18n="discordDesc">Engage with our volunteers, join discussions on sustainability, and get live updates on our projects.</p>
+        <a href="https://discord.gg/DMaJmWChP4" target="_blank" onclick="closeDiscordPopup()" class="block w-full bg-[#5865F2] hover:bg-[#4752C4] text-white text-center font-heading font-bold py-3 rounded-lg transition-colors text-sm" data-i18n="discordBtn">
+            Join Discord Server
+        </a>
+    </div>
+
+    <div id="accessibility-panel" class="shadow-lg rounded-r-xl overflow-hidden bg-white border border-l-0 border-gray-200">
+        <div class="bg-eco-dark text-white text-[9px] font-bold uppercase tracking-widest py-1.5 px-2 text-center w-12" data-i18n="accRead">Read</div>
+        <div class="acc-btn" onclick="adjustTextSize(1)" title="Increase Text Size"><i class="fa-solid fa-a text-lg"></i><i class="fa-solid fa-plus text-[10px] ml-0.5"></i></div>
+        <div class="acc-btn" onclick="adjustTextSize(-1)" title="Decrease Text Size"><i class="fa-solid fa-a text-sm"></i><i class="fa-solid fa-minus text-[10px] ml-0.5"></i></div>
+        <div class="acc-btn" onclick="toggleHighContrast()" title="Toggle High Contrast"><i class="fa-solid fa-circle-half-stroke text-lg"></i></div>
+    </div>
+
+    <div id="mobile-menu-overlay" class="fixed inset-0 bg-white z-[100] transform translate-x-full transition-transform duration-300 flex flex-col lg:hidden overflow-y-auto">
+        <div class="p-6 flex justify-between items-center border-b border-gray-100">
+            <div class="flex items-center gap-3">
+                <img src="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" alt="TNF Logo" class="w-8 h-8 rounded-full">
+                <h1 class="font-heading font-bold text-xl text-brand-dark">TNF</h1>
+            </div>
+            <button id="mobile-menu-close" class="text-brand-dark text-3xl"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="p-8 flex flex-col space-y-6 text-brand-dark flex-grow font-heading font-semibold text-2xl">
+            <a href="/" class="hover:text-eco-green transition-colors" data-i18n="navHome">Home</a>
+            <a href="/programs/" class="hover:text-eco-green transition-colors" data-i18n="navPrograms">Programs</a>
+            <a href="/about/" class="hover:text-eco-green transition-colors" data-i18n="navAboutUs">About Us</a>
+            <a href="/get-involved/" class="text-eco-green transition-colors" data-i18n="navInvolved">Get Involved</a>
+            <a href="/legal/" class="hover:text-eco-green transition-colors" data-i18n="navLegal">Legal</a>
+            <a href="/partners/" class="hover:text-eco-green transition-colors" data-i18n="navPartners">Our Partners</a>
+            <a href="/team/" class="hover:text-eco-green transition-colors" data-i18n="navTeam">Meet the Team</a>
+        </div>
+    </div>
+
+    <main class="flex-grow">
+        
+        <section class="pt-24 pb-20 bg-brand-dark text-center px-6 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-eco-light via-eco-green to-eco-light"></div>
+            <div class="absolute inset-0 z-0 opacity-10">
+                <div class="absolute -top-40 -left-40 w-96 h-96 bg-eco-green rounded-full blur-3xl"></div>
+                <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-eco-green rounded-full blur-3xl"></div>
+            </div>
+            
+            <div class="relative z-10 fade-up max-w-4xl mx-auto">
+                <span class="text-eco-green font-heading font-bold uppercase tracking-widest text-xs mb-3 block" data-i18n="heroSub">Take Action</span>
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-heading font-black text-white mb-6 leading-tight tracking-tight" data-i18n="heroTitle">
+                    Don't just watch the future happen. Help us build it.
+                </h1>
+                <p class="text-gray-400 text-lg md:text-xl leading-relaxed font-medium" data-i18n="heroDesc">
+                    We are a two-way infrastructure. Whether you are a student seeking an opportunity, a citizen wanting to volunteer, or a corporate partner ready to fund a project—we need you.
+                </p>
+            </div>
+        </section>
+
+        <section class="py-16 bg-white relative -mt-10 z-20">
+            <div class="max-w-7xl mx-auto px-6 md:px-12 fade-up delay-100">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
+                    <button onclick="selectPath('Applicant')" class="bg-white border border-gray-200 rounded-2xl p-8 text-left hover:border-eco-green hover:shadow-card transition-all group flex flex-col h-full">
+                        <div class="w-12 h-12 bg-blue-50 text-blue-500 rounded-xl flex items-center justify-center text-xl mb-6 group-hover:scale-110 transition-transform"><i class="fa-solid fa-graduation-cap"></i></div>
+                        <h4 class="text-xl font-heading font-bold text-brand-dark mb-2" data-i18n="path1Title">Seek Opportunity</h4>
+                        <p class="text-brand-muted text-sm leading-relaxed mb-6 flex-grow" data-i18n="path1Desc">Apply for career placements, international work attachments, or digital literacy support.</p>
+                        <span class="text-eco-green font-bold text-sm uppercase tracking-widest" data-i18n="pathBtn">Select Path &rarr;</span>
+                    </button>
+
+                    <button onclick="selectPath('Volunteer')" class="bg-white border border-gray-200 rounded-2xl p-8 text-left hover:border-eco-green hover:shadow-card transition-all group flex flex-col h-full">
+                        <div class="w-12 h-12 bg-eco-light text-eco-green rounded-xl flex items-center justify-center text-xl mb-6 group-hover:scale-110 transition-transform"><i class="fa-solid fa-hand-holding-heart"></i></div>
+                        <h4 class="text-xl font-heading font-bold text-brand-dark mb-2" data-i18n="path2Title">Give Time</h4>
+                        <p class="text-brand-muted text-sm leading-relaxed mb-6 flex-grow" data-i18n="path2Desc">Join our on-the-ground volunteer network for coastal restoration, food drives, and the Generations Archive.</p>
+                        <span class="text-eco-green font-bold text-sm uppercase tracking-widest" data-i18n="pathBtn">Select Path &rarr;</span>
+                    </button>
+
+                    <button onclick="selectPath('Partner')" class="bg-white border border-gray-200 rounded-2xl p-8 text-left hover:border-eco-green hover:shadow-card transition-all group flex flex-col h-full">
+                        <div class="w-12 h-12 bg-purple-50 text-purple-500 rounded-xl flex items-center justify-center text-xl mb-6 group-hover:scale-110 transition-transform"><i class="fa-solid fa-building-ngo"></i></div>
+                        <h4 class="text-xl font-heading font-bold text-brand-dark mb-2" data-i18n="path3Title">Give Resources</h4>
+                        <p class="text-brand-muted text-sm leading-relaxed mb-6 flex-grow" data-i18n="path3Desc">Corporate sponsorships, offering internship slots at your company, or funding specific community initiatives.</p>
+                        <span class="text-eco-green font-bold text-sm uppercase tracking-widest" data-i18n="pathBtn">Select Path &rarr;</span>
+                    </button>
+
+                </div>
+            </div>
+        </section>
+
+        <section class="py-16 bg-[#F9FAFB] border-y border-gray-100">
+            <div class="max-w-7xl mx-auto px-6 md:px-12 fade-up delay-200">
+                <div class="flex items-center gap-3 mb-8">
+                    <span class="w-3 h-3 rounded-full bg-red-500 animate-pulse"></span>
+                    <h3 class="text-lg font-heading font-bold text-brand-dark uppercase tracking-widest" data-i18n="urgencyTitle">Current High-Priority Needs</h3>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white border-l-4 border-red-500 p-6 rounded-r-xl shadow-sm">
+                        <span class="text-[10px] font-bold text-red-500 uppercase tracking-widest bg-red-50 px-2 py-1 rounded mb-3 inline-block" data-i18n="tagUrgent">Urgent</span>
+                        <h4 class="font-heading font-bold text-brand-dark mb-2" data-i18n="urg1Title">5 Web Mentors Needed</h4>
+                        <p class="text-xs text-brand-muted leading-relaxed" data-i18n="urg1Desc">We need experienced developers to assist with building free sites for The Artisan Initiative this month.</p>
+                    </div>
+                    <div class="bg-white border-l-4 border-eco-green p-6 rounded-r-xl shadow-sm">
+                        <span class="text-[10px] font-bold text-eco-green uppercase tracking-widest bg-eco-light px-2 py-1 rounded mb-3 inline-block" data-i18n="tagOpen">Open</span>
+                        <h4 class="font-heading font-bold text-brand-dark mb-2" data-i18n="urg2Title">Q3 International Placements</h4>
+                        <p class="text-xs text-brand-muted leading-relaxed" data-i18n="urg2Desc">Applications are now open for high school and university students seeking work attachments abroad.</p>
+                    </div>
+                    <div class="bg-white border-l-4 border-blue-500 p-6 rounded-r-xl shadow-sm">
+                        <span class="text-[10px] font-bold text-blue-500 uppercase tracking-widest bg-blue-50 px-2 py-1 rounded mb-3 inline-block" data-i18n="tagEvent">Event</span>
+                        <h4 class="font-heading font-bold text-brand-dark mb-2" data-i18n="urg3Title">Coastal Restoration Drive</h4>
+                        <p class="text-xs text-brand-muted leading-relaxed" data-i18n="urg3Desc">Seeking 20 physical volunteers for our upcoming weekend mangrove planting and beach cleanup.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="intake-section" class="py-24 bg-white">
+            <div class="max-w-7xl mx-auto px-6 md:px-12 flex flex-col lg:flex-row gap-16 read-area text-lvl-1">
+                
+                <div class="w-full lg:w-[40%]">
+                    <h2 class="text-3xl md:text-4xl font-heading font-bold text-brand-dark mb-6" data-i18n="formTitle">Secure Intake Portal</h2>
+                    <p class="text-brand-muted mb-8 leading-relaxed" data-i18n="formDesc">
+                        Whether you are asking for help or offering it, this form goes directly to our executive team. We pride ourselves on moving fast, outside of slow bureaucracy. 
+                    </p>
+                    <div class="bg-eco-sand border border-eco-light rounded-2xl p-6">
+                        <h4 class="font-heading font-bold text-eco-dark mb-2 text-sm"><i class="fa-solid fa-bolt mr-2"></i> <span data-i18n="formGuarantee">The 48-Hour Guarantee</span></h4>
+                        <p class="text-sm text-eco-dark/80" data-i18n="formGuaranteeDesc">Our team reviews all submissions systematically and commits to responding to all serious inquiries within 48 hours.</p>
+                    </div>
+                </div>
+
+                <div class="w-full lg:w-[60%]">
+                    <form onsubmit="submitIntakeForm(event)" id="intake-form" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-[11px] font-heading font-bold text-brand-muted uppercase tracking-widest mb-2 ml-1" data-i18n="labelName">Full Legal Name</label>
+                                <input type="text" id="intake-name" class="saas-input" required data-i18n-placeholder="placeName" placeholder="e.g. John Doe">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-heading font-bold text-brand-muted uppercase tracking-widest mb-2 ml-1" data-i18n="labelEmail">Email Address</label>
+                                <input type="email" id="intake-email" class="saas-input" required data-i18n-placeholder="placeEmail" placeholder="john@example.com">
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-[11px] font-heading font-bold text-brand-muted uppercase tracking-widest mb-2 ml-1" data-i18n="labelPhone">Phone Number (Optional)</label>
+                                <input type="tel" id="intake-phone" class="saas-input" data-i18n-placeholder="placePhone" placeholder="+248 ...">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-heading font-bold text-brand-muted uppercase tracking-widest mb-2 ml-1" data-i18n="labelPath">Primary Interest</label>
+                                <select id="interest-area" class="saas-input appearance-none bg-white cursor-pointer" required>
+                                    <option value="" disabled selected data-i18n="optSelect">-- Select an option --</option>
+                                    <option value="Applicant" data-i18n="optApp">Seeking Placement/Opportunity</option>
+                                    <option value="Volunteer" data-i18n="optVol">Volunteering Time</option>
+                                    <option value="Partner" data-i18n="optPart">Corporate Partnership/Donation</option>
+                                    <option value="General" data-i18n="optGen">General Inquiry</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-heading font-bold text-brand-muted uppercase tracking-widest mb-2 ml-1" data-i18n="labelMsg">Message / Specific Request</label>
+                            <textarea id="intake-msg" rows="5" class="saas-input resize-none" required data-i18n-placeholder="placeMsg" placeholder="Please provide details about what you are looking for or how you want to help..."></textarea>
+                        </div>
+
+                        <button type="submit" id="btn-submit" class="w-full bg-eco-green hover:bg-eco-dark text-white font-heading font-bold py-4 rounded-xl transition-all shadow-md transform hover:-translate-y-0.5 text-sm uppercase tracking-widest flex items-center justify-center">
+                            <span data-i18n="btnSubmit">Submit Application</span> <i class="fa-solid fa-paper-plane ml-2"></i>
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="py-24 bg-[#F9FAFB] border-t border-gray-100">
+            <div class="max-w-3xl mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-heading font-bold text-brand-dark mb-4" data-i18n="faqTitle">Frequently Asked Questions</h2>
+                    <p class="text-brand-muted" data-i18n="faqDesc">Clear answers to common questions about working with the Foundation.</p>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="faq-item bg-white border border-gray-200 rounded-2xl overflow-hidden cursor-pointer" onclick="this.classList.toggle('active')">
+                        <div class="p-6 flex justify-between items-center font-heading font-bold text-brand-dark">
+                            <h4 data-i18n="faq1Q">Does it cost money to apply for a career placement?</h4>
+                            <i class="fa-solid fa-chevron-down faq-icon transition-transform duration-300 text-brand-muted"></i>
+                        </div>
+                        <div class="faq-answer px-6 pb-6 text-brand-muted text-sm leading-relaxed border-t border-gray-100">
+                            <p data-i18n="faq1A">Absolutely not. Radical accessibility is one of our core values. Every service, placement coordination, and educational resource we provide is 100% free to the recipient.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item bg-white border border-gray-200 rounded-2xl overflow-hidden cursor-pointer" onclick="this.classList.toggle('active')">
+                        <div class="p-6 flex justify-between items-center font-heading font-bold text-brand-dark">
+                            <h4 data-i18n="faq2Q">How much time do I have to commit to volunteer?</h4>
+                            <i class="fa-solid fa-chevron-down faq-icon transition-transform duration-300 text-brand-muted"></i>
+                        </div>
+                        <div class="faq-answer px-6 pb-6 text-brand-muted text-sm leading-relaxed border-t border-gray-100">
+                            <p data-i18n="faq2A">We are highly flexible. You can volunteer for a single weekend event (like a coastal cleanup) or commit to a long-term role (like mentoring for The Artisan Initiative). Let us know your availability in the form above.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item bg-white border border-gray-200 rounded-2xl overflow-hidden cursor-pointer" onclick="this.classList.toggle('active')">
+                        <div class="p-6 flex justify-between items-center font-heading font-bold text-brand-dark">
+                            <h4 data-i18n="faq3Q">Can my company sponsor a specific initiative?</h4>
+                            <i class="fa-solid fa-chevron-down faq-icon transition-transform duration-300 text-brand-muted"></i>
+                        </div>
+                        <div class="faq-answer px-6 pb-6 text-brand-muted text-sm leading-relaxed border-t border-gray-100">
+                            <p data-i18n="faq3A">Yes. We work closely with local and international businesses. You can sponsor resources, or even better, partner with us to offer dedicated internship and work attachment slots at your company for our youth.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 pt-20 pb-10 px-6 md:px-12 mt-auto">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
+            <div class="md:col-span-4">
+                <div class="flex items-center gap-3 mb-4">
+                    <img src="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" alt="TNF Logo" class="w-10 h-10 rounded-full object-cover">
+                    <h3 class="font-heading font-bold text-xl tracking-tight text-brand-dark">Tyler Nicholas <span class="text-eco-green">Foundation</span></h3>
+                </div>
+                <p class="text-sm font-heading font-bold text-brand-dark italic mb-6" data-i18n="footerSlogan">"For the Youth. For the Islands. For Tomorrow."</p>
+                <div class="inline-block bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 mb-8">
+                    <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest leading-tight" data-i18n="footerTNG">
+                        The Tyler Nicholas Foundation is a proud member of <br><a href="https://tylernicholasgroup.com/" target="_blank" class="text-brand-dark hover:text-eco-green transition-colors">The Tyler Nicholas Group</a>
+                    </p>
+                </div>
+            </div>
+
+            <div class="md:col-span-2">
+                <h4 class="text-brand-dark font-heading font-bold text-base mb-6" data-i18n="footerDir">Directory</h4>
+                <ul class="space-y-4 text-sm font-medium text-brand-muted">
+                    <li><a href="/" class="hover:text-eco-green transition-colors" data-i18n="navHome">Home</a></li>
+                    <li><a href="/about/" class="hover:text-eco-green transition-colors" data-i18n="navAboutUs">About Us</a></li>
+                    <li><a href="/programs/" class="hover:text-eco-green transition-colors" data-i18n="navPrograms">Programs</a></li>
+                    <li><a href="/get-involved/" class="text-eco-green transition-colors" data-i18n="navInvolved">Get Involved</a></li>
+                </ul>
+            </div>
+
+            <div class="md:col-span-3">
+                <h4 class="text-brand-dark font-heading font-bold text-base mb-6" data-i18n="footerAffil">Network Partners</h4>
+                <ul class="space-y-4 text-sm font-medium text-brand-muted">
+                    <li><a href="https://nicholasoffice.online" target="_blank" class="flex items-center hover:text-eco-green transition-colors"><span data-i18n="footLinkOffice">Office of Tyler Nicholas</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-2"></i></a></li>
+                    <li><a href="https://foodshare-seychelle.online" target="_blank" class="flex items-center hover:text-eco-green transition-colors"><span data-i18n="footLinkFood">FoodShare Seychelles</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-2"></i></a></li>
+                    <li><a href="https://tylernicholasgroup.com" target="_blank" class="flex items-center hover:text-eco-green transition-colors"><span data-i18n="footLinkTNG">Tyler Nicholas Group</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-2"></i></a></li>
+                    <li><a href="https://tyler.tylernicholasgroup.com" target="_blank" class="flex items-center hover:text-eco-green transition-colors"><span data-i18n="footLinkPersonal">Tyler Nicholas Profile</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-2"></i></a></li>
+                </ul>
+            </div>
+
+            <div class="md:col-span-3">
+                <h4 class="text-brand-dark font-heading font-bold text-base mb-6" data-i18n="footerContact">Contact</h4>
+                <ul class="space-y-4 text-sm font-medium text-brand-muted mb-6">
+                    <li><a href="mailto:nicholasfoundation.sc@gmail.com" class="hover:text-eco-green transition-colors break-all flex items-center"><i class="fa-solid fa-envelope w-5"></i> nicholasfoundation.sc@gmail.com</a></li>
+                </ul>
+                <div class="flex flex-wrap gap-3">
+                    <a href="https://www.linkedin.com/company/tylernicholas-foundation" target="_blank" class="w-10 h-10 rounded-full bg-gray-100 text-brand-muted flex items-center justify-center hover:bg-eco-green hover:text-white transition-all shadow-sm"><i class="fa-brands fa-linkedin-in"></i></a>
+                    <a href="https://x.com/tnfseychelles" target="_blank" class="w-10 h-10 rounded-full bg-gray-100 text-brand-muted flex items-center justify-center hover:bg-eco-green hover:text-white transition-all shadow-sm"><i class="fa-brands fa-x-twitter"></i></a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="max-w-7xl mx-auto border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-medium text-brand-muted relative">
+            <p data-i18n="footerRights">Copyright 2026 &copy; Tyler Nicholas Foundation. All Rights Reserved.</p>
+            <div class="flex gap-6 items-center">
+                <a href="/legal/" class="hover:text-eco-green transition-colors" data-i18n="navLegal">Legal</a>
+                <a href="/admin/" class="text-gray-300 hover:text-eco-green transition-colors" title="Secure Staff Portal"><i class="fa-solid fa-lock"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <div id="toast-container"></div>
+
+    <script>
+        // --- I18N DICTIONARY FOR FOUNDATION INVOLVE PAGE ---
+        const translations = {
+            en: {
+                banner: "Empowering the youth and protecting the environment of the Republic of Seychelles",
+                navHome: "Home", navPrograms: "Programs", navMore: "More", navAboutUs: "About Us", navInvolved: "Get Involved", navLegal: "Legal", navPartners: "Our Partners", navTeam: "Meet the Team", btnDonate: "Donate",
+                searchTitle: "Search Foundation Directory", searchHint1: "Press", searchHint2: "to search.", searchPlaceholder: "Search programs, news, and initiatives...",
+                accRead: "Read",
+                discordTitle: "Join the Community", discordDesc: "Engage with our volunteers, join discussions on sustainability, and get live updates on our projects.", discordBtn: "Join Discord Server",
+                heroSub: "Take Action", heroTitle: "Don't just watch the future happen. Help us build it.", heroDesc: "We are a two-way infrastructure. Whether you are a student seeking an opportunity, a citizen wanting to volunteer, or a corporate partner ready to fund a project—we need you.",
+                path1Title: "Seek Opportunity", path1Desc: "Apply for career placements, international work attachments, or digital literacy support.",
+                path2Title: "Give Time", path2Desc: "Join our on-the-ground volunteer network for coastal restoration, food drives, and the Generations Archive.",
+                path3Title: "Give Resources", path3Desc: "Corporate sponsorships, offering internship slots at your company, or funding specific community initiatives.",
+                pathBtn: "Select Path &rarr;",
+                urgencyTitle: "Current High-Priority Needs", tagUrgent: "Urgent", tagOpen: "Open", tagEvent: "Event",
+                urg1Title: "5 Web Mentors Needed", urg1Desc: "We need experienced developers to assist with building free sites for The Artisan Initiative this month.",
+                urg2Title: "Q3 International Placements", urg2Desc: "Applications are now open for high school and university students seeking work attachments abroad.",
+                urg3Title: "Coastal Restoration Drive", urg3Desc: "Seeking 20 physical volunteers for our upcoming weekend mangrove planting and beach cleanup.",
+                formTitle: "Secure Intake Portal", formDesc: "Whether you are asking for help or offering it, this form goes directly to our executive team. We pride ourselves on moving fast, outside of slow bureaucracy.",
+                formGuarantee: "The 48-Hour Guarantee", formGuaranteeDesc: "Our team reviews all submissions systematically and commits to responding to all serious inquiries within 48 hours.",
+                labelName: "Full Legal Name", placeName: "e.g. John Doe",
+                labelEmail: "Email Address", placeEmail: "john@example.com",
+                labelPhone: "Phone Number (Optional)", placePhone: "+248 ...",
+                labelPath: "Primary Interest", optSelect: "-- Select an option --", optApp: "Seeking Placement/Opportunity", optVol: "Volunteering Time", optPart: "Corporate Partnership/Donation", optGen: "General Inquiry",
+                labelMsg: "Message / Specific Request", placeMsg: "Please provide details about what you are looking for or how you want to help...",
+                btnSubmit: "Submit Application",
+                formSuccess: "Application received securely. We will be in touch shortly.", formError: "Error transmitting form. Please try again.",
+                faqTitle: "Frequently Asked Questions", faqDesc: "Clear answers to common questions about working with the Foundation.",
+                faq1Q: "Does it cost money to apply for a career placement?", faq1A: "Absolutely not. Radical accessibility is one of our core values. Every service, placement coordination, and educational resource we provide is 100% free to the recipient.",
+                faq2Q: "How much time do I have to commit to volunteer?", faq2A: "We are highly flexible. You can volunteer for a single weekend event (like a coastal cleanup) or commit to a long-term role (like mentoring for The Artisan Initiative). Let us know your availability in the form above.",
+                faq3Q: "Can my company sponsor a specific initiative?", faq3A: "Yes. We work closely with local and international businesses. You can sponsor resources, or even better, partner with us to offer dedicated internship and work attachment slots at your company for our youth.",
+                footerSlogan: "\"For the Youth. For the Islands. For Tomorrow.\"",
+                footerTNG: "The Tyler Nicholas Foundation is a proud member of <br><a href='https://tylernicholasgroup.com/' target='_blank' class='text-brand-dark hover:text-eco-green transition-colors'>The Tyler Nicholas Group</a>",
+                footerDir: "Directory", footerAffil: "Network Partners", footerContact: "Contact Us",
+                footLinkOffice: "Office of Tyler Nicholas", footLinkFood: "FoodShare Seychelles", footLinkTNG: "Tyler Nicholas Group", footLinkPersonal: "Tyler Nicholas Profile",
+                footerRights: "Copyright 2026 &copy; Tyler Nicholas Foundation. All Rights Reserved."
+            },
+            fr: {
+                banner: "Autonomiser la jeunesse et protéger l'environnement de la République des Seychelles",
+                navHome: "Accueil", navPrograms: "Programmes", navMore: "Plus", navAboutUs: "À Propos", navInvolved: "S'impliquer", navLegal: "Légal", navPartners: "Nos Partenaires", navTeam: "L'Équipe", btnDonate: "Faire un Don",
+                searchTitle: "Rechercher dans l'Annuaire", searchHint1: "Appuyez sur", searchHint2: "pour rechercher.", searchPlaceholder: "Rechercher des programmes, des actualités...",
+                accRead: "Lire",
+                discordTitle: "Rejoignez la Communauté", discordDesc: "Échangez avec nos bénévoles et suivez nos projets en direct.", discordBtn: "Rejoindre le Serveur",
+                heroSub: "Passer à l'action", heroTitle: "Ne vous contentez pas de regarder l'avenir. Aidez-nous à le construire.", heroDesc: "Que vous soyez un étudiant cherchant une opportunité, un citoyen voulant faire du bénévolat, ou une entreprise prête à financer un projet—nous avons besoin de vous.",
+                path1Title: "Chercher une Opportunité", path1Desc: "Postulez pour des placements, des stages internationaux ou un soutien numérique.",
+                path2Title: "Donner du Temps", path2Desc: "Rejoignez notre réseau de bénévoles pour la restauration côtière ou les collectes alimentaires.",
+                path3Title: "Donner des Ressources", path3Desc: "Parrainages d'entreprises, offres de stages ou financement d'initiatives.",
+                pathBtn: "Sélectionner la Voie &rarr;",
+                urgencyTitle: "Besoins Actuels Hautement Prioritaires", tagUrgent: "Urgent", tagOpen: "Ouvert", tagEvent: "Événement",
+                urg1Title: "5 Mentors Web Recherchés", urg1Desc: "Nous avons besoin de développeurs pour aider à construire des sites gratuits ce mois-ci.",
+                urg2Title: "Placements Internationaux T3", urg2Desc: "Les candidatures sont ouvertes pour les étudiants cherchant des stages à l'étranger.",
+                urg3Title: "Campagne de Restauration Côtière", urg3Desc: "Recherche de 20 bénévoles pour notre plantation de mangroves ce week-end.",
+                formTitle: "Portail Sécurisé", formDesc: "Que vous demandiez de l'aide ou en offriez, ce formulaire va directement à notre équipe.",
+                formGuarantee: "La Garantie de 48 Heures", formGuaranteeDesc: "Nous nous engageons à répondre à toutes les demandes sérieuses dans les 48 heures.",
+                labelName: "Nom Légal Complet", placeName: "ex. Jean Dupont",
+                labelEmail: "Adresse E-mail", placeEmail: "jean@exemple.com",
+                labelPhone: "Numéro de Téléphone (Optionnel)", placePhone: "+248 ...",
+                labelPath: "Intérêt Principal", optSelect: "-- Sélectionnez une option --", optApp: "Recherche de Placement", optVol: "Bénévolat", optPart: "Partenariat/Don d'Entreprise", optGen: "Demande Générale",
+                labelMsg: "Message / Demande Spécifique", placeMsg: "Veuillez fournir des détails...",
+                btnSubmit: "Soumettre la Candidature",
+                formSuccess: "Candidature reçue en toute sécurité. Nous vous contacterons sous peu.", formError: "Erreur de transmission. Veuillez réessayer.",
+                faqTitle: "Questions Fréquemment Posées", faqDesc: "Des réponses claires aux questions courantes.",
+                faq1Q: "Est-ce payant de postuler pour un placement ?", faq1A: "Absolument pas. L'accessibilité radicale est l'une de nos valeurs fondamentales.",
+                faq2Q: "Combien de temps dois-je consacrer au bénévolat ?", faq2A: "Nous sommes très flexibles. Vous pouvez faire du bénévolat pour un seul événement ou vous engager à long terme.",
+                faq3Q: "Mon entreprise peut-elle parrainer une initiative ?", faq3A: "Oui. Nous travaillons en étroite collaboration avec les entreprises. Vous pouvez proposer des stages dédiés.",
+                footerSlogan: "\"Pour les Jeunes. Pour les Îles. Pour Demain.\"",
+                footerTNG: "La Fondation Tyler Nicholas est fière d'être membre de <br><a href='https://tylernicholasgroup.com/' target='_blank' class='text-brand-dark hover:text-eco-green transition-colors'>The Tyler Nicholas Group</a>",
+                footerDir: "Annuaire", footerAffil: "Partenaires du Réseau", footerContact: "Nous Contacter",
+                footLinkOffice: "Bureau de Tyler Nicholas", footLinkFood: "FoodShare Seychelles", footLinkTNG: "Tyler Nicholas Group", footLinkPersonal: "Profil Tyler Nicholas",
+                footerRights: "Copyright 2026 &copy; Fondation Tyler Nicholas. Tous droits réservés."
+            },
+            crs: {
+                banner: "Donn lafors lazenes e protez lanvironnman Repiblik Sesel",
+                navHome: "Akey", navPrograms: "Progranm", navMore: "Plis", navAboutUs: "Apropo Nou", navInvolved: "Partisipe", navLegal: "Legal", navPartners: "Nou Partener", navTeam: "Lekip", btnDonate: "Fer en Donasyon",
+                searchTitle: "Rod dan Lalis", searchHint1: "Pese", searchHint2: "pour rode.", searchPlaceholder: "Rod bann progranm ek nouvel...",
+                accRead: "Lir",
+                discordTitle: "Zwenn Kominote", discordDesc: "Koz avek nou bann volonter e ganny bann nouvel an direk lo nou bann proze.", discordBtn: "Zwenn Servir Discord",
+                heroSub: "Pran Aksyon", heroTitle: "Pa zis obzerv lavenir. Ed nou batir li.", heroDesc: "Ki ou en etidyan pe rod loportinite, en sitwayen ki oule ede, oubyen en biznes ki pare pour siporte—nou bezwen ou.",
+                path1Title: "Rod Loportinite", path1Desc: "Aplik pour staz travay, loportinite aletranze, oubyen sipor teknolozi.",
+                path2Title: "Donn Letan", path2Desc: "Zwenn nou group volonter pour netway lans, ranmas manze, ek ed bann dimoun aze.",
+                path3Title: "Donn Sipor", path3Desc: "Sponsor bann proze, ofer plas pour staz dan ou biznes, oubyen donn led finansyer.",
+                pathBtn: "Swazir sa semen &rarr;",
+                urgencyTitle: "Bann Bezwen Iryan", tagUrgent: "Iryan", tagOpen: "Ouver", tagEvent: "Levennman",
+                urg1Title: "5 Mentor Teknolozi Iryan", urg1Desc: "Nou bezwen dimoun pour ed batir sitweb gratis sa mwan.",
+                urg2Title: "Loportinite Aletranze", urg2Desc: "Aplikasyon in ouver pour etidyan ki pe rod staz an deor Sesel.",
+                urg3Title: "Netwayaz Lans", urg3Desc: "Nou pe rod 20 volonter pour nou plantasyon mangliye sa wikenn.",
+                formTitle: "Portay Sekirize", formDesc: "Ki ou pe demann led oubyen ofer led, sa formiler i al direk kot nou bann lekzekitif.",
+                formGuarantee: "Garanti 48-Er", formGuaranteeDesc: "Nou lekip i revwar tou formiler formelman e pou reponn tou demann serye dan lespas 48 er-d-tan.",
+                labelName: "Non Legal An Antye", placeName: "egzanp. Zan Pye",
+                labelEmail: "Ladres Email", placeEmail: "zan@egzanp.com",
+                labelPhone: "Nimero Telefon (Opsyonnel)", placePhone: "+248 ...",
+                labelPath: "Entere Prensipal", optSelect: "-- Swazir en opsyon --", optApp: "Pe rod loportinite staz", optVol: "Oule vin volonter", optPart: "Biznes ki oule donn sipor", optGen: "Lezot Kestyon",
+                labelMsg: "Mesaz / Detay", placeMsg: "Donn detay lo sa ki ou pe rode oubyen koman ou oule ede...",
+                btnSubmit: "Anvoy Aplikasyon",
+                formSuccess: "Nou'n ganny ou aplikasyon an sekirite. Nou pou kontakt ou byento.", formError: "I annan en lerer. Silvouple re-eseye.",
+                faqTitle: "Kestyon Ki Dimoun Demann Souvan", faqDesc: "Bann larepons kler lo koman pour travay avek Fondasyon.",
+                faq1Q: "Eski i kout larzan pour aplik pour en staz?", faq1A: "Non. Tou nou servis ek ledikasyon i 100% gratis.",
+                faq2Q: "Konbyen letan mon bezwen donnen pour volonter?", faq2A: "Nou fleksib. Ou kapab ed zis pour en wikenn, oubyen reste pour plizyer mwan. Dir nou kan ou disponib dan sa formiler anler.",
+                faq3Q: "Eski mon biznes kapab sponsor en proze?", faq3A: "Wi. Nou travay avek biznes lokal ek enternasyonal. Ou kapab ed avek resours, oubyen donn plas staz dan ou biznes pour lazenes.",
+                footerSlogan: "\"Pour Lazenes. Pour Bann Zil. Pour Demen.\"",
+                footerTNG: "Fondasyon Tyler Nicholas i fyer pour fer par <br><a href='https://tylernicholasgroup.com/' target='_blank' class='text-brand-dark hover:text-eco-green transition-colors'>The Tyler Nicholas Group</a>",
+                footerDir: "Lalis", footerAffil: "Nou Bann Partener", footerContact: "Kontak Nou",
+                footLinkOffice: "Lobi Tyler Nicholas", footLinkFood: "FoodShare Seychelles", footLinkTNG: "Tyler Nicholas Group", footLinkPersonal: "Profil Tyler Nicholas",
+                footerRights: "Copyright 2026 &copy; Fondasyon Tyler Nicholas. Tou drwa rezerve."
+            }
+        };
+
+        let currentLangCode = 'en';
+
+        function changeLang(lang) {
+            currentLangCode = lang;
+            document.getElementById('current-lang').innerText = lang.toUpperCase();
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) el.innerHTML = translations[lang][key];
+            });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (translations[lang] && translations[lang][key]) el.placeholder = translations[lang][key];
+            });
+            
+            // Translate Select Options manually due to how select works
+            document.getElementById('interest-area').options[0].text = translations[lang].optSelect;
+            document.getElementById('interest-area').options[1].text = translations[lang].optApp;
+            document.getElementById('interest-area').options[2].text = translations[lang].optVol;
+            document.getElementById('interest-area').options[3].text = translations[lang].optPart;
+            document.getElementById('interest-area').options[4].text = translations[lang].optGen;
+        }
+
+        // --- UI UTILITIES ---
+        function toggleSearch() {
+            const overlay = document.getElementById('search-overlay');
+            overlay.classList.toggle('hidden'); overlay.classList.toggle('active');
+            if(overlay.classList.contains('active')) document.getElementById('search-input').focus();
+        }
+
+        function executeSearch(e) {
+            if (e.key === 'Enter') {
+                const query = document.getElementById('search-input').value.trim();
+                if (query) window.location.href = `/search/?q=${encodeURIComponent(query)}`;
+            }
+        }
+
+        const mobileMenu = document.getElementById('mobile-menu-overlay');
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => mobileMenu.classList.toggle('translate-x-full'));
+        document.getElementById('mobile-menu-close').addEventListener('click', () => mobileMenu.classList.toggle('translate-x-full'));
+
+        window.addEventListener('load', () => {
+            if (!localStorage.getItem('discordPopupSeen')) {
+                setTimeout(() => {
+                    const popup = document.getElementById('discord-popup');
+                    popup.classList.remove('hide'); popup.classList.add('show');
+                }, 3000); 
+            }
+        });
+        function closeDiscordPopup() {
+            const popup = document.getElementById('discord-popup');
+            popup.classList.remove('show'); popup.classList.add('hide');
+            localStorage.setItem('discordPopupSeen', 'true');
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            const icon = type === 'success' ? '<i class="fa-solid fa-circle-check text-[#10B981] text-xl"></i>' : '<i class="fa-solid fa-circle-exclamation text-[#EF4444] text-xl"></i>';
+            toast.innerHTML = `${icon} <span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 400); }, 4000);
+        }
+
+        let currentTextLevel = 1; let isHighContrast = false;
+        function adjustTextSize(step) {
+            const newLevel = currentTextLevel + step;
+            if (newLevel >= 1 && newLevel <= 3) {
+                document.querySelectorAll('.read-area').forEach(area => {
+                    area.classList.remove(`text-lvl-${currentTextLevel}`);
+                    area.classList.add(`text-lvl-${newLevel}`);
+                });
+                currentTextLevel = newLevel;
+            }
+        }
+        function toggleHighContrast() {
+            isHighContrast = !isHighContrast;
+            document.querySelectorAll('.read-area').forEach(area => {
+                if(isHighContrast) area.classList.add('high-contrast');
+                else area.classList.remove('high-contrast');
+            });
+        }
+
+        // --- SPECIFIC PAGE LOGIC ---
+        
+        // Select Path and scroll to form
+        function selectPath(value) {
+            document.getElementById('interest-area').value = value;
+            document.getElementById('intake-section').scrollIntoView({ behavior: 'smooth' });
+            
+            // Subtle highlight effect on the dropdown
+            const select = document.getElementById('interest-area');
+            select.classList.add('ring-2', 'ring-eco-green');
+            setTimeout(() => select.classList.remove('ring-2', 'ring-eco-green'), 1500);
+        }
+
+        // --- SUPABASE INTAKE LOGIC ---
+        const SUPABASE_URL = 'https://eeqgfchvchpdulfybsjg.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVlcWdmY2h2Y2hwZHVsZnlic2pnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3MDEyMzYsImV4cCI6MjA5MDI3NzIzNn0.2Psw_X2TB1r8iLb46WWWANhVuDvoDPnUMjaWykvqd1s';
+        
+        document.addEventListener("DOMContentLoaded", () => {
+            const checkSupabase = setInterval(() => {
+                if (window.supabase) {
+                    clearInterval(checkSupabase); 
+                    window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                }
+            }, 100);
+        });
+
+        async function submitIntakeForm(e) {
+            e.preventDefault();
+            if (!window.supabaseClient) {
+                showToast('System initializing. Please wait.', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('btn-submit');
+            const dict = translations[currentLangCode];
+            
+            btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i>`;
+            btn.disabled = true;
+
+            const payload = {
+                full_name: document.getElementById('intake-name').value.trim(),
+                email: document.getElementById('intake-email').value.trim(),
+                phone: document.getElementById('intake-phone').value.trim() || null,
+                interest_area: document.getElementById('interest-area').value,
+                message: document.getElementById('intake-msg').value.trim()
+            };
+
+            try {
+                const { error } = await window.supabaseClient.from('tnf_volunteers').insert(payload);
+                
+                if (error) throw error;
+                
+                showToast(dict.formSuccess || translations.en.formSuccess, 'success');
+                e.target.reset(); // Clear form
+            } catch (err) {
+                console.error(err);
+                showToast(dict.formError || translations.en.formError, 'error');
+            } finally {
+                btn.innerHTML = `<span data-i18n="btnSubmit">${dict.btnSubmit || translations.en.btnSubmit}</span> <i class="fa-solid fa-paper-plane ml-2"></i>`;
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
