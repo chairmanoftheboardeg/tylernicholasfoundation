@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Programs | Tyler Nicholas Foundation</title>
+    
+    <link rel="icon" href="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" type="image/jpeg" />
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], heading: ['Poppins', 'sans-serif'] },
+                    colors: { brand: { dark: '#111827', muted: '#6B7280' }, eco: { green: '#059669', light: '#D1FAE5', dark: '#065F46', sand: '#FDFBF7' } },
+                    boxShadow: { 'soft': '0 10px 40px -10px rgba(5, 150, 105, 0.15)', 'card': '0 4px 20px rgba(0,0,0,0.04)' }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #FFFFFF; -webkit-font-smoothing: antialiased; }
+        .fade-up { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; transform: translateY(20px); }
+        .delay-100 { animation-delay: 100ms; } .delay-200 { animation-delay: 200ms; } .delay-300 { animation-delay: 300ms; }
+        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+
+        .nav-link { position: relative; cursor: pointer; }
+        .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -4px; left: 0; background-color: #059669; transition: width 0.3s ease; }
+        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
+        .nav-link.active { color: #059669; }
+
+        /* Floating Accessibility Panel */
+        #accessibility-panel { position: fixed; left: 0; top: 50%; transform: translateY(-50%); z-index: 80; transition: transform 0.3s ease; }
+        #accessibility-panel.closed { transform: translate(-100%, -50%); }
+        .acc-btn { @apply w-10 h-10 flex items-center justify-center bg-white border-b border-gray-100 text-brand-dark hover:bg-eco-light hover:text-eco-green transition-colors cursor-pointer; }
+        
+        .read-area { transition: all 0.3s ease; }
+        .read-area.high-contrast { background-color: #111827 !important; color: #F9FAFB !important; border-color: #374151 !important; }
+        .read-area.high-contrast h2, .read-area.high-contrast h3, .read-area.high-contrast h4, .read-area.high-contrast p, .read-area.high-contrast span { color: #F9FAFB !important; }
+        .read-area.text-lvl-1 p { font-size: 1rem; line-height: 1.75; }
+        .read-area.text-lvl-2 p { font-size: 1.125rem; line-height: 1.8; }
+        .read-area.text-lvl-3 p { font-size: 1.25rem; line-height: 1.9; }
+
+        #search-overlay { transition: opacity 0.3s ease; }
+        #search-overlay.hidden { opacity: 0; pointer-events: none; }
+        #search-overlay.active { opacity: 1; pointer-events: auto; }
+        
+        #discord-popup { transition: opacity 0.4s ease, transform 0.4s ease; }
+        #discord-popup.show { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+        #discord-popup.hide { opacity: 0; transform: translateY(20px) scale(0.95); pointer-events: none; }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen text-brand-dark">
+
+    <div class="bg-eco-green text-white text-[11px] md:text-xs font-medium py-2.5 px-4 text-center tracking-wide" data-i18n="banner">
+        Empowering the youth and protecting the environment of the Republic of Seychelles
+    </div>
+
+    <nav class="bg-white py-4 px-6 md:px-12 sticky top-0 z-50 transition-shadow duration-300 shadow-sm" id="navbar">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            
+            <a href="/" class="flex items-center gap-3 group">
+                <img src="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" alt="TNF Logo" class="w-10 h-10 rounded-full object-cover shadow-sm group-hover:scale-105 transition-transform duration-300">
+                <h1 class="font-heading font-bold text-xl tracking-tight text-brand-dark hidden sm:block">Tyler Nicholas <span class="text-eco-green">Foundation</span></h1>
+            </a>
+
+            <button id="mobile-menu-btn" class="lg:hidden text-brand-dark text-2xl focus:outline-none"><i class="fa-solid fa-bars"></i></button>
+
+            <div class="hidden lg:flex space-x-6 lg:space-x-8 text-sm font-heading font-medium text-brand-muted items-center">
+                <a href="/" class="nav-link hover:text-brand-dark transition-colors" data-i18n="navHome">Home</a>
+                <a href="/programs/" class="nav-link active hover:text-brand-dark transition-colors" data-i18n="navPrograms">Programs</a>
+                
+                <div class="relative group py-2">
+                    <span class="nav-link flex items-center gap-1 hover:text-brand-dark transition-colors"><span data-i18n="navMore">More</span> <i class="fa-solid fa-chevron-down text-[10px] mt-0.5"></i></span>
+                    <div class="absolute top-full left-0 w-48 bg-white rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 border border-gray-100 flex flex-col py-2 transform translate-y-2 group-hover:translate-y-0">
+                        <a href="/about/" class="px-5 py-2.5 text-sm font-medium text-brand-dark hover:bg-eco-light hover:text-eco-green transition-colors" data-i18n="navAboutUs">About Us</a>
+                        <a href="/get-involved/" class="px-5 py-2.5 text-sm font-medium text-brand-dark hover:bg-eco-light hover:text-eco-green transition-colors" data-i18n="navInvolved">Get Involved</a>
+                        <a href="/legal/" class="px-5 py-2.5 text-sm font-medium text-brand-dark hover:bg-eco-light hover:text-eco-green transition-colors" data-i18n="navLegal">Legal</a>
+                        <a href="/partners/" class="px-5 py-2.5 text-sm font-medium text-brand-dark hover:bg-eco-light hover:text-eco-green transition-colors" data-i18n="navPartners">Our Partners</a>
+                        <a href="/team/" class="px-5 py-2.5 text-sm font-medium text-brand-dark hover:bg-eco-light hover:text-eco-green transition-colors" data-i18n="navTeam">Meet the Team</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hidden lg:flex items-center space-x-6">
+                <button onclick="toggleSearch()" class="text-brand-muted hover:text-eco-green transition-colors text-lg"><i class="fa-solid fa-magnifying-glass"></i></button>
+                
+                <div class="relative group py-2">
+                    <button class="flex items-center text-sm font-heading font-semibold text-brand-dark hover:text-eco-green">
+                        <i class="fa-solid fa-globe mr-1.5 text-brand-muted"></i> <span id="current-lang">EN</span> <i class="fa-solid fa-chevron-down ml-1 text-[10px]"></i>
+                    </button>
+                    <div class="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all border border-gray-100 overflow-hidden transform translate-y-2 group-hover:translate-y-0">
+                        <button onclick="changeLang('en')" class="w-full text-left px-4 py-3 hover:bg-eco-light text-sm font-medium text-eco-dark">English</button>
+                        <button onclick="changeLang('fr')" class="w-full text-left px-4 py-3 hover:bg-eco-light text-sm font-medium text-eco-dark">Français</button>
+                        <button onclick="changeLang('crs')" class="w-full text-left px-4 py-3 hover:bg-eco-light text-sm font-medium text-eco-dark">Seselwa</button>
+                    </div>
+                </div>
+
+                <a href="/get-involved/" class="bg-eco-green hover:bg-eco-dark text-white px-6 py-2.5 rounded-lg font-heading font-medium transition-colors shadow-soft hover:shadow-md transform hover:-translate-y-0.5 inline-block" data-i18n="btnDonate">
+                    Donate
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div id="search-overlay" class="fixed inset-0 bg-white/95 backdrop-blur-md z-[200] hidden flex flex-col items-center justify-center p-6">
+        <button onclick="toggleSearch()" class="absolute top-8 right-8 text-4xl text-brand-muted hover:text-brand-dark"><i class="fa-solid fa-xmark"></i></button>
+        <div class="w-full max-w-3xl">
+            <h3 class="text-2xl font-heading font-bold text-brand-dark mb-4" data-i18n="searchTitle">Search Foundation Directory</h3>
+            <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-6 top-1/2 transform -translate-y-1/2 text-2xl text-brand-muted"></i>
+                <input type="text" id="search-input" data-i18n-placeholder="searchPlaceholder" onkeydown="executeSearch(event)" placeholder="Search programs, news, and initiatives..." class="w-full bg-gray-100 border-2 border-transparent focus:border-eco-green rounded-2xl py-6 pl-16 pr-6 text-xl md:text-2xl font-heading outline-none transition-all shadow-inner">
+            </div>
+        </div>
+    </div>
+
+    <div id="discord-popup" class="fixed bottom-6 left-6 z-[90] w-[350px] bg-white rounded-2xl shadow-2xl border border-gray-100 p-6 hide">
+        <button onclick="closeDiscordPopup()" class="absolute top-4 right-4 text-gray-400 hover:text-brand-dark"><i class="fa-solid fa-xmark"></i></button>
+        <div class="w-12 h-12 bg-[#5865F2]/10 text-[#5865F2] rounded-xl flex items-center justify-center text-2xl mb-4">
+            <i class="fa-brands fa-discord"></i>
+        </div>
+        <h4 class="font-heading font-bold text-lg text-brand-dark mb-2" data-i18n="discordTitle">Join the Community</h4>
+        <p class="text-sm text-brand-muted mb-4 leading-relaxed" data-i18n="discordDesc">Engage with our volunteers, join discussions on sustainability, and get live updates on our projects.</p>
+        <a href="https://discord.gg/DMaJmWChP4" target="_blank" onclick="closeDiscordPopup()" class="block w-full bg-[#5865F2] hover:bg-[#4752C4] text-white text-center font-heading font-bold py-3 rounded-lg transition-colors text-sm" data-i18n="discordBtn">
+            Join Discord Server
+        </a>
+    </div>
+
+    <div id="accessibility-panel" class="shadow-lg rounded-r-xl overflow-hidden bg-white border border-l-0 border-gray-200">
+        <div class="bg-eco-dark text-white text-[9px] font-bold uppercase tracking-widest py-1.5 px-2 text-center w-12" data-i18n="accRead">Read</div>
+        <div class="acc-btn" onclick="adjustTextSize(1)" title="Increase Text Size"><i class="fa-solid fa-a text-lg"></i><i class="fa-solid fa-plus text-[10px] ml-0.5"></i></div>
+        <div class="acc-btn" onclick="adjustTextSize(-1)" title="Decrease Text Size"><i class="fa-solid fa-a text-sm"></i><i class="fa-solid fa-minus text-[10px] ml-0.5"></i></div>
+        <div class="acc-btn" onclick="toggleHighContrast()" title="Toggle High Contrast"><i class="fa-solid fa-circle-half-stroke text-lg"></i></div>
+    </div>
+
+    <div id="mobile-menu-overlay" class="fixed inset-0 bg-white z-[100] transform translate-x-full transition-transform duration-300 flex flex-col lg:hidden overflow-y-auto">
+        <div class="p-6 flex justify-between items-center border-b border-gray-100">
+            <div class="flex items-center gap-3">
+                <img src="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" alt="TNF Logo" class="w-8 h-8 rounded-full">
+                <h1 class="font-heading font-bold text-xl text-brand-dark">TNF</h1>
+            </div>
+            <button id="mobile-menu-close" class="text-brand-dark text-3xl"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="p-8 flex flex-col space-y-6 text-brand-dark flex-grow font-heading font-semibold text-2xl">
+            <a href="/" class="hover:text-eco-green transition-colors" data-i18n="navHome">Home</a>
+            <a href="/programs/" class="text-eco-green transition-colors" data-i18n="navPrograms">Programs</a>
+            <a href="/about/" class="hover:text-eco-green transition-colors" data-i18n="navAboutUs">About Us</a>
+            <a href="/get-involved/" class="hover:text-eco-green transition-colors" data-i18n="navInvolved">Get Involved</a>
+            <a href="/legal/" class="hover:text-eco-green transition-colors" data-i18n="navLegal">Legal</a>
+            <a href="/partners/" class="hover:text-eco-green transition-colors" data-i18n="navPartners">Our Partners</a>
+            <a href="/team/" class="hover:text-eco-green transition-colors" data-i18n="navTeam">Meet the Team</a>
+            <a href="/get-involved/" class="mt-4 inline-block bg-eco-green text-white text-center py-4 rounded-xl font-bold text-lg shadow-soft" data-i18n="btnDonate">Donate</a>
+        </div>
+    </div>
+
+    <main class="flex-grow">
+        
+        <section class="pt-24 pb-20 bg-eco-sand text-center px-6 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-eco-light via-eco-green to-eco-light"></div>
+            <div class="relative z-10 fade-up">
+                <span class="text-eco-green font-heading font-bold uppercase tracking-widest text-xs mb-3 block" data-i18n="progHeroSub">Initiatives</span>
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-heading font-black text-brand-dark mb-6 max-w-4xl mx-auto leading-tight tracking-tight" data-i18n="progHeroTitle">
+                    Action-driven programs for a better Seychelles.
+                </h1>
+                <p class="text-brand-muted text-lg max-w-2xl mx-auto" data-i18n="progHeroDesc">
+                    We focus our efforts on the pillars that matter most: empowering our youth, protecting our environment, and feeding our communities.
+                </p>
+            </div>
+        </section>
+
+        <section class="py-20 bg-white">
+            <div class="max-w-7xl mx-auto px-6 md:px-12">
+                
+                <div class="flex flex-col lg:flex-row items-center gap-12 mb-24 fade-up delay-100 read-area text-lvl-1">
+                    <div class="w-full lg:w-1/2">
+                        <div class="bg-eco-light w-full h-72 rounded-3xl flex items-center justify-center text-eco-green text-6xl shadow-sm border border-eco-green/20">
+                            <i class="fa-solid fa-users-rays"></i>
+                        </div>
+                    </div>
+                    <div class="w-full lg:w-1/2">
+                        <h2 class="text-3xl font-heading font-bold text-brand-dark mb-4" data-i18n="progYouthTitle">Youth Leadership & Empowerment</h2>
+                        <p class="text-brand-muted text-lg leading-relaxed mb-6" data-i18n="progYouthDesc">
+                            Equipping the next generation of Seychellois leaders. We provide comprehensive mentorship programs, public speaking training, and leadership workshops. Our goal is to give young people the tools, confidence, and platforms they need to actively participate in shaping the future of our islands.
+                        </p>
+                        <ul class="space-y-3 text-brand-dark font-medium mb-8">
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-eco-green"></i> <span data-i18n="progYouthPoint1">1-on-1 Mentorship</span></li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-eco-green"></i> <span data-i18n="progYouthPoint2">Public Speaking & Advocacy Workshops</span></li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-eco-green"></i> <span data-i18n="progYouthPoint3">Career Placement Assistance</span></li>
+                        </ul>
+                        <a href="/get-involved/" class="inline-flex items-center text-eco-green font-heading font-bold hover:text-eco-dark transition-colors group">
+                            <span data-i18n="progJoin">Join the Initiative</span> <i class="fa-solid fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="flex flex-col lg:flex-row-reverse items-center gap-12 mb-24 fade-up delay-200 read-area text-lvl-1">
+                    <div class="w-full lg:w-1/2">
+                        <div class="bg-[#F0FDF4] w-full h-72 rounded-3xl flex items-center justify-center text-eco-green text-6xl shadow-sm border border-eco-green/20">
+                            <i class="fa-solid fa-leaf"></i>
+                        </div>
+                    </div>
+                    <div class="w-full lg:w-1/2">
+                        <h2 class="text-3xl font-heading font-bold text-brand-dark mb-4" data-i18n="progEnvTitle">Environmental Stewardship & Sustainability</h2>
+                        <p class="text-brand-muted text-lg leading-relaxed mb-6" data-i18n="progEnvDesc">
+                            Protecting the unique biodiversity of Seychelles requires action, not just policy. We mobilize youth-led teams for coastal clean-ups, organize mangrove restorations, and run climate awareness campaigns to ensure our island ecosystems thrive for generations.
+                        </p>
+                        <ul class="space-y-3 text-brand-dark font-medium mb-8">
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-eco-green"></i> <span data-i18n="progEnvPoint1">Youth-Led Coastal Clean-ups</span></li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-eco-green"></i> <span data-i18n="progEnvPoint2">Mangrove & Reef Restoration</span></li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-eco-green"></i> <span data-i18n="progEnvPoint3">Climate Literacy Campaigns</span></li>
+                        </ul>
+                        <a href="/get-involved/" class="inline-flex items-center text-eco-green font-heading font-bold hover:text-eco-dark transition-colors group">
+                            <span data-i18n="progJoin">Join the Initiative</span> <i class="fa-solid fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="flex flex-col lg:flex-row items-center gap-12 mb-24 fade-up delay-300 read-area text-lvl-1">
+                    <div class="w-full lg:w-1/2">
+                        <div class="bg-[#EFF6FF] w-full h-72 rounded-3xl flex items-center justify-center text-[#3B82F6] text-6xl shadow-sm border border-[#3B82F6]/20">
+                            <i class="fa-solid fa-hands-holding-circle"></i>
+                        </div>
+                    </div>
+                    <div class="w-full lg:w-1/2">
+                        <h2 class="text-3xl font-heading font-bold text-brand-dark mb-4" data-i18n="progComTitle">Community Action & Development</h2>
+                        <p class="text-brand-muted text-lg leading-relaxed mb-6" data-i18n="progComDesc">
+                            We believe in the power of local solutions for local problems. This pillar focuses on mobilizing young people to solve immediate challenges within their districts, fostering a culture of volunteerism, and providing direct support to vulnerable populations.
+                        </p>
+                        <ul class="space-y-3 text-brand-dark font-medium mb-8">
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-[#3B82F6]"></i> <span data-i18n="progComPoint1">District Volunteer Mobilization</span></li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-[#3B82F6]"></i> <span data-i18n="progComPoint2">Micro-Grants & Support Programs</span></li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-[#3B82F6]"></i> <span data-i18n="progComPoint3">Digital Literacy Training</span></li>
+                        </ul>
+                        <a href="/get-involved/" class="inline-flex items-center text-[#3B82F6] font-heading font-bold hover:text-blue-800 transition-colors group">
+                            <span data-i18n="progJoin">Join the Initiative</span> <i class="fa-solid fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="bg-[#FFFBEB] rounded-3xl p-10 md:p-16 border border-[#FCD34D] fade-up delay-300 read-area text-lvl-1">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <div>
+                            <span class="inline-block bg-[#FCD34D] text-[#92400E] text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-4" data-i18n="progFoodBadge">Foundation Partner</span>
+                            <h2 class="text-3xl font-heading font-bold text-brand-dark mb-4">FoodShare Seychelles</h2>
+                            <p class="text-brand-muted text-lg leading-relaxed mb-6" data-i18n="progFoodDesc">
+                                As a vital initiative partnered with the Tyler Nicholas Foundation, FoodShare Seychelles tackles food security head-on. We connect essential resources to communities in need across the islands, ensuring efficient distribution and reducing food waste.
+                            </p>
+                            <a href="https://foodshare-seychelle.online" target="_blank" class="inline-flex items-center bg-[#F59E0B] hover:bg-[#D97706] text-white font-heading font-semibold py-3 px-6 rounded-xl transition-colors shadow-sm">
+                                <span data-i18n="progFoodBtn">Visit FoodShare</span> <i class="fa-solid fa-arrow-up-right-from-square ml-2 text-sm"></i>
+                            </a>
+                        </div>
+                        <div class="hidden lg:flex justify-center">
+                            <i class="fa-solid fa-bowl-food text-[#F59E0B] text-9xl opacity-80"></i>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 pt-20 pb-10 px-6 md:px-12 mt-auto">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
+            
+            <div class="md:col-span-4">
+                <div class="flex items-center gap-3 mb-4">
+                    <img src="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" alt="TNF Logo" class="w-10 h-10 rounded-full object-cover">
+                    <h3 class="font-heading font-bold text-xl tracking-tight text-brand-dark">Tyler Nicholas <span class="text-eco-green">Foundation</span></h3>
+                </div>
+                <p class="text-sm font-heading font-bold text-brand-dark italic mb-6" data-i18n="footerSlogan">"For the Youth. For the Islands. For Tomorrow."</p>
+                <div class="inline-block bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 mb-8">
+                    <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest leading-tight" data-i18n="footerTNG">
+                        The Tyler Nicholas Foundation is a proud member of <br><a href="https://tylernicholasgroup.com/" target="_blank" class="text-brand-dark hover:text-eco-green transition-colors">The Tyler Nicholas Group</a>
+                    </p>
+                </div>
+            </div>
+
+            <div class="md:col-span-2">
+                <h4 class="text-brand-dark font-heading font-bold text-base mb-6" data-i18n="footerDir">Directory</h4>
+                <ul class="space-y-4 text-sm font-medium text-brand-muted">
+                    <li><a href="/" class="hover:text-eco-green transition-colors" data-i18n="navHome">Home</a></li>
+                    <li><a href="/about/" class="hover:text-eco-green transition-colors" data-i18n="navAboutUs">About Us</a></li>
+                    <li><a href="/programs/" class="text-eco-green transition-colors" data-i18n="navPrograms">Programs</a></li>
+                    <li><a href="/get-involved/" class="hover:text-eco-green transition-colors" data-i18n="navInvolved">Get Involved</a></li>
+                </ul>
+            </div>
+
+            <div class="md:col-span-3">
+                <h4 class="text-brand-dark font-heading font-bold text-base mb-6" data-i18n="footerAffil">Network Partners</h4>
+                <ul class="space-y-4 text-sm font-medium text-brand-muted">
+                    <li><a href="https://nicholasoffice.online" target="_blank" class="flex items-center hover:text-eco-green transition-colors"><span data-i18n="footLinkOffice">Office of Tyler Nicholas</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-2"></i></a></li>
+                    <li><a href="https://foodshare-seychelle.online" target="_blank" class="flex items-center hover:text-eco-green transition-colors"><span data-i18n="footLinkFood">FoodShare Seychelles</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-2"></i></a></li>
+                    <li><a href="https://tylernicholasgroup.com" target="_blank" class="flex items-center hover:text-eco-green transition-colors"><span data-i18n="footLinkTNG">Tyler Nicholas Group</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-2"></i></a></li>
+                    <li><a href="https://tyler.tylernicholasgroup.com" target="_blank" class="flex items-center hover:text-eco-green transition-colors"><span data-i18n="footLinkPersonal">Tyler Nicholas Profile</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-2"></i></a></li>
+                </ul>
+            </div>
+
+            <div class="md:col-span-3">
+                <h4 class="text-brand-dark font-heading font-bold text-base mb-6" data-i18n="footerContact">Contact</h4>
+                <ul class="space-y-4 text-sm font-medium text-brand-muted mb-6">
+                    <li><a href="mailto:nicholasfoundation.sc@gmail.com" class="hover:text-eco-green transition-colors break-all flex items-center"><i class="fa-solid fa-envelope w-5"></i> nicholasfoundation.sc@gmail.com</a></li>
+                </ul>
+                <div class="flex flex-wrap gap-3">
+                    <a href="https://www.linkedin.com/company/tylernicholas-foundation" target="_blank" class="w-10 h-10 rounded-full bg-gray-100 text-brand-muted flex items-center justify-center hover:bg-eco-green hover:text-white transition-all shadow-sm"><i class="fa-brands fa-linkedin-in"></i></a>
+                    <a href="https://x.com/tnfseychelles" target="_blank" class="w-10 h-10 rounded-full bg-gray-100 text-brand-muted flex items-center justify-center hover:bg-eco-green hover:text-white transition-all shadow-sm"><i class="fa-brands fa-x-twitter"></i></a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="max-w-7xl mx-auto border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-medium text-brand-muted relative">
+            <p data-i18n="footerRights">Copyright 2026 &copy; Tyler Nicholas Foundation. All Rights Reserved.</p>
+            <div class="flex gap-6 items-center">
+                <a href="/legal/" class="hover:text-eco-green transition-colors" data-i18n="navLegal">Legal</a>
+                <a href="/admin/" class="text-gray-300 hover:text-eco-green transition-colors" title="Secure Staff Portal"><i class="fa-solid fa-lock"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const translations = {
+            en: {
+                banner: "Empowering the youth and protecting the environment of the Republic of Seychelles",
+                navHome: "Home", navPrograms: "Programs", navMore: "More", navAboutUs: "About Us", navInvolved: "Get Involved", navLegal: "Legal", navPartners: "Our Partners", navTeam: "Meet the Team", btnDonate: "Donate",
+                searchTitle: "Search Foundation Directory", searchHint1: "Press", searchHint2: "to search.", searchPlaceholder: "Search programs, news, and initiatives...",
+                accRead: "Read",
+                discordTitle: "Join the Community", discordDesc: "Engage with our volunteers, join discussions on sustainability, and get live updates on our projects.", discordBtn: "Join Discord Server",
+                
+                // Programs Page Specific
+                progHeroSub: "Initiatives", progHeroTitle: "Action-driven programs for a better Seychelles.", progHeroDesc: "We focus our efforts on the pillars that matter most: empowering our youth, protecting our environment, and feeding our communities.",
+                progYouthTitle: "Youth Leadership & Empowerment", progYouthDesc: "Equipping the next generation of Seychellois leaders. We provide comprehensive mentorship programs, public speaking training, and leadership workshops. Our goal is to give young people the tools, confidence, and platforms they need to actively participate in shaping the future of our islands.",
+                progYouthPoint1: "1-on-1 Mentorship", progYouthPoint2: "Public Speaking & Advocacy Workshops", progYouthPoint3: "Career Placement Assistance",
+                progEnvTitle: "Environmental Stewardship & Sustainability", progEnvDesc: "Protecting the unique biodiversity of Seychelles requires action, not just policy. We mobilize youth-led teams for coastal clean-ups, organize mangrove restorations, and run climate awareness campaigns to ensure our island ecosystems thrive for generations.",
+                progEnvPoint1: "Youth-Led Coastal Clean-ups", progEnvPoint2: "Mangrove & Reef Restoration", progEnvPoint3: "Climate Literacy Campaigns",
+                progComTitle: "Community Action & Development", progComDesc: "We believe in the power of local solutions for local problems. This pillar focuses on mobilizing young people to solve immediate challenges within their districts, fostering a culture of volunteerism, and providing direct support to vulnerable populations.",
+                progComPoint1: "District Volunteer Mobilization", progComPoint2: "Micro-Grants & Support Programs", progComPoint3: "Digital Literacy Training",
+                progFoodBadge: "Foundation Partner", progFoodDesc: "As a vital initiative partnered with the Tyler Nicholas Foundation, FoodShare Seychelles tackles food security head-on. We connect essential resources to communities in need across the islands, ensuring efficient distribution and reducing food waste.", progFoodBtn: "Visit FoodShare",
+                progJoin: "Join the Initiative",
+
+                footerSlogan: "\"For the Youth. For the Islands. For Tomorrow.\"",
+                footerTNG: "The Tyler Nicholas Foundation is a proud member of <br><a href='https://tylernicholasgroup.com/' target='_blank' class='text-brand-dark hover:text-eco-green transition-colors'>The Tyler Nicholas Group</a>",
+                footerDir: "Directory", footerAffil: "Network Partners", footerContact: "Contact Us",
+                footLinkOffice: "Office of Tyler Nicholas", footLinkFood: "FoodShare Seychelles", footLinkTNG: "Tyler Nicholas Group", footLinkPersonal: "Tyler Nicholas Profile",
+                footerRights: "Copyright 2026 &copy; Tyler Nicholas Foundation. All Rights Reserved."
+            },
+            fr: {
+                banner: "Autonomiser la jeunesse et protéger l'environnement de la République des Seychelles",
+                navHome: "Accueil", navPrograms: "Programmes", navMore: "Plus", navAboutUs: "À Propos", navInvolved: "S'impliquer", navLegal: "Légal", navPartners: "Nos Partenaires", navTeam: "L'Équipe", btnDonate: "Faire un Don",
+                searchTitle: "Rechercher dans l'Annuaire", searchHint1: "Appuyez sur", searchHint2: "pour rechercher.", searchPlaceholder: "Rechercher des programmes, des actualités...",
+                accRead: "Lire",
+                discordTitle: "Rejoignez la Communauté", discordDesc: "Échangez avec nos bénévoles et suivez nos projets en direct.", discordBtn: "Rejoindre le Serveur",
+                
+                progHeroSub: "Initiatives", progHeroTitle: "Des programmes axés sur l'action pour de meilleures Seychelles.", progHeroDesc: "Nous concentrons nos efforts sur les piliers les plus importants : autonomiser notre jeunesse, protéger notre environnement et nourrir nos communautés.",
+                progYouthTitle: "Leadership et Autonomisation des Jeunes", progYouthDesc: "Préparer la prochaine génération de leaders seychellois. Nous proposons des programmes de mentorat, des formations à la prise de parole en public et des ateliers de leadership.",
+                progYouthPoint1: "Mentorat Individuel", progYouthPoint2: "Ateliers de Prise de Parole et Plaidoyer", progYouthPoint3: "Aide au Placement Professionnel",
+                progEnvTitle: "Gérance de l'Environnement et Durabilité", progEnvDesc: "Protéger la biodiversité unique des Seychelles exige de l'action. Nous mobilisons des équipes de jeunes pour le nettoyage des côtes et la restauration des mangroves.",
+                progEnvPoint1: "Nettoyage des Côtes par les Jeunes", progEnvPoint2: "Restauration des Mangroves et des Récifs", progEnvPoint3: "Campagnes de Sensibilisation au Climat",
+                progComTitle: "Action Communautaire et Développement", progComDesc: "Nous croyons au pouvoir des solutions locales. Ce pilier se concentre sur la mobilisation des jeunes pour résoudre les défis immédiats dans leurs districts.",
+                progComPoint1: "Mobilisation des Bénévoles de District", progComPoint2: "Micro-Subventions et Programmes de Soutien", progComPoint3: "Formation à la Littératie Numérique",
+                progFoodBadge: "Partenaire de la Fondation", progFoodDesc: "Initiative vitale en partenariat avec la Fondation, FoodShare Seychelles s'attaque de front à la sécurité alimentaire. Nous connectons les ressources aux communautés dans le besoin.", progFoodBtn: "Visiter FoodShare",
+                progJoin: "Rejoindre l'Initiative",
+
+                footerSlogan: "\"Pour les Jeunes. Pour les Îles. Pour Demain.\"",
+                footerTNG: "La Fondation Tyler Nicholas est fière d'être membre de <br><a href='https://tylernicholasgroup.com/' target='_blank' class='text-brand-dark hover:text-eco-green transition-colors'>The Tyler Nicholas Group</a>",
+                footerDir: "Annuaire", footerAffil: "Partenaires du Réseau", footerContact: "Nous Contacter",
+                footLinkOffice: "Bureau de Tyler Nicholas", footLinkFood: "FoodShare Seychelles", footLinkTNG: "Tyler Nicholas Group", footLinkPersonal: "Profil Tyler Nicholas",
+                footerRights: "Copyright 2026 &copy; Fondation Tyler Nicholas. Tous droits réservés."
+            },
+            crs: {
+                banner: "Donn lafors lazenes e protez lanvironnman Repiblik Sesel",
+                navHome: "Akey", navPrograms: "Progranm", navMore: "Plis", navAboutUs: "Apropo Nou", navInvolved: "Partisipe", navLegal: "Legal", navPartners: "Nou Partener", navTeam: "Lekip", btnDonate: "Fer en Donasyon",
+                searchTitle: "Rod dan Lalis", searchHint1: "Pese", searchHint2: "pour rode.", searchPlaceholder: "Rod bann progranm ek nouvel...",
+                accRead: "Lir",
+                discordTitle: "Zwenn Kominote", discordDesc: "Koz avek nou bann volonter e ganny bann nouvel an direk lo nou bann proze.", discordBtn: "Zwenn Servir Discord",
+                
+                progHeroSub: "Bann Inisyativ", progHeroTitle: "Bann progranm aksyon pour en meyer Sesel.", progHeroDesc: "Nou met nou zefor lo bann pilye pli enportan: donn lafors nou lazenes, protez lanvironnman, e donn manze nou bann kominote.",
+                progYouthTitle: "Lidersip ek Lafors Lazenes", progYouthDesc: "Prepar fitir lidersip Sesel. Nou donn progranm mentorat, formasyon pour koz devan piblik, ek atelye lidersip pour donn bann zenn konfyans.",
+                progYouthPoint1: "Mentorat En-a-En", progYouthPoint2: "Atelye Koze Piblik", progYouthPoint3: "Lasistans pour Ganny Travay",
+                progEnvTitle: "Proteksyon Lanvironnman", progEnvDesc: "Protez lavi sovaz Sesel i demann aksyon. Nou form group zenn pour netway lans, refer mangliye, e fer kanpanny lo sanzman klima.",
+                progEnvPoint1: "Zenn ki Netway Lans", progEnvPoint2: "Refer Mangliye ek Resif", progEnvPoint3: "Kanpanny Ledikasyon Klima",
+                progComTitle: "Aksyon Kominote", progComDesc: "Nou krwar dan solisyon lokal pour problenm lokal. Nou ankouraz zenn pour rezourd problenm dan zot distrik e ankouraz travay volonter.",
+                progComPoint1: "Mobiliz Volonter Distrik", progComPoint2: "Pti Sibvansyon ek Progranm Led", progComPoint3: "Formasyon Teknolozi",
+                progFoodBadge: "Partener Fondasyon", progFoodDesc: "FoodShare Seychelles, en proze enportan avek Fondasyon, i lit kont problenm manze. Nou konekte resours avek kominote ki bezwen atraver bann zil.", progFoodBtn: "Al lo FoodShare",
+                progJoin: "Partisip dan Proze",
+
+                footerSlogan: "\"Pour Lazenes. Pour Bann Zil. Pour Demen.\"",
+                footerTNG: "Fondasyon Tyler Nicholas i fyer pour fer par <br><a href='https://tylernicholasgroup.com/' target='_blank' class='text-brand-dark hover:text-eco-green transition-colors'>The Tyler Nicholas Group</a>",
+                footerDir: "Lalis", footerAffil: "Nou Bann Partener", footerContact: "Kontak Nou",
+                footLinkOffice: "Lobi Tyler Nicholas", footLinkFood: "FoodShare Seychelles", footLinkTNG: "Tyler Nicholas Group", footLinkPersonal: "Profil Tyler Nicholas",
+                footerRights: "Copyright 2026 &copy; Fondasyon Tyler Nicholas. Tou drwa rezerve."
+            }
+        };
+
+        function changeLang(lang) {
+            document.getElementById('current-lang').innerText = lang.toUpperCase();
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) el.innerHTML = translations[lang][key];
+            });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (translations[lang] && translations[lang][key]) el.placeholder = translations[lang][key];
+            });
+        }
+
+        function toggleSearch() {
+            const overlay = document.getElementById('search-overlay');
+            overlay.classList.toggle('hidden'); overlay.classList.toggle('active');
+            if(overlay.classList.contains('active')) document.getElementById('search-input').focus();
+        }
+
+        function executeSearch(e) {
+            if (e.key === 'Enter') {
+                const query = document.getElementById('search-input').value.trim();
+                if (query) window.location.href = `/search/?q=${encodeURIComponent(query)}`;
+            }
+        }
+
+        const mobileMenu = document.getElementById('mobile-menu-overlay');
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => mobileMenu.classList.toggle('translate-x-full'));
+        document.getElementById('mobile-menu-close').addEventListener('click', () => mobileMenu.classList.toggle('translate-x-full'));
+
+        window.addEventListener('load', () => {
+            if (!localStorage.getItem('discordPopupSeen')) {
+                setTimeout(() => {
+                    const popup = document.getElementById('discord-popup');
+                    popup.classList.remove('hide'); popup.classList.add('show');
+                }, 3000); 
+            }
+        });
+        function closeDiscordPopup() {
+            const popup = document.getElementById('discord-popup');
+            popup.classList.remove('show'); popup.classList.add('hide');
+            localStorage.setItem('discordPopupSeen', 'true');
+        }
+
+        let currentTextLevel = 1; let isHighContrast = false;
+        function adjustTextSize(step) {
+            const newLevel = currentTextLevel + step;
+            if (newLevel >= 1 && newLevel <= 3) {
+                document.querySelectorAll('.read-area').forEach(area => {
+                    area.classList.remove(`text-lvl-${currentTextLevel}`);
+                    area.classList.add(`text-lvl-${newLevel}`);
+                });
+                currentTextLevel = newLevel;
+            }
+        }
+        function toggleHighContrast() {
+            isHighContrast = !isHighContrast;
+            document.querySelectorAll('.read-area').forEach(area => {
+                if(isHighContrast) area.classList.add('high-contrast');
+                else area.classList.remove('high-contrast');
+            });
+        }
+    </script>
+</body>
+</html>
