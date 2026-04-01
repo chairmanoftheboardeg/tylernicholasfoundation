@@ -13,38 +13,42 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: { sans: ['Inter', 'sans-serif'], heading: ['Poppins', 'sans-serif'] },
-                    colors: { brand: { dark: '#111827', muted: '#6B7280' }, eco: { green: '#059669', light: '#D1FAE5', dark: '#065F46', sand: '#FDFBF7' } },
-                    boxShadow: { 'soft': '0 10px 40px -10px rgba(5, 150, 105, 0.15)', 'card': '0 4px 20px rgba(0,0,0,0.04)' }
+                    colors: { brand: { dark: '#0A0F1C', muted: '#6B7280' }, eco: { green: '#059669', light: '#ECFDF5', dark: '#047857', sand: '#FDFBF7' } },
+                    boxShadow: { 'soft': '0 20px 40px -15px rgba(0,0,0,0.05)', 'card': '0 10px 30px -10px rgba(5, 150, 105, 0.15)', 'glow': '0 0 40px -10px rgba(5, 150, 105, 0.3)' }
                 }
             }
         }
     </script>
 
     <style>
-        body { background-color: #FFFFFF; -webkit-font-smoothing: antialiased; }
-        .fade-up { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; transform: translateY(20px); }
-        .delay-100 { animation-delay: 100ms; } .delay-200 { animation-delay: 200ms; }
-        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+        body { background-color: #FAFAFA; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+        
+        /* Smooth Reveal Animations */
+        .fade-up { opacity: 0; transform: translateY(30px); transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .fade-up.visible { opacity: 1; transform: translateY(0); }
+        .delay-100 { transition-delay: 100ms; } .delay-200 { transition-delay: 200ms; } .delay-300 { transition-delay: 300ms; }
 
-        .nav-link { position: relative; cursor: pointer; }
-        .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -4px; left: 0; background-color: #059669; transition: width 0.3s ease; }
-        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
-        .nav-link.active { color: #059669; }
+        /* Modern Nav Links */
+        .nav-link { position: relative; cursor: pointer; color: #4B5563; font-weight: 500; transition: color 0.3s ease; }
+        .nav-link:hover { color: #059669; }
+        .nav-link::after { content: ''; position: absolute; width: 4px; height: 4px; bottom: -8px; left: 50%; transform: translateX(-50%) scale(0); background-color: #059669; border-radius: 50%; transition: transform 0.3s ease; }
+        .nav-link:hover::after, .nav-link.active::after { transform: translateX(-50%) scale(1); }
+        .nav-link.active { color: #0A0F1C; font-weight: 600; }
 
-        /* Floating Accessibility Panel */
+        /* Accessibility Panel */
         #accessibility-panel { position: fixed; left: 0; top: 50%; transform: translateY(-50%); z-index: 80; transition: transform 0.3s ease; }
         #accessibility-panel.closed { transform: translate(-100%, -50%); }
         .acc-btn { @apply w-10 h-10 flex items-center justify-center bg-white border-b border-gray-100 text-brand-dark hover:bg-eco-light hover:text-eco-green transition-colors cursor-pointer; }
         
         .read-area { transition: all 0.3s ease; }
-        .read-area.high-contrast { background-color: #111827 !important; color: #F9FAFB !important; border-color: #374151 !important; }
+        .read-area.high-contrast { background-color: #0A0F1C !important; color: #F9FAFB !important; border-color: #1F2937 !important; }
         .read-area.high-contrast h2, .read-area.high-contrast h3, .read-area.high-contrast h4, .read-area.high-contrast p, .read-area.high-contrast span { color: #F9FAFB !important; }
 
         #search-overlay { transition: opacity 0.3s ease; }
@@ -53,62 +57,77 @@
 
         /* Toast Notification */
         #toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
-        .toast { background: white; color: #111827; padding: 16px 24px; border-radius: 8px; box-shadow: 0 10px 30px -5px rgba(0,0,0,0.1); border-left: 4px solid #059669; font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600; text-transform: uppercase; transform: translateX(120%); transition: transform 0.4s ease; display: flex; align-items: center; gap: 12px; }
+        .toast { background: white; color: #0A0F1C; padding: 16px 24px; border-radius: 12px; box-shadow: 0 20px 40px -10px rgba(0,0,0,0.1); border-left: 4px solid #059669; font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600; transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); display: flex; align-items: center; gap: 12px; }
         .toast.show { transform: translateX(0); }
         .toast.error { border-left-color: #EF4444; }
 
-        .editorial-card { border-top: 4px solid #059669; background-color: #F9FAFB; transition: all 0.3s ease; }
-        .editorial-card:hover { background-color: #FFFFFF; box-shadow: 0 10px 30px rgba(0,0,0,0.05); transform: translateY(-5px); }
+        /* Modern UI Elements */
+        .glass-panel { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.5); }
+        .text-gradient { background: linear-gradient(135deg, #059669 0%, #047857 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
-        .stat-counter { background: linear-gradient(135deg, #059669 0%, #047857 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { w-2 }
+        ::-webkit-scrollbar-track { bg-gray-50 }
+        ::-webkit-scrollbar-thumb { bg-gray-300 rounded-full }
+        ::-webkit-scrollbar-thumb:hover { bg-gray-400 }
+        
+        /* Scope Accordion */
+        .scope-item { transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); border-left: 2px solid transparent; }
+        .scope-item:hover, .scope-item.active { border-left-color: #059669; background-color: #ECFDF5; padding-left: 1.5rem; }
+        .scope-item .scope-desc { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.4s ease; }
+        .scope-item.active .scope-desc { grid-template-rows: 1fr; }
+        .scope-inner { overflow: hidden; }
     </style>
 </head>
 <body class="flex flex-col min-h-screen text-brand-dark">
 
-    <div class="bg-eco-green text-white text-[11px] md:text-xs font-medium py-2.5 px-4 text-center tracking-wide" data-i18n="banner">
+    <div class="bg-brand-dark text-white text-[11px] md:text-xs font-medium py-3 px-4 text-center tracking-wider uppercase" data-i18n="banner">
         Empowering the youth and protecting the environment of the Republic of Seychelles
     </div>
 
-    <nav class="bg-white py-4 px-6 md:px-12 sticky top-0 z-50 transition-shadow duration-300 shadow-sm" id="navbar">
+    <nav class="bg-white/90 backdrop-blur-md py-4 px-6 md:px-12 sticky top-0 z-50 transition-all duration-300 border-b border-gray-100" id="navbar">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <a href="/" class="flex items-center gap-3 group">
-                <img src="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" alt="TNF Logo" class="w-10 h-10 rounded-full object-cover shadow-sm group-hover:scale-105 transition-transform duration-300">
+            
+            <a href="/" class="flex items-center gap-4 group">
+                <img src="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" alt="TNF Logo" class="w-11 h-11 rounded-full object-cover shadow-sm group-hover:shadow-md transition-all duration-300">
                 <h1 class="font-heading font-bold text-xl tracking-tight text-brand-dark hidden sm:block">Tyler Nicholas <span class="text-eco-green">Foundation</span></h1>
             </a>
 
-            <button id="mobile-menu-btn" class="lg:hidden text-brand-dark text-2xl focus:outline-none"><i class="fa-solid fa-bars"></i></button>
+            <button id="mobile-menu-btn" class="lg:hidden text-brand-dark text-2xl focus:outline-none hover:text-eco-green transition-colors"><i class="fa-solid fa-bars-staggered"></i></button>
 
-            <div class="hidden lg:flex space-x-6 lg:space-x-8 text-sm font-heading font-medium text-brand-muted items-center">
+            <div class="hidden lg:flex space-x-8 text-sm font-heading items-center">
                 <a href="/" class="nav-link active" data-i18n="navHome">Home</a>
-                <a href="/programs/" class="nav-link hover:text-brand-dark transition-colors" data-i18n="navPrograms">Programs</a>
+                <a href="/programs/" class="nav-link" data-i18n="navPrograms">Programs</a>
+                <a href="/about/" class="nav-link" data-i18n="navAboutUs">About</a>
+                <a href="/contact/" class="nav-link" data-i18n="navContact">Contact</a>
                 
                 <div class="relative group py-2">
-                    <span class="nav-link flex items-center gap-1 hover:text-brand-dark transition-colors"><span data-i18n="navMore">More</span> <i class="fa-solid fa-chevron-down text-[10px] mt-0.5"></i></span>
-                    <div class="absolute top-full left-0 w-48 bg-white rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 border border-gray-100 flex flex-col py-2 transform translate-y-2 group-hover:translate-y-0">
-                        <a href="/about/" class="px-5 py-2.5 text-sm font-medium text-brand-dark hover:bg-eco-light hover:text-eco-green transition-colors" data-i18n="navAboutUs">About Us</a>
-                        <a href="/get-involved/" class="px-5 py-2.5 text-sm font-medium text-brand-dark hover:bg-eco-light hover:text-eco-green transition-colors" data-i18n="navInvolved">Get Involved</a>
-                        <a href="/legal/" class="px-5 py-2.5 text-sm font-medium text-brand-dark hover:bg-eco-light hover:text-eco-green transition-colors" data-i18n="navLegal">Legal</a>
+                    <span class="nav-link flex items-center gap-1.5"><span data-i18n="navMore">More</span> <i class="fa-solid fa-chevron-down text-[9px] mt-0.5 opacity-60"></i></span>
+                    <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-56 bg-white rounded-2xl shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 border border-gray-100 flex flex-col py-3 translate-y-3 group-hover:translate-y-1">
+                        <div class="px-5 pb-2 mb-2 border-b border-gray-50 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Resources</div>
+                        <a href="/get-involved/" class="px-5 py-2.5 text-sm font-medium text-brand-dark hover:bg-eco-light hover:text-eco-green transition-colors flex items-center justify-between" data-i18n="navInvolved">Get Involved <i class="fa-solid fa-arrow-right text-[10px] opacity-0 group-hover:opacity-100 transition-opacity"></i></a>
                         <a href="/partners/" class="px-5 py-2.5 text-sm font-medium text-brand-dark hover:bg-eco-light hover:text-eco-green transition-colors" data-i18n="navPartners">Our Partners</a>
-                        <a href="/team/" class="px-5 py-2.5 text-sm font-medium text-brand-dark hover:bg-eco-light hover:text-eco-green transition-colors" data-i18n="navTeam">Meet the Team</a>
+                        <a href="/team/" class="px-5 py-2.5 text-sm font-medium text-brand-dark hover:bg-eco-light hover:text-eco-green transition-colors" data-i18n="navTeam">Meet the Board</a>
+                        <a href="/legal/" class="px-5 py-2.5 text-sm font-medium text-brand-dark hover:bg-eco-light hover:text-eco-green transition-colors" data-i18n="navLegal">Legal</a>
                     </div>
                 </div>
             </div>
 
             <div class="hidden lg:flex items-center space-x-6">
-                <button onclick="toggleSearch()" class="text-brand-muted hover:text-eco-green transition-colors text-lg"><i class="fa-solid fa-magnifying-glass"></i></button>
+                <button onclick="toggleSearch()" class="text-brand-dark hover:text-eco-green transition-colors text-lg"><i class="fa-solid fa-magnifying-glass"></i></button>
                 
                 <div class="relative group py-2">
-                    <button class="flex items-center text-sm font-heading font-semibold text-brand-dark hover:text-eco-green">
-                        <i class="fa-solid fa-globe mr-1.5 text-brand-muted"></i> <span id="current-lang">EN</span> <i class="fa-solid fa-chevron-down ml-1 text-[10px]"></i>
+                    <button class="flex items-center text-sm font-heading font-semibold text-brand-dark hover:text-eco-green transition-colors">
+                        <span id="current-lang">EN</span> <i class="fa-solid fa-chevron-down ml-1.5 text-[9px] opacity-60"></i>
                     </button>
-                    <div class="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all border border-gray-100 overflow-hidden transform translate-y-2 group-hover:translate-y-0">
-                        <button onclick="changeLang('en')" class="w-full text-left px-4 py-3 hover:bg-eco-light text-sm font-medium text-eco-dark">English</button>
-                        <button onclick="changeLang('fr')" class="w-full text-left px-4 py-3 hover:bg-eco-light text-sm font-medium text-eco-dark">Français</button>
-                        <button onclick="changeLang('crs')" class="w-full text-left px-4 py-3 hover:bg-eco-light text-sm font-medium text-eco-dark">Seselwa</button>
+                    <div class="absolute right-0 top-full w-32 bg-white rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 border border-gray-100 overflow-hidden transform translate-y-3 group-hover:translate-y-1">
+                        <button onclick="changeLang('en')" class="w-full text-left px-4 py-3 hover:bg-gray-50 text-sm font-medium text-brand-dark transition-colors">English</button>
+                        <button onclick="changeLang('fr')" class="w-full text-left px-4 py-3 hover:bg-gray-50 text-sm font-medium text-brand-dark transition-colors">Français</button>
+                        <button onclick="changeLang('crs')" class="w-full text-left px-4 py-3 hover:bg-gray-50 text-sm font-medium text-brand-dark transition-colors">Seselwa</button>
                     </div>
                 </div>
 
-                <a href="/get-involved/" class="bg-eco-green hover:bg-eco-dark text-white px-6 py-2.5 rounded-lg font-heading font-medium transition-colors shadow-soft hover:shadow-md transform hover:-translate-y-0.5 inline-block" data-i18n="btnDonate">
+                <a href="/get-involved/" class="bg-brand-dark hover:bg-eco-green text-white px-7 py-2.5 rounded-full font-heading font-medium transition-all duration-300 shadow-md hover:shadow-glow transform hover:-translate-y-0.5 inline-block text-sm" data-i18n="btnDonate">
                     Donate
                 </a>
             </div>
@@ -116,163 +135,264 @@
     </nav>
 
     <div id="search-overlay" class="fixed inset-0 bg-white/95 backdrop-blur-md z-[200] hidden flex flex-col items-center justify-center p-6">
-        <button onclick="toggleSearch()" class="absolute top-8 right-8 text-4xl text-brand-muted hover:text-brand-dark"><i class="fa-solid fa-xmark"></i></button>
+        <button onclick="toggleSearch()" class="absolute top-8 right-8 text-4xl text-brand-muted hover:text-brand-dark transition-transform hover:rotate-90"><i class="fa-solid fa-xmark"></i></button>
         <div class="w-full max-w-3xl">
-            <h3 class="text-2xl font-heading font-bold text-brand-dark mb-4" data-i18n="searchTitle">Search Foundation Directory</h3>
+            <h3 class="text-xl font-heading font-bold text-gray-400 mb-4 uppercase tracking-widest" data-i18n="searchTitle">Search Directory</h3>
             <div class="relative">
-                <i class="fa-solid fa-magnifying-glass absolute left-6 top-1/2 transform -translate-y-1/2 text-2xl text-brand-muted"></i>
-                <input type="text" id="search-input" data-i18n-placeholder="searchPlaceholder" onkeydown="executeSearch(event)" placeholder="Search programs, news, and initiatives..." class="w-full bg-gray-100 border-2 border-transparent focus:border-eco-green rounded-2xl py-6 pl-16 pr-6 text-xl md:text-2xl font-heading outline-none transition-all shadow-inner">
+                <i class="fa-solid fa-magnifying-glass absolute left-6 top-1/2 transform -translate-y-1/2 text-2xl text-brand-dark"></i>
+                <input type="text" id="search-input" data-i18n-placeholder="searchPlaceholder" onkeydown="executeSearch(event)" placeholder="Search programs, news..." class="w-full bg-transparent border-b-2 border-gray-200 focus:border-eco-green py-6 pl-16 pr-6 text-2xl md:text-4xl font-heading font-light text-brand-dark outline-none transition-colors placeholder-gray-300">
             </div>
         </div>
     </div>
 
-    <div id="accessibility-panel" class="shadow-lg rounded-r-xl overflow-hidden bg-white border border-l-0 border-gray-200">
-        <div class="bg-eco-dark text-white text-[9px] font-bold uppercase tracking-widest py-1.5 px-2 text-center w-12" data-i18n="accRead">Read</div>
+    <div id="accessibility-panel" class="shadow-card rounded-r-xl overflow-hidden bg-white border border-l-0 border-gray-100">
+        <div class="bg-brand-dark text-white text-[9px] font-bold uppercase tracking-widest py-2 px-2 text-center w-12" data-i18n="accRead">A11Y</div>
         <div class="acc-btn" onclick="adjustTextSize(1)" title="Increase Text Size"><i class="fa-solid fa-a text-lg"></i><i class="fa-solid fa-plus text-[10px] ml-0.5"></i></div>
         <div class="acc-btn" onclick="adjustTextSize(-1)" title="Decrease Text Size"><i class="fa-solid fa-a text-sm"></i><i class="fa-solid fa-minus text-[10px] ml-0.5"></i></div>
         <div class="acc-btn" onclick="toggleHighContrast()" title="Toggle High Contrast"><i class="fa-solid fa-circle-half-stroke text-lg"></i></div>
     </div>
 
-    <div id="mobile-menu-overlay" class="fixed inset-0 bg-white z-[100] transform translate-x-full transition-transform duration-300 flex flex-col lg:hidden overflow-y-auto">
+    <div id="mobile-menu-overlay" class="fixed inset-0 bg-white z-[100] transform translate-x-full transition-transform duration-500 ease-in-out flex flex-col lg:hidden overflow-y-auto">
         <div class="p-6 flex justify-between items-center border-b border-gray-100">
             <div class="flex items-center gap-3">
-                <img src="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" alt="TNF Logo" class="w-8 h-8 rounded-full">
+                <img src="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" alt="TNF Logo" class="w-10 h-10 rounded-full">
                 <h1 class="font-heading font-bold text-xl text-brand-dark">TNF</h1>
             </div>
-            <button id="mobile-menu-close" class="text-brand-dark text-3xl"><i class="fa-solid fa-xmark"></i></button>
+            <button id="mobile-menu-close" class="text-brand-dark text-3xl hover:rotate-90 transition-transform"><i class="fa-solid fa-xmark"></i></button>
         </div>
-        <div class="p-8 flex flex-col space-y-6 text-brand-dark flex-grow font-heading font-semibold text-2xl">
-            <a href="/" class="text-eco-green transition-colors" data-i18n="navHome">Home</a>
+        <div class="p-8 flex flex-col space-y-6 text-brand-dark flex-grow font-heading font-semibold text-3xl">
+            <a href="/" class="text-eco-green" data-i18n="navHome">Home</a>
             <a href="/programs/" class="hover:text-eco-green transition-colors" data-i18n="navPrograms">Programs</a>
             <a href="/about/" class="hover:text-eco-green transition-colors" data-i18n="navAboutUs">About Us</a>
-            <a href="/get-involved/" class="hover:text-eco-green transition-colors" data-i18n="navInvolved">Get Involved</a>
-            <a href="/legal/" class="hover:text-eco-green transition-colors" data-i18n="navLegal">Legal</a>
-            <a href="/partners/" class="hover:text-eco-green transition-colors" data-i18n="navPartners">Our Partners</a>
-            <a href="/team/" class="hover:text-eco-green transition-colors" data-i18n="navTeam">Meet the Team</a>
-            <a href="/get-involved/" class="mt-4 inline-block bg-eco-green text-white text-center py-4 rounded-xl font-bold text-lg shadow-soft" data-i18n="btnDonate">Donate</a>
+            <a href="/contact/" class="hover:text-eco-green transition-colors" data-i18n="navContact">Contact</a>
+            <div class="h-px bg-gray-100 w-full my-4"></div>
+            <a href="/get-involved/" class="text-xl text-gray-500 hover:text-eco-green transition-colors" data-i18n="navInvolved">Get Involved</a>
+            <a href="/partners/" class="text-xl text-gray-500 hover:text-eco-green transition-colors" data-i18n="navPartners">Our Partners</a>
+            <a href="/team/" class="text-xl text-gray-500 hover:text-eco-green transition-colors" data-i18n="navTeam">Meet the Board</a>
+        </div>
+        <div class="p-8">
+            <a href="/get-involved/" class="block w-full bg-brand-dark text-white text-center py-5 rounded-2xl font-heading font-bold text-xl shadow-lg" data-i18n="btnDonate">Donate</a>
         </div>
     </div>
 
     <main class="flex-grow">
         
-        <section class="relative h-[85vh] min-h-[600px] flex items-center justify-center overflow-hidden">
+        <section class="relative h-[90vh] min-h-[600px] flex items-center justify-center overflow-hidden">
             <div class="absolute inset-0 z-0">
-                <img src="https://robbreport.com/wp-content/uploads/2025/08/Cheval-Blanc-Seychelles-Beach-Anse-Intendance-Romain-Reglade-2024-copy.jpg" alt="Seychelles Beach" class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-gradient-to-b from-[#065F46]/80 via-brand-dark/60 to-brand-dark/90 mix-blend-multiply"></div>
+                <img src="https://robbreport.com/wp-content/uploads/2025/08/Cheval-Blanc-Seychelles-Beach-Anse-Intendance-Romain-Reglade-2024-copy.jpg" alt="Seychelles Beach" class="w-full h-full object-cover transform scale-105 motion-safe:animate-[pulse_20s_ease-in-out_infinite_alternate]">
+                <div class="absolute inset-0 bg-gradient-to-b from-[#0A0F1C]/40 via-[#0A0F1C]/70 to-[#0A0F1C]"></div>
             </div>
 
-            <div class="relative z-10 text-center px-6 max-w-5xl mx-auto fade-up">
-                <div class="inline-block bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-5 py-2 mb-6">
-                    <p class="text-white text-xs font-heading font-bold uppercase tracking-widest"><span data-i18n="heroBadge">Official Non-Profit Organization</span></p>
+            <div class="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 flex flex-col justify-end pb-20 h-full">
+                <div class="max-w-4xl fade-up observer-target">
+                    <div class="inline-flex items-center gap-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-4 py-2 mb-8">
+                        <span class="w-2 h-2 rounded-full bg-eco-green animate-pulse"></span>
+                        <span class="text-white text-[10px] font-heading font-bold uppercase tracking-widest" data-i18n="heroBadge">Official Non-Profit Organization</span>
+                    </div>
+                    
+                    <h2 class="text-5xl md:text-7xl lg:text-[90px] font-heading font-black text-white leading-[1.05] mb-8 tracking-tighter" data-i18n="heroSlogan">
+                        For the Youth.<br>For the Islands.<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-eco-green to-emerald-300">For Tomorrow.</span>
+                    </h2>
+                    
+                    <p class="text-lg md:text-2xl text-gray-300 mb-10 max-w-2xl font-light leading-relaxed" data-i18n="heroDesc">
+                        Bridging the gaps in our social infrastructure. We build community safety nets, secure life-changing youth placements, and execute environmental action across Seychelles.
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row items-center gap-5">
+                        <a href="/get-involved/" class="w-full sm:w-auto bg-eco-green hover:bg-white text-white hover:text-brand-dark font-heading font-bold py-4 px-8 rounded-full transition-all duration-300 shadow-glow text-center text-sm tracking-wide uppercase" data-i18n="btnAction1">Find an Opportunity</a>
+                        <a href="/contact/" class="w-full sm:w-auto bg-transparent hover:bg-white/10 border border-white/30 text-white font-heading font-bold py-4 px-8 rounded-full transition-all duration-300 text-center text-sm tracking-wide uppercase flex items-center justify-center gap-2" data-i18n="btnAction2">Partner With Us <i class="fa-solid fa-arrow-right text-xs"></i></a>
+                    </div>
                 </div>
-                
-                <h2 class="text-5xl md:text-6xl lg:text-[80px] font-heading font-black text-white leading-[1.1] mb-8 tracking-tight" data-i18n="heroSlogan">
-                    For the Youth.<br>For the Islands.<br>For Tomorrow.
-                </h2>
-                
-                <p class="text-lg md:text-xl text-gray-200 mb-10 max-w-2xl mx-auto font-medium leading-relaxed" data-i18n="heroDesc">
-                    Bridging the gaps in our social infrastructure. We build community safety nets, secure life-changing youth placements, and execute environmental action across Seychelles.
-                </p>
-                
-                <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-                    <a href="/get-involved/" class="w-full sm:w-auto bg-eco-green hover:bg-eco-dark text-white font-heading font-semibold py-4 px-10 rounded-xl transition-all shadow-lg text-center text-lg" data-i18n="btnAction1">Find an Opportunity</a>
-                    <a href="/contact/" class="w-full sm:w-auto bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/30 text-white font-heading font-semibold py-4 px-10 rounded-xl transition-all text-center text-lg" data-i18n="btnAction2">Partner With Us</a>
-                </div>
-            </div>
-            
-            <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-10 animate-bounce">
-                <i class="fa-solid fa-arrow-down text-white/50 text-2xl"></i>
             </div>
         </section>
 
-        <section class="py-24 bg-white overflow-hidden">
-            <div class="max-w-7xl mx-auto px-6 md:px-12 flex flex-col lg:flex-row items-center gap-16 relative z-10">
-                <div class="w-full lg:w-[40%] relative fade-up flex justify-center">
-                    <div class="absolute top-[50%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-eco-light rounded-full z-0"></div>
-                    <img src="https://i.ibb.co/Q34Wycc7/dr9jgfmhq5rmt0cx5marskkg94-preview-0-ezremove-removebg-preview.png" alt="Tyler Nicholas" class="relative z-10 w-[80%] h-auto object-contain drop-shadow-xl">
-                </div>
-                <div class="w-full lg:w-[60%] read-area text-lvl-1 fade-up delay-100">
-                    <h2 class="text-sm font-heading font-bold text-eco-green uppercase tracking-widest mb-3" data-i18n="msgSub">A Message From The Chairman</h2>
-                    <h3 class="text-3xl md:text-4xl font-heading font-bold text-brand-dark mb-6 leading-tight" data-i18n="msgTitle">
+        <section class="py-32 bg-white relative overflow-hidden">
+            <div class="absolute -left-10 top-20 text-[150px] font-heading font-black text-gray-50 leading-none whitespace-nowrap z-0 select-none pointer-events-none">IMPACT</div>
+            
+            <div class="max-w-7xl mx-auto px-6 md:px-12 relative z-10 flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
+                
+                <div class="w-full lg:w-[45%] read-area text-lvl-1 fade-up observer-target order-2 lg:order-1">
+                    <div class="flex items-center gap-4 mb-8">
+                        <div class="h-px bg-eco-green w-12"></div>
+                        <h2 class="text-xs font-heading font-bold text-eco-green uppercase tracking-widest" data-i18n="msgSub">A Message From The Chairman</h2>
+                    </div>
+                    
+                    <h3 class="text-3xl md:text-5xl font-heading font-bold text-brand-dark mb-8 leading-[1.2] tracking-tight" data-i18n="msgTitle">
                         "Philanthropy must evolve beyond awareness. It must become infrastructure."
                     </h3>
-                    <div class="space-y-5 text-brand-muted text-lg leading-relaxed">
+                    
+                    <div class="space-y-6 text-gray-500 text-lg leading-relaxed font-light">
                         <p data-i18n="msgP1">
-                            The Tyler Nicholas Foundation was not built to simply talk about the problems facing Seychelles; it was built to aggressively solve them. During my time in public service, I realized that while government policy is essential for the future, our communities and our youth need tangible help <strong>today</strong>.
+                            The Tyler Nicholas Foundation was not built to simply talk about the problems facing Seychelles; it was built to aggressively solve them. During my time in public service, I realized that while government policy is essential for the future, our communities and our youth need tangible help <strong class="text-brand-dark font-semibold">today</strong>.
                         </p>
                         <p data-i18n="msgP2">
                             This Foundation is a multi-disciplinary action group. We do not restrict ourselves to one single issue because the challenges facing our islands are deeply interconnected. You cannot solve economic stagnation without addressing digital literacy; you cannot protect our coastal environments without empowering the youth who will inherit them.
                         </p>
-                        <p data-i18n="msgP3">
-                            From securing international work attachments for ambitious students, to funding grassroots climate action, to providing free digital lifelines for local artisans—our mandate is vast, but our methodology is precise. We are here to act as a shadow-infrastructure for the Republic, providing the tools, the network, and the capital to ensure no Seychellois is left behind.
-                        </p>
-                        <p class="font-heading font-bold text-brand-dark mt-4">Tyler Nicholas</p>
+                        <div class="pt-6 mt-6 border-t border-gray-100 flex items-center justify-between">
+                            <div>
+                                <p class="font-heading font-bold text-brand-dark text-xl">Tyler Nicholas</p>
+                                <p class="text-xs text-gray-400 font-medium uppercase tracking-widest mt-1">Founder & CEO</p>
+                            </div>
+                            <img src="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" alt="Signature" class="h-12 w-12 rounded-full opacity-50 grayscale">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full lg:w-[55%] relative fade-up observer-target delay-100 order-1 lg:order-2">
+                    <div class="relative rounded-[2rem] overflow-hidden">
+                        <div class="absolute inset-0 bg-brand-dark/5 mix-blend-multiply z-10 rounded-[2rem]"></div>
+                        <img src="https://i.ibb.co/Q34Wycc7/dr9jgfmhq5rmt0cx5marskkg94-preview-0-ezremove-removebg-preview.png" alt="Tyler Nicholas" class="w-full h-auto object-contain relative z-20 scale-105 transform translate-y-4">
+                        <div class="absolute bottom-0 right-0 w-32 h-32 bg-eco-green rounded-tl-[3rem] z-0 opacity-10"></div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="py-24 bg-white border-t border-gray-100">
-            <div class="max-w-7xl mx-auto px-6 md:px-12 fade-up">
-                <div class="text-center mb-16 max-w-3xl mx-auto">
-                    <h2 class="text-sm font-heading font-bold text-eco-green uppercase tracking-widest mb-2" data-i18n="mandateSub">Our Scope of Work</h2>
-                    <h3 class="text-3xl md:text-4xl font-heading font-bold text-brand-dark mb-6" data-i18n="mandateTitle">A Comprehensive National Mandate</h3>
-                    <p class="text-brand-muted text-lg leading-relaxed" data-i18n="mandateDesc">
-                        We operate across multiple sectors to provide a holistic safety net for the Republic. Explore our primary pillars of action below.
-                    </p>
+        <section class="py-24 bg-brand-dark text-white relative overflow-hidden">
+            <div class="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-eco-green via-brand-dark to-brand-dark"></div>
+            
+            <div class="max-w-7xl mx-auto px-6 md:px-12 relative z-10 fade-up observer-target">
+                <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+                    <div class="max-w-2xl">
+                        <h2 class="text-xs font-heading font-bold text-eco-green uppercase tracking-widest mb-3" data-i18n="approachSub">Our Methodology</h2>
+                        <h3 class="text-3xl md:text-5xl font-heading font-bold text-white leading-tight tracking-tight" data-i18n="approachTitle">Digital-First.<br>Sweat Equity Driven.</h3>
+                    </div>
+                    <p class="text-gray-400 max-w-md text-sm md:text-base" data-i18n="approachDesc">We bypass traditional bureaucracy. By leveraging the corporate infrastructure of The Tyler Nicholas Group, we execute high-impact community projects with minimal financial overhead.</p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 read-area text-lvl-1">
-                    <div class="editorial-card p-8 rounded-b-2xl flex flex-col h-full">
-                        <h4 class="text-xl font-heading font-bold text-brand-dark mb-3" data-i18n="pilPlacementTitle">Career & Opportunity Placement</h4>
-                        <p class="text-brand-muted text-sm leading-relaxed mb-4 flex-grow" data-i18n="pilPlacementDesc">We actively source and secure customized work attachments, long-term internships, and international holiday opportunities for Seychellois youth by contacting organizations and leveraging our corporate network directly on their behalf.</p>
-                        <a href="/get-involved/" class="text-eco-green font-bold text-sm hover:underline mt-auto" data-i18n="applyBtn">Apply for Placement &rarr;</a>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white/5 border border-white/10 rounded-3xl p-8 hover:bg-white/10 transition-colors">
+                        <div class="w-12 h-12 bg-eco-green rounded-xl flex items-center justify-center text-white text-xl mb-6">
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
+                        <h4 class="font-heading font-bold text-xl mb-3">Agile Execution</h4>
+                        <p class="text-gray-400 text-sm leading-relaxed">Operating independently allows us to identify community gaps and deploy resources or digital tools in a matter of weeks, not years.</p>
                     </div>
-                    <div class="editorial-card p-8 rounded-b-2xl flex flex-col h-full">
-                        <h4 class="text-xl font-heading font-bold text-brand-dark mb-3" data-i18n="pilEcoTitle">Environmental Stewardship & Climate Action</h4>
-                        <p class="text-brand-muted text-sm leading-relaxed mb-4 flex-grow" data-i18n="pilEcoDesc">Executing grassroots coastal protection, organizing massive youth-led mangrove restoration projects, and providing micro-grants for local eco-innovation and sustainability startups.</p>
+                    <div class="bg-white/5 border border-white/10 rounded-3xl p-8 hover:bg-white/10 transition-colors">
+                        <div class="w-12 h-12 bg-eco-green rounded-xl flex items-center justify-center text-white text-xl mb-6">
+                            <i class="fa-solid fa-network-wired"></i>
+                        </div>
+                        <h4 class="font-heading font-bold text-xl mb-3">Corporate Synergy</h4>
+                        <p class="text-gray-400 text-sm leading-relaxed">Backed by our parent company's network, we secure elite work placements and donate professional digital services that standard charities cannot afford.</p>
                     </div>
-                    <div class="editorial-card p-8 rounded-b-2xl flex flex-col h-full">
-                        <h4 class="text-xl font-heading font-bold text-brand-dark mb-3" data-i18n="pilDigiTitle">Digital Literacy & Enterprise Incubator</h4>
-                        <p class="text-brand-muted text-sm leading-relaxed mb-4 flex-grow" data-i18n="pilDigiDesc">Through "The Artisan Initiative" and our corporate partners, we provide free websites, digital branding, and coding workshops to local vendors and underprivileged youth to transition Seychelles into a creator economy.</p>
-                    </div>
-                    <div class="editorial-card p-8 rounded-b-2xl flex flex-col h-full">
-                        <h4 class="text-xl font-heading font-bold text-brand-dark mb-3" data-i18n="pilHealthTitle">Health, Mental Wellness & Food Security</h4>
-                        <p class="text-brand-muted text-sm leading-relaxed mb-4 flex-grow" data-i18n="pilHealthDesc">Maintaining the National Mental Health Directory, organizing preventative wellness campaigns, and partnering closely with FoodShare Seychelles to manage community food logistics for vulnerable demographics.</p>
-                    </div>
-                    <div class="editorial-card p-8 rounded-b-2xl flex flex-col h-full">
-                        <h4 class="text-xl font-heading font-bold text-brand-dark mb-3" data-i18n="pilCivicTitle">Civic Education & Policy Research Lab</h4>
-                        <p class="text-brand-muted text-sm leading-relaxed mb-4 flex-grow" data-i18n="pilCivicDesc">Operating an Open-Access Education Library for students, conducting youth parliament simulations, and aggregating community data to support evidence-based, data-driven national policymaking.</p>
-                    </div>
-                    <div class="editorial-card p-8 rounded-b-2xl flex flex-col h-full">
-                        <h4 class="text-xl font-heading font-bold text-brand-dark mb-3" data-i18n="pilCultureTitle">Cultural Heritage & Social Inclusion</h4>
-                        <p class="text-brand-muted text-sm leading-relaxed mb-4 flex-grow" data-i18n="pilCultureDesc">Running "The Generations Archive" to digitally preserve the folklore of our elderly, while providing strict advocacy and support networks for persons with disabilities and marginalized groups.</p>
+                    <div class="bg-white/5 border border-white/10 rounded-3xl p-8 hover:bg-white/10 transition-colors">
+                        <div class="w-12 h-12 bg-eco-green rounded-xl flex items-center justify-center text-white text-xl mb-6">
+                            <i class="fa-solid fa-hand-holding-heart"></i>
+                        </div>
+                        <h4 class="font-heading font-bold text-xl mb-3">Radical Accessibility</h4>
+                        <p class="text-gray-400 text-sm leading-relaxed">Every service, website, educational resource, and placement program we engineer is provided 100% free to the recipient.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="py-24 bg-white border-t border-gray-100 relative">
-            <div class="max-w-7xl mx-auto px-6 md:px-12 fade-up delay-100">
+        <section class="py-32 bg-[#F9FAFB]">
+            <div class="max-w-7xl mx-auto px-6 md:px-12">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-16">
+                    
+                    <div class="lg:col-span-5 fade-up observer-target">
+                        <div class="sticky top-32">
+                            <h2 class="text-xs font-heading font-bold text-eco-green uppercase tracking-widest mb-3" data-i18n="mandateSub">Scope of Work</h2>
+                            <h3 class="text-4xl md:text-5xl font-heading font-bold text-brand-dark mb-6 tracking-tight leading-[1.1]" data-i18n="mandateTitle">A Holistic National Mandate</h3>
+                            <p class="text-gray-500 text-lg leading-relaxed mb-8" data-i18n="mandateDesc">
+                                True progress requires a multi-sector approach. We mobilize our resources across these core pillars to engineer a comprehensive safety net for the Republic.
+                            </p>
+                            <a href="/programs/" class="inline-flex items-center justify-center gap-2 bg-white border border-gray-200 text-brand-dark hover:border-eco-green hover:text-eco-green font-heading font-bold py-3.5 px-8 rounded-full transition-all text-sm uppercase tracking-wide shadow-sm">
+                                View All Programs <i class="fa-solid fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-7 fade-up observer-target delay-100 read-area text-lvl-1">
+                        <div class="flex flex-col gap-4">
+                            <div class="scope-item active bg-white rounded-2xl p-6 md:p-8 cursor-pointer shadow-sm border border-gray-100" onclick="toggleScope(this)">
+                                <div class="flex justify-between items-center mb-2">
+                                    <h4 class="text-xl md:text-2xl font-heading font-bold text-brand-dark" data-i18n="pilPlacementTitle">Career & Opportunity Placement</h4>
+                                    <div class="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 icon-toggle"><i class="fa-solid fa-minus"></i></div>
+                                </div>
+                                <div class="scope-desc">
+                                    <div class="scope-inner">
+                                        <p class="text-gray-500 leading-relaxed mt-4" data-i18n="pilPlacementDesc">We actively source and secure customized work attachments, long-term internships, and international holiday opportunities for Seychellois youth by leveraging our corporate network directly on their behalf.</p>
+                                        <a href="/get-involved/" class="inline-block mt-4 text-sm font-bold text-eco-green uppercase tracking-wide hover:underline" data-i18n="applyBtn">Apply for Placement &rarr;</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="scope-item bg-white rounded-2xl p-6 md:p-8 cursor-pointer shadow-sm border border-gray-100" onclick="toggleScope(this)">
+                                <div class="flex justify-between items-center mb-2">
+                                    <h4 class="text-xl md:text-2xl font-heading font-bold text-brand-dark" data-i18n="pilEcoTitle">Environmental Stewardship</h4>
+                                    <div class="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 icon-toggle"><i class="fa-solid fa-plus"></i></div>
+                                </div>
+                                <div class="scope-desc">
+                                    <div class="scope-inner">
+                                        <p class="text-gray-500 leading-relaxed mt-4" data-i18n="pilEcoDesc">Executing grassroots coastal protection, organizing massive youth-led mangrove restoration projects, and providing micro-grants for local eco-innovation and sustainability startups.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="scope-item bg-white rounded-2xl p-6 md:p-8 cursor-pointer shadow-sm border border-gray-100" onclick="toggleScope(this)">
+                                <div class="flex justify-between items-center mb-2">
+                                    <h4 class="text-xl md:text-2xl font-heading font-bold text-brand-dark" data-i18n="pilDigiTitle">Digital Literacy & Enterprise</h4>
+                                    <div class="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 icon-toggle"><i class="fa-solid fa-plus"></i></div>
+                                </div>
+                                <div class="scope-desc">
+                                    <div class="scope-inner">
+                                        <p class="text-gray-500 leading-relaxed mt-4" data-i18n="pilDigiDesc">Through "The Artisan Initiative" and our corporate partners, we provide free websites, digital branding, and coding workshops to local vendors and underprivileged youth to transition Seychelles into a creator economy.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="scope-item bg-white rounded-2xl p-6 md:p-8 cursor-pointer shadow-sm border border-gray-100" onclick="toggleScope(this)">
+                                <div class="flex justify-between items-center mb-2">
+                                    <h4 class="text-xl md:text-2xl font-heading font-bold text-brand-dark" data-i18n="pilHealthTitle">Health & Food Security</h4>
+                                    <div class="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 icon-toggle"><i class="fa-solid fa-plus"></i></div>
+                                </div>
+                                <div class="scope-desc">
+                                    <div class="scope-inner">
+                                        <p class="text-gray-500 leading-relaxed mt-4" data-i18n="pilHealthDesc">Maintaining the National Mental Health Directory and partnering closely with FoodShare Seychelles to manage community food logistics for vulnerable demographics.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="scope-item bg-white rounded-2xl p-6 md:p-8 cursor-pointer shadow-sm border border-gray-100" onclick="toggleScope(this)">
+                                <div class="flex justify-between items-center mb-2">
+                                    <h4 class="text-xl md:text-2xl font-heading font-bold text-brand-dark" data-i18n="pilCultureTitle">Cultural Heritage & Inclusion</h4>
+                                    <div class="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 icon-toggle"><i class="fa-solid fa-plus"></i></div>
+                                </div>
+                                <div class="scope-desc">
+                                    <div class="scope-inner">
+                                        <p class="text-gray-500 leading-relaxed mt-4" data-i18n="pilCultureDesc">Running "The Generations Archive" to digitally preserve the folklore of our elderly, while providing strict advocacy and support networks for marginalized groups.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-24 bg-white border-y border-gray-100 relative">
+            <div class="max-w-7xl mx-auto px-6 md:px-12 fade-up observer-target">
                 <div class="text-center mb-16">
-                    <h2 class="text-sm font-heading font-bold text-eco-green uppercase tracking-widest mb-2" data-i18n="impactSub">Our Footprint</h2>
-                    <h3 class="text-3xl md:text-4xl font-heading font-bold text-brand-dark" data-i18n="impactTitle">Measurable Impact</h3>
+                    <h2 class="text-xs font-heading font-bold text-eco-green uppercase tracking-widest mb-2" data-i18n="impactSub">Our Footprint</h2>
+                    <h3 class="text-3xl md:text-4xl font-heading font-bold text-brand-dark tracking-tight" data-i18n="impactTitle">Measurable Impact</h3>
                 </div>
-                <div id="impact-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <div id="impact-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-10">
                     <div class="col-span-full text-center text-gray-400 py-10"><i class="fa-solid fa-circle-notch fa-spin text-3xl mb-4 text-eco-green"></i><br>Syncing Live Data...</div>
                 </div>
             </div>
         </section>
 
-        <section class="py-24 bg-[#F9FAFB] border-t border-gray-100">
-            <div class="max-w-7xl mx-auto px-6 md:px-12 fade-up">
+        <section class="py-32 bg-[#FAFAFA]">
+            <div class="max-w-7xl mx-auto px-6 md:px-12 fade-up observer-target">
                 <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
                     <div>
-                        <h2 class="text-sm font-heading font-bold text-eco-green uppercase tracking-widest mb-2" data-i18n="newsSub">Latest Updates</h2>
-                        <h3 class="text-3xl md:text-4xl font-heading font-bold text-brand-dark" data-i18n="newsTitle">Foundation Newsroom</h3>
+                        <h2 class="text-xs font-heading font-bold text-eco-green uppercase tracking-widest mb-2" data-i18n="newsSub">Updates</h2>
+                        <h3 class="text-4xl font-heading font-bold text-brand-dark tracking-tight" data-i18n="newsTitle">Foundation Newsroom</h3>
                     </div>
-                    <a href="/news/" class="text-sm font-heading font-semibold text-brand-blue hover:text-brand-dark transition-colors flex items-center">
-                        <span data-i18n="newsViewAll">View All Articles</span> <i class="fa-solid fa-arrow-right ml-2"></i>
+                    <a href="/news/" class="inline-flex items-center gap-2 text-sm font-heading font-bold text-brand-dark hover:text-eco-green transition-colors uppercase tracking-widest group">
+                        <span data-i18n="newsViewAll">View All</span> <i class="fa-solid fa-arrow-right transform group-hover:translate-x-1 transition-transform"></i>
                     </a>
                 </div>
 
@@ -282,62 +402,22 @@
             </div>
         </section>
 
-        <section class="py-24 bg-white border-t border-gray-100">
-            <div class="max-w-7xl mx-auto px-6 md:px-12 fade-up delay-100">
-                <div class="text-center mb-16 max-w-3xl mx-auto">
-                    <h2 class="text-sm font-heading font-bold text-eco-green uppercase tracking-widest mb-2" data-i18n="boardSub">Leadership</h2>
-                    <h3 class="text-3xl md:text-4xl font-heading font-bold text-brand-dark mb-4" data-i18n="boardTitle">Meet the Board of Directors</h3>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                    <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100 text-center shadow-sm hover:shadow-card transition-shadow">
-                        <div class="w-28 h-28 mx-auto rounded-full overflow-hidden mb-5 border-4 border-white shadow-md">
-                            <img src="https://tyler.tylernicholasgroup.com/tyler%20n.jpg" alt="Tyler Nicholas" class="w-full h-full object-cover">
-                        </div>
-                        <h4 class="font-heading font-bold text-lg text-brand-dark mb-1">Tyler Nicholas</h4>
-                        <p class="text-[10px] font-bold text-eco-green uppercase tracking-widest mb-4" data-i18n="boardRole1">Founder & Chairman</p>
-                        <p class="text-xs text-brand-muted leading-relaxed" data-i18n="boardDesc1">Directing the foundation's strategic vision, partnerships, and overall commitment to the Seychellois community.</p>
-                    </div>
-                    <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100 text-center shadow-sm hover:shadow-card transition-shadow">
-                        <div class="w-28 h-28 mx-auto rounded-full overflow-hidden mb-5 border-4 border-white shadow-md bg-gray-200">
-                            <img src="https://media.istockphoto.com/id/521573873/vector/unknown-person-silhouette-whith-blue-tie.jpg?s=612x612&w=0&k=20&c=5Ax4LbSxC0swuxzNmRarYD5R0bxE5u7p31AHfy9Iqd8=" alt="Vacant Seat" class="w-full h-full object-cover opacity-70 filter grayscale">
-                        </div>
-                        <h4 class="font-heading font-bold text-lg text-gray-500 mb-1">N/A</h4>
-                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4" data-i18n="boardRole2">Vice Chairman</p>
-                        <p class="text-xs text-gray-400 leading-relaxed" data-i18n="boardDesc2">Supporting the Chairman in executive decisions and operational oversight.</p>
-                    </div>
-                    <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100 text-center shadow-sm hover:shadow-card transition-shadow">
-                        <div class="w-28 h-28 mx-auto rounded-full overflow-hidden mb-5 border-4 border-white shadow-md bg-gray-200">
-                            <img src="https://media.istockphoto.com/id/521573873/vector/unknown-person-silhouette-whith-blue-tie.jpg?s=612x612&w=0&k=20&c=5Ax4LbSxC0swuxzNmRarYD5R0bxE5u7p31AHfy9Iqd8=" alt="Vacant Seat" class="w-full h-full object-cover opacity-70 filter grayscale">
-                        </div>
-                        <h4 class="font-heading font-bold text-lg text-gray-500 mb-1">N/A</h4>
-                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4" data-i18n="boardRole3">Treasurer</p>
-                        <p class="text-xs text-gray-400 leading-relaxed" data-i18n="boardDesc3">Managing the foundation's financial health, transparency, and resource allocation.</p>
-                    </div>
-                    <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100 text-center shadow-sm hover:shadow-card transition-shadow">
-                        <div class="w-28 h-28 mx-auto rounded-full overflow-hidden mb-5 border-4 border-white shadow-md bg-gray-200">
-                            <img src="https://media.istockphoto.com/id/521573873/vector/unknown-person-silhouette-whith-blue-tie.jpg?s=612x612&w=0&k=20&c=5Ax4LbSxC0swuxzNmRarYD5R0bxE5u7p31AHfy9Iqd8=" alt="Vacant Seat" class="w-full h-full object-cover opacity-70 filter grayscale">
-                        </div>
-                        <h4 class="font-heading font-bold text-lg text-gray-500 mb-1">N/A</h4>
-                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4" data-i18n="boardRole4">Executive Director</p>
-                        <p class="text-xs text-gray-400 leading-relaxed" data-i18n="boardDesc4">Leading the day-to-day execution of our community programs and volunteer coordination.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="py-20 bg-brand-dark text-center relative overflow-hidden">
+        <section class="py-24 bg-brand-dark text-center relative overflow-hidden">
             <div class="absolute inset-0 z-0 opacity-10">
-                <div class="absolute -top-40 -left-40 w-96 h-96 bg-eco-green rounded-full blur-3xl"></div>
-                <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-eco-green rounded-full blur-3xl"></div>
+                <div class="absolute -top-40 -left-40 w-96 h-96 bg-eco-green rounded-full blur-[100px]"></div>
+                <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-eco-green rounded-full blur-[100px]"></div>
             </div>
-            <div class="max-w-2xl mx-auto px-6 relative z-10 fade-up">
-                <h3 class="text-3xl font-heading font-bold text-white mb-4" data-i18n="nlTitle">Join the Movement</h3>
-                <p class="text-gray-400 mb-8 leading-relaxed" data-i18n="nlDesc">Subscribe to the official Tyler Nicholas Foundation newsletter to receive live updates on our projects, volunteer opportunities, and community impact reports.</p>
+            
+            <div class="max-w-2xl mx-auto px-6 relative z-10 fade-up observer-target">
+                <div class="w-16 h-16 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center mx-auto mb-6 border border-white/20">
+                    <i class="fa-regular fa-envelope text-2xl text-white"></i>
+                </div>
+                <h3 class="text-4xl font-heading font-bold text-white mb-4 tracking-tight" data-i18n="nlTitle">Stay Informed</h3>
+                <p class="text-gray-400 mb-10 leading-relaxed font-light" data-i18n="nlDesc">Subscribe to the official Tyler Nicholas Foundation digest to receive direct updates on our community initiatives and volunteer calls.</p>
                 
-                <form onsubmit="subscribeNewsletter(event)" class="flex flex-col sm:flex-row gap-3 justify-center max-w-lg mx-auto">
-                    <input type="email" id="nl-email" required data-i18n-placeholder="nlPlaceholder" placeholder="Enter your email address..." class="w-full sm:w-2/3 px-5 py-4 rounded-xl bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-eco-green transition-colors text-sm">
-                    <button type="submit" id="btn-subscribe" class="w-full sm:w-1/3 bg-eco-green hover:bg-eco-dark text-white font-heading font-bold py-4 rounded-xl transition-all shadow-md text-sm">
+                <form onsubmit="subscribeNewsletter(event)" class="flex flex-col sm:flex-row gap-3 justify-center max-w-lg mx-auto relative">
+                    <input type="email" id="nl-email" required data-i18n-placeholder="nlPlaceholder" placeholder="Enter your email address..." class="w-full sm:w-2/3 px-6 py-4 rounded-full bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:bg-white/10 focus:border-eco-green transition-all text-sm font-medium">
+                    <button type="submit" id="btn-subscribe" class="w-full sm:w-auto bg-eco-green hover:bg-eco-light hover:text-eco-green text-white font-heading font-bold py-4 px-8 rounded-full transition-all duration-300 shadow-[0_0_20px_rgba(5,150,105,0.3)] text-sm uppercase tracking-wider">
                         <span data-i18n="nlBtn">Subscribe</span>
                     </button>
                 </form>
@@ -346,58 +426,58 @@
 
     </main>
 
-    <footer class="bg-white border-t border-gray-200 pt-20 pb-10 px-6 md:px-12 mt-auto">
+    <footer class="bg-white border-t border-gray-100 pt-24 pb-10 px-6 md:px-12 mt-auto">
         <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
             <div class="md:col-span-4">
-                <div class="flex items-center gap-3 mb-4">
-                    <img src="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" alt="TNF Logo" class="w-10 h-10 rounded-full object-cover">
-                    <h3 class="font-heading font-bold text-xl tracking-tight text-brand-dark">Tyler Nicholas <span class="text-eco-green">Foundation</span></h3>
+                <div class="flex items-center gap-4 mb-6">
+                    <img src="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" alt="TNF Logo" class="w-12 h-12 rounded-full object-cover shadow-sm">
+                    <h3 class="font-heading font-bold text-xl tracking-tight text-brand-dark">Tyler Nicholas <br><span class="text-eco-green text-lg">Foundation</span></h3>
                 </div>
-                <p class="text-sm font-heading font-bold text-brand-dark italic mb-6" data-i18n="footerSlogan">"For the Youth. For the Islands. For Tomorrow."</p>
-                <div class="inline-block bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 mb-8">
-                    <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest leading-tight" data-i18n="footerTNG">
-                        The Tyler Nicholas Foundation is a proud member of <br><a href="https://tylernicholasgroup.com/" target="_blank" class="text-brand-dark hover:text-eco-green transition-colors">The Tyler Nicholas Group</a>
+                <p class="text-sm font-heading font-medium text-gray-500 italic mb-8" data-i18n="footerSlogan">"For the Youth. For the Islands. For Tomorrow."</p>
+                <div class="inline-block bg-[#FAFAFA] border border-gray-100 rounded-xl px-5 py-4 mb-8">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-relaxed" data-i18n="footerTNG">
+                        A proud philanthropic subsidiary of <br><a href="https://tylernicholasgroup.com/" target="_blank" class="text-brand-dark hover:text-eco-green transition-colors mt-1 block text-xs">The Tyler Nicholas Group</a>
                     </p>
                 </div>
             </div>
 
             <div class="md:col-span-2">
-                <h4 class="text-brand-dark font-heading font-bold text-base mb-6" data-i18n="footerDir">Directory</h4>
-                <ul class="space-y-4 text-sm font-medium text-brand-muted">
+                <h4 class="text-brand-dark font-heading font-bold text-sm uppercase tracking-widest mb-6" data-i18n="footerDir">Directory</h4>
+                <ul class="space-y-4 text-sm font-medium text-gray-500">
                     <li><a href="/" class="hover:text-eco-green transition-colors" data-i18n="navHome">Home</a></li>
                     <li><a href="/about/" class="hover:text-eco-green transition-colors" data-i18n="navAboutUs">About Us</a></li>
                     <li><a href="/programs/" class="hover:text-eco-green transition-colors" data-i18n="navPrograms">Programs</a></li>
-                    <li><a href="/get-involved/" class="hover:text-eco-green transition-colors" data-i18n="navInvolved">Get Involved</a></li>
+                    <li><a href="/contact/" class="hover:text-eco-green transition-colors" data-i18n="navContact">Contact</a></li>
                 </ul>
             </div>
 
             <div class="md:col-span-3">
-                <h4 class="text-brand-dark font-heading font-bold text-base mb-6" data-i18n="footerAffil">Network Partners</h4>
-                <ul class="space-y-4 text-sm font-medium text-brand-muted">
-                    <li><a href="https://nicholasoffice.online" target="_blank" class="flex items-center hover:text-eco-green transition-colors"><span data-i18n="footLinkOffice">Office of Tyler Nicholas</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-2"></i></a></li>
-                    <li><a href="https://foodshare-seychelle.online" target="_blank" class="flex items-center hover:text-eco-green transition-colors"><span data-i18n="footLinkFood">FoodShare Seychelles</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-2"></i></a></li>
-                    <li><a href="https://tylernicholasgroup.com" target="_blank" class="flex items-center hover:text-eco-green transition-colors"><span data-i18n="footLinkTNG">Tyler Nicholas Group</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-2"></i></a></li>
-                    <li><a href="https://tyler.tylernicholasgroup.com" target="_blank" class="flex items-center hover:text-eco-green transition-colors"><span data-i18n="footLinkPersonal">Tyler Nicholas Profile</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-2"></i></a></li>
+                <h4 class="text-brand-dark font-heading font-bold text-sm uppercase tracking-widest mb-6" data-i18n="footerAffil">Network Partners</h4>
+                <ul class="space-y-4 text-sm font-medium text-gray-500">
+                    <li><a href="https://nicholasoffice.online" target="_blank" class="flex items-center hover:text-eco-green transition-colors group"><span data-i18n="footLinkOffice">Office of Tyler Nicholas</span> <i class="fa-solid fa-arrow-up-right-from-square text-[9px] ml-2 opacity-50 group-hover:opacity-100 transition-opacity"></i></a></li>
+                    <li><a href="https://foodshare-seychelles.online" target="_blank" class="flex items-center hover:text-eco-green transition-colors group"><span data-i18n="footLinkFood">FoodShare Seychelles</span> <i class="fa-solid fa-arrow-up-right-from-square text-[9px] ml-2 opacity-50 group-hover:opacity-100 transition-opacity"></i></a></li>
+                    <li><a href="https://tylernicholasgroup.com" target="_blank" class="flex items-center hover:text-eco-green transition-colors group"><span data-i18n="footLinkTNG">Tyler Nicholas Group</span> <i class="fa-solid fa-arrow-up-right-from-square text-[9px] ml-2 opacity-50 group-hover:opacity-100 transition-opacity"></i></a></li>
+                    <li><a href="https://tyler.tylernicholasgroup.com" target="_blank" class="flex items-center hover:text-eco-green transition-colors group"><span data-i18n="footLinkPersonal">Tyler Nicholas Profile</span> <i class="fa-solid fa-arrow-up-right-from-square text-[9px] ml-2 opacity-50 group-hover:opacity-100 transition-opacity"></i></a></li>
                 </ul>
             </div>
 
             <div class="md:col-span-3">
-                <h4 class="text-brand-dark font-heading font-bold text-base mb-6" data-i18n="footerContact">Contact</h4>
-                <ul class="space-y-4 text-sm font-medium text-brand-muted mb-6">
-                    <li><a href="mailto:nicholasfoundation.sc@gmail.com" class="hover:text-eco-green transition-colors break-all flex items-center"><i class="fa-solid fa-envelope w-5"></i> nicholasfoundation.sc@gmail.com</a></li>
+                <h4 class="text-brand-dark font-heading font-bold text-sm uppercase tracking-widest mb-6" data-i18n="footerContact">Contact</h4>
+                <ul class="space-y-4 text-sm font-medium text-gray-500 mb-8">
+                    <li><a href="mailto:nicholasfoundation.sc@gmail.com" class="hover:text-eco-green transition-colors break-all flex items-center"><i class="fa-solid fa-envelope w-4 mr-3 opacity-50"></i> nicholasfoundation.sc@gmail.com</a></li>
                 </ul>
                 <div class="flex flex-wrap gap-3">
-                    <a href="https://www.linkedin.com/company/tylernicholas-foundation" target="_blank" class="w-10 h-10 rounded-full bg-gray-100 text-brand-muted flex items-center justify-center hover:bg-eco-green hover:text-white transition-all shadow-sm"><i class="fa-brands fa-linkedin-in"></i></a>
-                    <a href="https://x.com/tnfseychelles" target="_blank" class="w-10 h-10 rounded-full bg-gray-100 text-brand-muted flex items-center justify-center hover:bg-eco-green hover:text-white transition-all shadow-sm"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="https://www.linkedin.com/company/tylernicholas-foundation" target="_blank" class="w-10 h-10 rounded-full bg-gray-50 border border-gray-100 text-gray-400 flex items-center justify-center hover:bg-[#0A66C2] hover:text-white hover:border-[#0A66C2] transition-all shadow-sm"><i class="fa-brands fa-linkedin-in text-sm"></i></a>
+                    <a href="https://x.com/tnfseychelles" target="_blank" class="w-10 h-10 rounded-full bg-gray-50 border border-gray-100 text-gray-400 flex items-center justify-center hover:bg-black hover:text-white hover:border-black transition-all shadow-sm"><i class="fa-brands fa-x-twitter text-sm"></i></a>
                 </div>
             </div>
         </div>
         
-        <div class="max-w-7xl mx-auto border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-medium text-brand-muted relative">
+        <div class="max-w-7xl mx-auto border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-medium text-gray-400 relative">
             <p data-i18n="footerRights">Copyright 2026 &copy; Tyler Nicholas Foundation. All Rights Reserved.</p>
             <div class="flex gap-6 items-center">
-                <a href="/legal/" class="hover:text-eco-green transition-colors" data-i18n="navLegal">Legal</a>
-                <a href="/admin/" class="text-gray-300 hover:text-eco-green transition-colors" title="Secure Staff Portal"><i class="fa-solid fa-lock"></i></a>
+                <a href="/legal/" class="hover:text-brand-dark transition-colors" data-i18n="navLegal">Legal</a>
+                <a href="/admin/" class="hover:text-brand-dark transition-colors" title="Secure Staff Portal"><i class="fa-solid fa-lock text-[10px]"></i></a>
             </div>
         </div>
     </footer>
@@ -409,100 +489,85 @@
         const translations = {
             en: {
                 banner: "Empowering the youth and protecting the environment of the Republic of Seychelles",
-                navHome: "Home", navPrograms: "Programs", navMore: "More", navAboutUs: "About Us", navInvolved: "Get Involved", navLegal: "Legal", navPartners: "Our Partners", navTeam: "Meet the Team", btnDonate: "Donate",
-                searchTitle: "Search Foundation Directory", searchHint1: "Press", searchHint2: "to search.", searchPlaceholder: "Search programs, news, and initiatives...",
-                accRead: "Read",
-                heroBadge: "Official Non-Profit Organization", heroSlogan: "For the Youth.<br>For the Islands.<br>For Tomorrow.",
+                navHome: "Home", navPrograms: "Programs", navMore: "More", navAboutUs: "About", navContact: "Contact", navInvolved: "Get Involved", navLegal: "Legal", navPartners: "Our Partners", navTeam: "Meet the Board", btnDonate: "Donate",
+                searchTitle: "Search Directory", searchHint1: "Press", searchHint2: "to search.", searchPlaceholder: "Search programs, news...",
+                accRead: "A11Y",
+                heroBadge: "Official Non-Profit Organization", heroSlogan: "For the Youth.<br>For the Islands.<br><span class=\"text-transparent bg-clip-text bg-gradient-to-r from-eco-green to-emerald-300\">For Tomorrow.</span>",
                 heroDesc: "Bridging the gaps in our social infrastructure. We build community safety nets, secure life-changing youth placements, and execute environmental action across Seychelles.",
                 btnAction1: "Find an Opportunity", btnAction2: "Partner With Us",
                 msgSub: "A Message From The Chairman", msgTitle: "\"Philanthropy must evolve beyond awareness. It must become infrastructure.\"",
-                msgP1: "The Tyler Nicholas Foundation was not built to simply talk about the problems facing Seychelles; it was built to aggressively solve them. During my time in public service, I realized that while government policy is essential for the future, our communities and our youth need tangible help <strong>today</strong>.",
+                msgP1: "The Tyler Nicholas Foundation was not built to simply talk about the problems facing Seychelles; it was built to aggressively solve them. During my time in public service, I realized that while government policy is essential for the future, our communities and our youth need tangible help <strong class=\"text-brand-dark font-semibold\">today</strong>.",
                 msgP2: "This Foundation is a multi-disciplinary action group. We do not restrict ourselves to one single issue because the challenges facing our islands are deeply interconnected. You cannot solve economic stagnation without addressing digital literacy; you cannot protect our coastal environments without empowering the youth who will inherit them.",
                 msgP3: "From securing international work attachments for ambitious students, to funding grassroots climate action, to providing free digital lifelines for local artisans—our mandate is vast, but our methodology is precise. We are here to act as a shadow-infrastructure for the Republic, providing the tools, the network, and the capital to ensure no Seychellois is left behind.",
-                mandateSub: "Our Scope of Work", mandateTitle: "A Comprehensive National Mandate", mandateDesc: "We operate across multiple sectors to provide a holistic safety net for the Republic. Explore our primary pillars of action below.",
-                pilPlacementTitle: "Career & Opportunity Placement", pilPlacementDesc: "We actively source and secure customized work attachments, long-term internships, and international holiday opportunities for Seychellois youth by contacting organizations and leveraging our corporate network directly on their behalf.", applyBtn: "Apply for Placement &rarr;",
-                pilEcoTitle: "Environmental Stewardship & Climate Action", pilEcoDesc: "Executing grassroots coastal protection, organizing massive youth-led mangrove restoration projects, and providing micro-grants for local eco-innovation and sustainability startups.",
-                pilDigiTitle: "Digital Literacy & Enterprise Incubator", pilDigiDesc: "Through \"The Artisan Initiative\" and our corporate partners, we provide free websites, digital branding, and coding workshops to local vendors and underprivileged youth to transition Seychelles into a creator economy.",
-                pilHealthTitle: "Health, Mental Wellness & Food Security", pilHealthDesc: "Maintaining the National Mental Health Directory, organizing preventative wellness campaigns, and partnering closely with FoodShare Seychelles to manage community food logistics for vulnerable demographics.",
-                pilCivicTitle: "Civic Education & Policy Research Lab", pilCivicDesc: "Operating an Open-Access Education Library for students, conducting youth parliament simulations, and aggregating community data to support evidence-based, data-driven national policymaking.",
-                pilCultureTitle: "Cultural Heritage & Social Inclusion", pilCultureDesc: "Running \"The Generations Archive\" to digitally preserve the folklore of our elderly, while providing strict advocacy and support networks for persons with disabilities and marginalized groups.",
+                approachSub: "Our Methodology", approachTitle: "Digital-First.<br>Sweat Equity Driven.", approachDesc: "We bypass traditional bureaucracy. By leveraging the corporate infrastructure of The Tyler Nicholas Group, we execute high-impact community projects with minimal financial overhead.",
+                mandateSub: "Scope of Work", mandateTitle: "A Holistic National Mandate", mandateDesc: "True progress requires a multi-sector approach. We mobilize our resources across these core pillars to engineer a comprehensive safety net for the Republic.",
+                pilPlacementTitle: "Career & Opportunity Placement", pilPlacementDesc: "We actively source and secure customized work attachments, long-term internships, and international holiday opportunities for Seychellois youth by leveraging our corporate network directly on their behalf.", applyBtn: "Apply for Placement &rarr;",
+                pilEcoTitle: "Environmental Stewardship", pilEcoDesc: "Executing grassroots coastal protection, organizing massive youth-led mangrove restoration projects, and providing micro-grants for local eco-innovation and sustainability startups.",
+                pilDigiTitle: "Digital Literacy & Enterprise", pilDigiDesc: "Through \"The Artisan Initiative\" and our corporate partners, we provide free websites, digital branding, and coding workshops to local vendors and underprivileged youth to transition Seychelles into a creator economy.",
+                pilHealthTitle: "Health & Food Security", pilHealthDesc: "Maintaining the National Mental Health Directory and partnering closely with FoodShare Seychelles to manage community food logistics for vulnerable demographics.",
+                pilCultureTitle: "Cultural Heritage & Inclusion", pilCultureDesc: "Running \"The Generations Archive\" to digitally preserve the folklore of our elderly, while providing strict advocacy and support networks for marginalized groups.",
                 impactSub: "Our Footprint", impactTitle: "Measurable Impact",
-                newsSub: "Latest Updates", newsTitle: "Foundation Newsroom", newsViewAll: "View All Articles", newsReadMore: "Read Article", newsEmpty: "No updates published yet. Check back soon.",
-                boardSub: "Leadership", boardTitle: "Meet the Board of Directors",
-                boardRole1: "Founder & Chairman", boardDesc1: "Directing the foundation's strategic vision, partnerships, and overall commitment to the Seychellois community.",
-                boardRole2: "Vice Chairman", boardDesc2: "Supporting the Chairman in executive decisions and operational oversight.",
-                boardRole3: "Treasurer", boardDesc3: "Managing the foundation's financial health, transparency, and resource allocation.",
-                boardRole4: "Executive Director", boardDesc4: "Leading the day-to-day execution of our community programs and volunteer coordination.",
-                nlTitle: "Join the Movement", nlDesc: "Subscribe to the official Tyler Nicholas Foundation newsletter to receive live updates on our projects, volunteer opportunities, and community impact reports.", nlPlaceholder: "Enter your email address...", nlBtn: "Subscribe", nlSuccess: "Successfully subscribed to the newsletter!", nlError: "Failed to subscribe. Please try again.", nlExists: "You are already subscribed!",
+                newsSub: "Updates", newsTitle: "Foundation Newsroom", newsViewAll: "View All", newsReadMore: "Read Article", newsEmpty: "No updates published yet. Check back soon.",
+                nlTitle: "Stay Informed", nlDesc: "Subscribe to the official Tyler Nicholas Foundation digest to receive direct updates on our community initiatives and volunteer calls.", nlPlaceholder: "Enter your email address...", nlBtn: "Subscribe", nlSuccess: "Successfully subscribed to the digest!", nlError: "Failed to subscribe. Please try again.", nlExists: "You are already subscribed!",
                 footerSlogan: "\"For the Youth. For the Islands. For Tomorrow.\"",
-                footerTNG: "The Tyler Nicholas Foundation is a proud member of <br><a href='https://tylernicholasgroup.com/' target='_blank' class='text-brand-dark hover:text-eco-green transition-colors'>The Tyler Nicholas Group</a>",
-                footerDir: "Directory", footerAffil: "Network Partners", footerContact: "Contact Us",
+                footerTNG: "A proud philanthropic subsidiary of <br><a href='https://tylernicholasgroup.com/' target='_blank' class='text-brand-dark hover:text-eco-green transition-colors mt-1 block text-xs'>The Tyler Nicholas Group</a>",
+                footerDir: "Directory", footerAffil: "Network Partners", footerContact: "Contact",
                 footLinkOffice: "Office of Tyler Nicholas", footLinkFood: "FoodShare Seychelles", footLinkTNG: "Tyler Nicholas Group", footLinkPersonal: "Tyler Nicholas Profile",
                 footerRights: "Copyright 2026 &copy; Tyler Nicholas Foundation. All Rights Reserved."
             },
             fr: {
                 banner: "Autonomiser la jeunesse et protéger l'environnement de la République des Seychelles",
-                navHome: "Accueil", navPrograms: "Programmes", navMore: "Plus", navAboutUs: "À Propos", navInvolved: "S'impliquer", navLegal: "Légal", navPartners: "Nos Partenaires", navTeam: "L'Équipe", btnDonate: "Faire un Don",
-                searchTitle: "Rechercher dans l'Annuaire", searchHint1: "Appuyez sur", searchHint2: "pour rechercher.", searchPlaceholder: "Rechercher des programmes, des actualités...",
-                accRead: "Lire",
-                heroBadge: "Organisation à But Non Lucratif", heroSlogan: "Pour les Jeunes.<br>Pour les Îles.<br>Pour Demain.",
+                navHome: "Accueil", navPrograms: "Programmes", navMore: "Plus", navAboutUs: "À Propos", navContact: "Contact", navInvolved: "S'impliquer", navLegal: "Légal", navPartners: "Nos Partenaires", navTeam: "L'Équipe", btnDonate: "Faire un Don",
+                searchTitle: "Rechercher", searchHint1: "Appuyez sur", searchHint2: "pour rechercher.", searchPlaceholder: "Rechercher des programmes, actualités...",
+                accRead: "A11Y",
+                heroBadge: "Organisation à But Non Lucratif", heroSlogan: "Pour les Jeunes.<br>Pour les Îles.<br><span class=\"text-transparent bg-clip-text bg-gradient-to-r from-eco-green to-emerald-300\">Pour Demain.</span>",
                 heroDesc: "Nous comblons les lacunes de notre infrastructure sociale en créant des filets de sécurité, en garantissant des stages pour les jeunes et en menant des actions environnementales.",
                 btnAction1: "Trouver une Opportunité", btnAction2: "Devenir Partenaire",
                 msgSub: "Un Message du Président", msgTitle: "\"La philanthropie doit devenir une infrastructure.\"",
-                msgP1: "La Fondation Tyler Nicholas n'a pas été créée simplement pour parler des problèmes, mais pour les résoudre. Nos communautés et notre jeunesse ont besoin d'une aide tangible <strong>aujourd'hui</strong>.",
+                msgP1: "La Fondation Tyler Nicholas n'a pas été créée simplement pour parler des problèmes, mais pour les résoudre. Nos communautés et notre jeunesse ont besoin d'une aide tangible <strong class=\"text-brand-dark font-semibold\">aujourd'hui</strong>.",
                 msgP2: "Cette fondation est un groupe d'action multidisciplinaire. Les défis de nos îles sont interconnectés. Vous ne pouvez pas protéger nos côtes sans responsabiliser les jeunes qui en hériteront.",
-                msgP3: "Qu'il s'agisse d'obtenir des stages internationaux pour les étudiants, de financer l'action climatique ou de fournir une aide numérique gratuite aux artisans, notre mandat est vaste. Nous sommes ici pour agir comme une infrastructure de soutien pour la République.",
-                mandateSub: "Notre Champ d'Action", mandateTitle: "Un Mandat National Complet", mandateDesc: "Nous opérons dans de multiples secteurs pour fournir un filet de sécurité holistique. Découvrez nos principaux piliers d'action.",
-                pilPlacementTitle: "Carrière et Placement", pilPlacementDesc: "Nous recherchons et sécurisons activement des stages et des opportunités internationales pour la jeunesse seychelloise en contactant directement les organisations en leur nom.", applyBtn: "Postuler pour un Placement &rarr;",
-                pilEcoTitle: "Gérance Environnementale et Action Climatique", pilEcoDesc: "Exécution de la protection côtière, projets de restauration des mangroves dirigés par les jeunes et micro-subventions pour l'éco-innovation locale.",
-                pilDigiTitle: "Alphabétisation Numérique et Incubateur d'Entreprises", pilDigiDesc: "Grâce à \"L'Initiative Artisanale\", nous fournissons des sites web gratuits et des ateliers de codage aux vendeurs locaux et aux jeunes défavorisés.",
-                pilHealthTitle: "Santé, Bien-être Mental et Sécurité Alimentaire", pilHealthDesc: "Maintien de l'Annuaire National de la Santé Mentale et partenariat avec FoodShare Seychelles pour gérer la logistique alimentaire communautaire.",
-                pilCivicTitle: "Éducation Civique et Laboratoire de Recherche", pilCivicDesc: "Exploitation d'une bibliothèque d'éducation en libre accès pour les étudiants et collecte de données communautaires pour soutenir les politiques publiques.",
-                pilCultureTitle: "Patrimoine Culturel et Inclusion Sociale", pilCultureDesc: "Gérer \"Les Archives des Générations\" pour préserver le folklore de nos aînés, tout en offrant un soutien strict aux groupes marginalisés.",
+                msgP3: "Qu'il s'agisse d'obtenir des stages internationaux pour les étudiants ou de fournir une aide numérique, notre mandat est vaste. Nous sommes ici pour agir comme une infrastructure de soutien pour la République.",
+                approachSub: "Notre Méthodologie", approachTitle: "Numérique d'abord.<br>Action sur le Terrain.", approachDesc: "Nous contournons la bureaucratie. En tirant parti de l'infrastructure de The Tyler Nicholas Group, nous exécutons des projets à fort impact avec des frais minimaux.",
+                mandateSub: "Champ d'Action", mandateTitle: "Un Mandat National", mandateDesc: "Le véritable progrès nécessite une approche multisectorielle. Nous mobilisons nos ressources sur ces piliers fondamentaux.",
+                pilPlacementTitle: "Carrière et Placement", pilPlacementDesc: "Nous recherchons et sécurisons activement des stages et des opportunités pour la jeunesse seychelloise via notre réseau.", applyBtn: "Postuler &rarr;",
+                pilEcoTitle: "Gérance Environnementale", pilEcoDesc: "Protection côtière, projets de restauration des mangroves par les jeunes et micro-subventions pour l'éco-innovation.",
+                pilDigiTitle: "Alphabétisation Numérique", pilDigiDesc: "Nous fournissons des sites web gratuits et des ateliers de codage aux vendeurs locaux et aux jeunes défavorisés.",
+                pilHealthTitle: "Santé et Sécurité Alimentaire", pilHealthDesc: "Maintien de l'Annuaire de la Santé Mentale et partenariat avec FoodShare Seychelles pour la logistique alimentaire.",
+                pilCultureTitle: "Patrimoine Culturel", pilCultureDesc: "Gérer \"Les Archives des Générations\" pour préserver le folklore de nos aînés, et offrir un soutien aux groupes marginalisés.",
                 impactSub: "Notre Empreinte", impactTitle: "Impact Mesurable",
-                newsSub: "Dernières Mises à Jour", newsTitle: "Actualités de la Fondation", newsViewAll: "Voir Tous les Articles", newsReadMore: "Lire l'Article", newsEmpty: "Aucune mise à jour publiée pour le moment.",
-                boardSub: "Direction", boardTitle: "Rencontrez le Conseil d'Administration",
-                boardRole1: "Fondateur & Président", boardDesc1: "Dirige la vision stratégique de la fondation et son engagement global envers la communauté seychelloise.",
-                boardRole2: "Vice-président", boardDesc2: "Soutient le Président dans les décisions exécutives et la supervision opérationnelle.",
-                boardRole3: "Trésorier", boardDesc3: "Gère la santé financière de la fondation, la transparence et l'allocation des ressources.",
-                boardRole4: "Directeur Exécutif", boardDesc4: "Dirige l'exécution quotidienne de nos programmes communautaires et la coordination des bénévoles.",
-                nlTitle: "Rejoignez le Mouvement", nlDesc: "Abonnez-vous à la newsletter officielle pour recevoir des mises à jour en direct sur nos projets et notre impact.", nlPlaceholder: "Entrez votre adresse e-mail...", nlBtn: "S'abonner", nlSuccess: "Abonnement réussi !", nlError: "Échec de l'abonnement.", nlExists: "Vous êtes déjà abonné !",
+                newsSub: "Mises à Jour", newsTitle: "Actualités", newsViewAll: "Voir Tout", newsReadMore: "Lire l'Article", newsEmpty: "Aucune actualité pour le moment.",
+                nlTitle: "Restez Informé", nlDesc: "Abonnez-vous pour recevoir des mises à jour directes sur nos initiatives et nos appels à bénévoles.", nlPlaceholder: "Votre e-mail...", nlBtn: "S'abonner", nlSuccess: "Abonnement réussi !", nlError: "Échec. Veuillez réessayer.", nlExists: "Vous êtes déjà abonné !",
                 footerSlogan: "\"Pour les Jeunes. Pour les Îles. Pour Demain.\"",
-                footerTNG: "La Fondation Tyler Nicholas est fière d'être membre de <br><a href='https://tylernicholasgroup.com/' target='_blank' class='text-brand-dark hover:text-eco-green transition-colors'>The Tyler Nicholas Group</a>",
-                footerDir: "Annuaire", footerAffil: "Partenaires du Réseau", footerContact: "Nous Contacter",
+                footerTNG: "Une fière filiale philanthropique de <br><a href='https://tylernicholasgroup.com/' target='_blank' class='text-brand-dark hover:text-eco-green transition-colors mt-1 block text-xs'>The Tyler Nicholas Group</a>",
+                footerDir: "Annuaire", footerAffil: "Partenaires du Réseau", footerContact: "Contact",
                 footLinkOffice: "Bureau de Tyler Nicholas", footLinkFood: "FoodShare Seychelles", footLinkTNG: "Tyler Nicholas Group", footLinkPersonal: "Profil Tyler Nicholas",
                 footerRights: "Copyright 2026 &copy; Fondation Tyler Nicholas. Tous droits réservés."
             },
             crs: {
                 banner: "Donn lafors lazenes e protez lanvironnman Repiblik Sesel",
-                navHome: "Akey", navPrograms: "Progranm", navMore: "Plis", navAboutUs: "Apropo Nou", navInvolved: "Partisipe", navLegal: "Legal", navPartners: "Nou Partener", navTeam: "Lekip", btnDonate: "Fer en Donasyon",
-                searchTitle: "Rod dan Lalis", searchHint1: "Pese", searchHint2: "pour rode.", searchPlaceholder: "Rod bann progranm ek nouvel...",
-                accRead: "Lir",
-                heroBadge: "Lorganizasyon Non-Profit Ofisyel", heroSlogan: "Pour Lazenes.<br>Pour Bann Zil.<br>Pour Demen.",
+                navHome: "Akey", navPrograms: "Progranm", navMore: "Plis", navAboutUs: "Apropo", navContact: "Kontak", navInvolved: "Partisipe", navLegal: "Legal", navPartners: "Nou Partener", navTeam: "Lekip", btnDonate: "Donasyon",
+                searchTitle: "Rod", searchHint1: "Pese", searchHint2: "pour rode.", searchPlaceholder: "Rod progranm, nouvel...",
+                accRead: "A11Y",
+                heroBadge: "Lorganizasyon Non-Profit", heroSlogan: "Pour Lazenes.<br>Pour Bann Zil.<br><span class=\"text-transparent bg-clip-text bg-gradient-to-r from-eco-green to-emerald-300\">Pour Demen.</span>",
                 heroDesc: "Nou ed komble bann mankman dan kominote par anmenn vre sanzman, ganny bann staz pour lazenes, e protez nou lanvironnman.",
                 btnAction1: "Rod en Loportinite", btnAction2: "Travay avek Nou",
                 msgSub: "En Mesaz Sorti Kot Tyermenn", msgTitle: "\"Travay sarite i bezwen vin en sipor serye pour pei.\"",
-                msgP1: "Fondasyon Tyler Nicholas pa'n ganny kree zis pour koz lo problenm Sesel; in ganny kree pour rezourd zot. Nou kominote ek nou lazenes i bezwen ed <strong>ozordi</strong>.",
+                msgP1: "Fondasyon Tyler Nicholas pa'n ganny kree zis pour koz lo problenm; in ganny kree pour rezourd zot. Nou kominote ek nou lazenes i bezwen ed <strong class=\"text-brand-dark font-semibold\">ozordi</strong>.",
                 msgP2: "Sa Fondasyon i travay lo plizyer keksoz. Bann defi ki nou zil i fer fas avek i konekte. Ou pa kapab protez lanvironnman san donn lafors sa bann zenn ki pou erit li.",
-                msgP3: "Sorti kot rod staz aletranze pour etidyan, ziska ed bann artizan lokal avek zot biznes lo lenternet—nou travay i la pour asire ki personn pa ganny kit deryer dan Sesel.",
-                mandateSub: "Nou Travay", mandateTitle: "En Plan Nasyonal Konple", mandateDesc: "Nou travay dan plizyer sekter pour donn en sipor total pour Repiblik. Dekouver nou bann pilye prensipal anba.",
-                pilPlacementTitle: "Karyer ek Plasman", pilPlacementDesc: "Nou rod e sekirize bann staz ek lezot loportinite travay aletranze pour lazenes Seselwa par pran kontak direk avek bann lorganizasyon pour zot.", applyBtn: "Aplik pour en Plasman &rarr;",
-                pilEcoTitle: "Aksyon pour Lanvironnman ek Klima", pilEcoDesc: "Siport proze netway lans, restorasyon mangliye par lazenes, ek donn led finansyer pour bann nouvo lide ekolozik.",
-                pilDigiTitle: "Ledikasyon Dizital ek Biznes", pilDigiDesc: "A traver \"The Artisan Initiative\", nou donn sitweb gratis ek kour teknolozi pour bann pti biznes ek bann zenn pour prepar zot pour lavenir.",
-                pilHealthTitle: "Lasante, Byen-et Mantal ek Manze", pilHealthDesc: "Gard Lalis Lasante Mantal Nasyonal a-zour e travay avek FoodShare Seychelles pour asire ki bann fanmir i ganny manze.",
-                pilCivicTitle: "Ledikasyon Sivik ek Resers", pilCivicDesc: "Gard en libreri ledikasyon ouver pour etidyan e anrezistre bann lenformasyon dan kominote pour ed gouvernman pran bann bon desizyon.",
-                pilCultureTitle: "Kiltir ek Lenklizyon Sosyal", pilCultureDesc: "Gard \"Larsiv bann Zenerasyon\" pour prezerv nou listwar, e donn sipor pour bann dimoun andikape ek lezot group ki dan bezwen.",
+                msgP3: "Sorti kot rod staz aletranze ziska ed bann artizan lokal—nou travay i la pour asire ki personn pa ganny kit deryer dan Sesel.",
+                approachSub: "Koman Nou Travay", approachTitle: "Teknolozi An-Premye.<br>Aksyon Rapide.", approachDesc: "Nou reisi evite birokrasi lant. A traver led Tyler Nicholas Group, nou fer bann gran proze kominote avek mwens depans.",
+                mandateSub: "Nou Travay", mandateTitle: "En Plan Nasyonal", mandateDesc: "Vre progre i demann travay dan plizyer sekter. Nou met nou lenerzi dan sa bann pilye prensipal.",
+                pilPlacementTitle: "Karyer ek Plasman", pilPlacementDesc: "Nou rod e sekirize bann staz ek lezot loportinite travay pour lazenes Seselwa par pran kontak direk avek lorganizasyon.", applyBtn: "Aplik pour Plasman &rarr;",
+                pilEcoTitle: "Proteksyon Lanvironnman", pilEcoDesc: "Siport proze netway lans, restorasyon mangliye, ek donn led finansyer pour nouvo lide ekolozik.",
+                pilDigiTitle: "Ledikasyon Dizital", pilDigiDesc: "Nou donn sitweb gratis ek kour teknolozi pour bann pti biznes ek bann zenn.",
+                pilHealthTitle: "Lasante ek Manze", pilHealthDesc: "Gard Lalis Lasante Mantal Nasyonal e travay avek FoodShare Seychelles pour asire ki bann fanmir i ganny manze.",
+                pilCultureTitle: "Kiltir ek Lenklizyon", pilCultureDesc: "Gard \"Larsiv bann Zenerasyon\" pour prezerv nou listwar, e donn sipor pour group ki dan bezwen.",
                 impactSub: "Nou Rasin", impactTitle: "Lenpak Ki Ou Kapab Mezire",
-                newsSub: "Bann Dernyen Nouvel", newsTitle: "Lasal Nouvel Fondasyon", newsViewAll: "Vwar Tou Lartik", newsReadMore: "Lir Lartik", newsEmpty: "Napa okenn nouvel ofisyel pibliye pour lemanman.",
-                boardSub: "Ledersip", boardTitle: "Rankontre nou Board",
-                boardRole1: "Fonder ek Tyermenn", boardDesc1: "Diriz vizyon stratezik sa fondasyon ek son devouman pour kominote Seselwa.",
-                boardRole2: "Vays Tyermenn", boardDesc2: "Siport Tyermenn dan bann desizyon enportan ek louvraz fondasyon.",
-                boardRole3: "Trezorye", boardDesc3: "Zer larzan fondasyon, transparans, ek koman nou resours i ganny depanse.",
-                boardRole4: "Direkter Egzekitif", boardDesc4: "Anmenn devan louvraz toulezour lo nou bann proze kominote e zer nou bann volonter.",
-                nlTitle: "Zwenn Nou Mouvman", nlDesc: "Abone avek nou newsletter pour ganny bann nouvel lo nou proze ek loportinite volonter.", nlPlaceholder: "Met ou email isi...", nlBtn: "Abone", nlSuccess: "Ou'n abone avek sikse!", nlError: "I annan en lerer. Silvouple re-eseye.", nlExists: "Ou'n deza abone!",
+                newsSub: "Nouvel", newsTitle: "Bann Dernyen Nouvel", newsViewAll: "Vwar Tou", newsReadMore: "Lir Lartik", newsEmpty: "Napa okenn nouvel pour lemanman.",
+                nlTitle: "Reste Konekte", nlDesc: "Abone pour ganny bann nouvel direk lo nou proze ek loportinite volonter.", nlPlaceholder: "Ou email...", nlBtn: "Abone", nlSuccess: "Ou'n abone avek sikse!", nlError: "Lerer. Silvouple re-eseye.", nlExists: "Ou'n deza abone!",
                 footerSlogan: "\"Pour Lazenes. Pour Bann Zil. Pour Demen.\"",
-                footerTNG: "Fondasyon Tyler Nicholas i fyer pour fer par <br><a href='https://tylernicholasgroup.com/' target='_blank' class='text-brand-dark hover:text-eco-green transition-colors'>The Tyler Nicholas Group</a>",
-                footerDir: "Lalis", footerAffil: "Nou Bann Partener", footerContact: "Kontak Nou",
+                footerTNG: "En branch sarite dirize par <br><a href='https://tylernicholasgroup.com/' target='_blank' class='text-brand-dark hover:text-eco-green transition-colors mt-1 block text-xs'>The Tyler Nicholas Group</a>",
+                footerDir: "Lalis", footerAffil: "Nou Partener", footerContact: "Kontak Nou",
                 footLinkOffice: "Lobi Tyler Nicholas", footLinkFood: "FoodShare Seychelles", footLinkTNG: "Tyler Nicholas Group", footLinkPersonal: "Profil Tyler Nicholas",
                 footerRights: "Copyright 2026 &copy; Fondasyon Tyler Nicholas. Tou drwa rezerve."
             }
@@ -521,9 +586,10 @@
                 const key = el.getAttribute('data-i18n-placeholder');
                 if (translations[lang] && translations[lang][key]) el.placeholder = translations[lang][key];
             });
-            if (window.fetchLatestNews) fetchLatestNews(window.supabaseClient); // Re-render news to update buttons
+            if (window.fetchLatestNews) fetchLatestNews(window.supabaseClient);
         }
 
+        // Search & Menu Logic
         function toggleSearch() {
             const overlay = document.getElementById('search-overlay');
             overlay.classList.toggle('hidden'); overlay.classList.toggle('active');
@@ -541,6 +607,39 @@
         document.getElementById('mobile-menu-btn').addEventListener('click', () => mobileMenu.classList.toggle('translate-x-full'));
         document.getElementById('mobile-menu-close').addEventListener('click', () => mobileMenu.classList.toggle('translate-x-full'));
 
+        // Interactive Accordion Logic
+        function toggleScope(element) {
+            const allItems = document.querySelectorAll('.scope-item');
+            
+            if (element.classList.contains('active')) {
+                element.classList.remove('active');
+                element.querySelector('.icon-toggle').innerHTML = '<i class="fa-solid fa-plus"></i>';
+            } else {
+                allItems.forEach(item => {
+                    item.classList.remove('active');
+                    item.querySelector('.icon-toggle').innerHTML = '<i class="fa-solid fa-plus"></i>';
+                });
+                element.classList.add('active');
+                element.querySelector('.icon-toggle').innerHTML = '<i class="fa-solid fa-minus"></i>';
+            }
+        }
+
+        // Intersection Observer for Fade Up Animations
+        const observerOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.observer-target').forEach((el) => {
+            observer.observe(el);
+        });
+
+        // Toast logic
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -552,6 +651,7 @@
             setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 400); }, 4000);
         }
 
+        // A11y
         let currentTextLevel = 1; let isHighContrast = false;
         function adjustTextSize(step) {
             const newLevel = currentTextLevel + step;
@@ -571,11 +671,18 @@
             });
         }
 
-        // --- SUPABASE LOGIC (Metrics, News, Newsletter) ---
+        // --- SUPABASE LOGIC ---
         const SUPABASE_URL = 'https://eeqgfchvchpdulfybsjg.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVlcWdmY2h2Y2hwZHVsZnlic2pnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3MDEyMzYsImV4cCI6MjA5MDI3NzIzNn0.2Psw_X2TB1r8iLb46WWWANhVuDvoDPnUMjaWykvqd1s';
         
         document.addEventListener("DOMContentLoaded", () => {
+            // Trigger initial animations
+            setTimeout(() => {
+                document.querySelectorAll('.fade-up').forEach((el, index) => {
+                    if(index < 2) el.classList.add('visible'); // Show top elements immediately
+                });
+            }, 100);
+
             const checkSupabase = setInterval(() => {
                 if (window.supabase) {
                     clearInterval(checkSupabase); 
@@ -586,7 +693,6 @@
             }, 100);
         });
 
-        // 1. Fetch Metrics
         async function fetchImpactMetrics(supabase) {
             try {
                 const { data, error } = await supabase.from('tnf_impact_metrics').select('*').order('metric_value', { ascending: false }).limit(3);
@@ -594,36 +700,31 @@
                 
                 if (error || !data || data.length === 0) {
                     grid.innerHTML = `
-                        <div class="bg-[#F9FAFB] rounded-2xl p-8 border border-gray-100 shadow-sm">
-                            <div class="w-16 h-16 bg-white text-eco-green rounded-full flex items-center justify-center text-2xl mx-auto mb-4 shadow-sm"><i class="fa-solid fa-users"></i></div>
-                            <h4 class="text-4xl font-heading font-black text-brand-dark mb-2 stat-counter">50+</h4>
+                        <div class="bg-[#F9FAFB] rounded-3xl p-8 lg:p-10 border border-gray-100 flex flex-col items-center justify-center text-center">
+                            <h4 class="text-5xl lg:text-6xl font-heading font-black text-brand-dark mb-3 text-gradient">50+</h4>
                             <p class="text-sm font-bold text-gray-500 uppercase tracking-widest">Active Volunteers</p>
                         </div>
-                        <div class="bg-[#F9FAFB] rounded-2xl p-8 border border-gray-100 shadow-sm">
-                            <div class="w-16 h-16 bg-white text-eco-green rounded-full flex items-center justify-center text-2xl mx-auto mb-4 shadow-sm"><i class="fa-solid fa-laptop-code"></i></div>
-                            <h4 class="text-4xl font-heading font-black text-brand-dark mb-2 stat-counter">3</h4>
+                        <div class="bg-[#F9FAFB] rounded-3xl p-8 lg:p-10 border border-gray-100 flex flex-col items-center justify-center text-center">
+                            <h4 class="text-5xl lg:text-6xl font-heading font-black text-brand-dark mb-3 text-gradient">3</h4>
                             <p class="text-sm font-bold text-gray-500 uppercase tracking-widest">Websites Donated</p>
                         </div>
-                        <div class="bg-[#F9FAFB] rounded-2xl p-8 border border-gray-100 shadow-sm">
-                            <div class="w-16 h-16 bg-white text-eco-green rounded-full flex items-center justify-center text-2xl mx-auto mb-4 shadow-sm"><i class="fa-solid fa-book-open"></i></div>
-                            <h4 class="text-4xl font-heading font-black text-brand-dark mb-2 stat-counter">12</h4>
-                            <p class="text-sm font-bold text-gray-500 uppercase tracking-widest">Courses Published</p>
+                        <div class="bg-[#F9FAFB] rounded-3xl p-8 lg:p-10 border border-gray-100 flex flex-col items-center justify-center text-center">
+                            <h4 class="text-5xl lg:text-6xl font-heading font-black text-brand-dark mb-3 text-gradient">12</h4>
+                            <p class="text-sm font-bold text-gray-500 uppercase tracking-widest">Placements Secured</p>
                         </div>
                     `;
                     return;
                 }
 
                 grid.innerHTML = data.map(metric => `
-                    <div class="bg-[#F9FAFB] rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-card transition-shadow">
-                        <div class="w-16 h-16 bg-white text-eco-green rounded-full flex items-center justify-center text-2xl mx-auto mb-4 shadow-sm"><i class="fa-solid ${metric.icon_class || 'fa-chart-simple'}"></i></div>
-                        <h4 class="text-4xl font-heading font-black text-brand-dark mb-2 stat-counter">${metric.metric_value.toLocaleString()}+</h4>
+                    <div class="bg-[#F9FAFB] rounded-3xl p-8 lg:p-10 border border-gray-100 flex flex-col items-center justify-center text-center hover:shadow-card transition-shadow">
+                        <h4 class="text-5xl lg:text-6xl font-heading font-black text-brand-dark mb-3 text-gradient">${metric.metric_value.toLocaleString()}+</h4>
                         <p class="text-sm font-bold text-gray-500 uppercase tracking-widest">${metric.metric_label}</p>
                     </div>
                 `).join('');
             } catch(e) { console.error(e); }
         }
 
-        // 2. Fetch News
         async function fetchLatestNews(supabase) {
             try {
                 const { data, error } = await supabase.from('tnf_news').select('*').order('published_at', { ascending: false }).limit(3);
@@ -636,19 +737,16 @@
                 }
 
                 grid.innerHTML = data.map(news => `
-                    <div class="bg-white border border-gray-100 rounded-3xl shadow-sm p-8 flex flex-col h-full hover:shadow-card transition-all duration-300">
-                        <div class="flex justify-between items-start mb-4">
-                            <span class="bg-gray-50 text-gray-500 text-[10px] font-bold px-3 py-1 rounded-md uppercase tracking-widest border border-gray-100">${new Date(news.published_at).toLocaleDateString()}</span>
-                        </div>
-                        <h4 class="font-heading font-bold text-xl text-brand-dark mb-3 leading-snug hover:text-eco-green transition-colors cursor-pointer">${news.title}</h4>
-                        <p class="text-sm text-gray-500 line-clamp-3 mb-6 flex-grow leading-relaxed">${news.short_summary}</p>
-                        <a href="/news/" class="text-eco-green font-bold text-sm hover:underline mt-auto flex items-center">${dict.newsReadMore || translations.en.newsReadMore} <i class="fa-solid fa-arrow-right ml-1 text-xs"></i></a>
-                    </div>
+                    <a href="/news/" class="block bg-white border border-gray-100 rounded-[2rem] p-8 flex flex-col h-full hover:shadow-card hover:border-eco-green/30 transition-all duration-300 group">
+                        <span class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-4 block">${new Date(news.published_at).toLocaleDateString()}</span>
+                        <h4 class="font-heading font-bold text-xl text-brand-dark mb-4 leading-snug group-hover:text-eco-green transition-colors">${news.title}</h4>
+                        <p class="text-sm text-gray-500 line-clamp-3 mb-8 flex-grow leading-relaxed">${news.short_summary}</p>
+                        <span class="text-brand-dark font-bold text-sm flex items-center mt-auto group-hover:text-eco-green transition-colors">${dict.newsReadMore || translations.en.newsReadMore} <i class="fa-solid fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform"></i></span>
+                    </a>
                 `).join('');
             } catch(e) { console.error(e); }
         }
 
-        // 3. Handle Newsletter Subscribe
         async function subscribeNewsletter(e) {
             e.preventDefault();
             if (!window.supabaseClient) return;
@@ -664,12 +762,8 @@
                 const { error } = await window.supabaseClient.from('tnf_subscribers').insert({ email: email });
                 
                 if (error) {
-                    // Check for unique constraint violation (already subscribed)
-                    if (error.code === '23505') {
-                        showToast(dict.nlExists || translations.en.nlExists, 'error');
-                    } else {
-                        throw error;
-                    }
+                    if (error.code === '23505') showToast(dict.nlExists || translations.en.nlExists, 'error');
+                    else throw error;
                 } else {
                     showToast(dict.nlSuccess || translations.en.nlSuccess, 'success');
                     document.getElementById('nl-email').value = '';
