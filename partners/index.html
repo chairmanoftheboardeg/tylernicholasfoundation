@@ -13,55 +13,52 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: { sans: ['Inter', 'sans-serif'], heading: ['Poppins', 'sans-serif'] },
-                    colors: { brand: { dark: '#0A0F1C', muted: '#6B7280' }, eco: { green: '#059669', light: '#ECFDF5', dark: '#047857', sand: '#FDFBF7' } },
-                    boxShadow: { 'soft': '0 20px 40px -15px rgba(0,0,0,0.05)', 'card': '0 10px 30px -10px rgba(5, 150, 105, 0.15)', 'glow': '0 0 40px -10px rgba(5, 150, 105, 0.3)' }
+                    colors: { brand: { dark: '#111827', muted: '#6B7280' }, eco: { green: '#059669', light: '#D1FAE5', dark: '#065F46', sand: '#FDFBF7' } },
+                    boxShadow: { 'soft': '0 10px 40px -10px rgba(5, 150, 105, 0.15)', 'card': '0 4px 20px rgba(0,0,0,0.04)' }
                 }
             }
         }
     </script>
 
     <style>
-        body { background-color: #FAFAFA; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
-        
-        /* Smooth Reveal Animations */
-        .fade-up { opacity: 0; transform: translateY(30px); transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
-        .fade-up.visible { opacity: 1; transform: translateY(0); }
-        .delay-100 { transition-delay: 100ms; } .delay-200 { transition-delay: 200ms; } .delay-300 { transition-delay: 300ms; }
+        body { background-color: #FFFFFF; -webkit-font-smoothing: antialiased; }
+        .fade-up { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; transform: translateY(20px); }
+        .delay-100 { animation-delay: 100ms; } .delay-200 { animation-delay: 200ms; }
+        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
 
-        /* Modern Nav Links */
-        .nav-link { position: relative; cursor: pointer; color: #4B5563; font-weight: 500; transition: color 0.3s ease; }
-        .nav-link:hover { color: #059669; }
-        .nav-link::after { content: ''; position: absolute; width: 4px; height: 4px; bottom: -8px; left: 50%; transform: translateX(-50%) scale(0); background-color: #059669; border-radius: 50%; transition: transform 0.3s ease; }
-        .nav-link:hover::after, .nav-link.active::after { transform: translateX(-50%) scale(1); }
-        .nav-link.active { color: #0A0F1C; font-weight: 600; }
+        .nav-link { position: relative; cursor: pointer; }
+        .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -4px; left: 0; background-color: #059669; transition: width 0.3s ease; }
+        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
+        .nav-link.active { color: #059669; }
 
-        /* Accessibility Panel */
+        /* Floating Accessibility Panel */
         #accessibility-panel { position: fixed; left: 0; top: 50%; transform: translateY(-50%); z-index: 80; transition: transform 0.3s ease; }
         #accessibility-panel.closed { transform: translate(-100%, -50%); }
         .acc-btn { @apply w-10 h-10 flex items-center justify-center bg-white border-b border-gray-100 text-brand-dark hover:bg-eco-light hover:text-eco-green transition-colors cursor-pointer; }
         
         .read-area { transition: all 0.3s ease; }
-        .read-area.high-contrast { background-color: #0A0F1C !important; color: #F9FAFB !important; border-color: #1F2937 !important; }
+        .read-area.high-contrast { background-color: #111827 !important; color: #F9FAFB !important; border-color: #374151 !important; }
         .read-area.high-contrast h2, .read-area.high-contrast h3, .read-area.high-contrast h4, .read-area.high-contrast p, .read-area.high-contrast span { color: #F9FAFB !important; }
+        .read-area.text-lvl-1 p { font-size: 1rem; line-height: 1.75; }
+        .read-area.text-lvl-2 p { font-size: 1.125rem; line-height: 1.8; }
+        .read-area.text-lvl-3 p { font-size: 1.25rem; line-height: 1.9; }
 
         #search-overlay { transition: opacity 0.3s ease; }
         #search-overlay.hidden { opacity: 0; pointer-events: none; }
         #search-overlay.active { opacity: 1; pointer-events: auto; }
-
-        /* Modern UI Elements */
-        .glass-panel { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.5); }
-        .text-gradient { background: linear-gradient(135deg, #059669 0%, #047857 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
-        /* Editorial Specific */
-        .editorial-image { clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%); }
-        .editorial-image-reverse { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 85%); }
+        #discord-popup { transition: opacity 0.4s ease, transform 0.4s ease; }
+        #discord-popup.show { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+        #discord-popup.hide { opacity: 0; transform: translateY(20px) scale(0.95); pointer-events: none; }
+
+        /* Modern Editorial Effects */
         .hover-line { position: relative; display: inline-block; }
         .hover-line::after { content: ''; position: absolute; width: 100%; transform: scaleX(0); height: 1px; bottom: 0; left: 0; background-color: currentColor; transform-origin: bottom right; transition: transform 0.4s cubic-bezier(0.86, 0, 0.07, 1); }
         .hover-line:hover::after { transform: scaleX(1); transform-origin: bottom left; }
@@ -69,53 +66,52 @@
 </head>
 <body class="flex flex-col min-h-screen text-brand-dark">
 
-    <div class="bg-brand-dark text-white text-[11px] md:text-xs font-medium py-3 px-4 text-center tracking-wider uppercase" data-i18n="banner">
+    <div class="bg-eco-green text-white text-[11px] md:text-xs font-medium py-2.5 px-4 text-center tracking-wide" data-i18n="banner">
         Empowering the youth and protecting the environment of the Republic of Seychelles
     </div>
 
-    <nav class="bg-white/90 backdrop-blur-md py-4 px-6 md:px-12 sticky top-0 z-50 transition-all duration-300 border-b border-gray-100" id="navbar">
+    <nav class="bg-white py-4 px-6 md:px-12 sticky top-0 z-50 transition-shadow duration-300 shadow-sm" id="navbar">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             
-            <a href="/" class="flex items-center gap-4 group">
-                <img src="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" alt="TNF Logo" class="w-11 h-11 rounded-full object-cover shadow-sm group-hover:shadow-md transition-all duration-300">
+            <a href="/" class="flex items-center gap-3 group">
+                <img src="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" alt="TNF Logo" class="w-10 h-10 rounded-full object-cover shadow-sm group-hover:scale-105 transition-transform duration-300">
                 <h1 class="font-heading font-bold text-xl tracking-tight text-brand-dark hidden sm:block">Tyler Nicholas <span class="text-eco-green">Foundation</span></h1>
             </a>
 
-            <button id="mobile-menu-btn" class="lg:hidden text-brand-dark text-2xl focus:outline-none hover:text-eco-green transition-colors"><i class="fa-solid fa-bars-staggered"></i></button>
+            <button id="mobile-menu-btn" class="lg:hidden text-brand-dark text-2xl focus:outline-none"><i class="fa-solid fa-bars"></i></button>
 
-            <div class="hidden lg:flex space-x-8 text-sm font-heading items-center">
-                <a href="/" class="nav-link" data-i18n="navHome">Home</a>
-                <a href="/programs/" class="nav-link" data-i18n="navPrograms">Programs</a>
-                <a href="/about/" class="nav-link" data-i18n="navAboutUs">About</a>
-                <a href="/contact/" class="nav-link" data-i18n="navContact">Contact</a>
+            <div class="hidden lg:flex space-x-6 lg:space-x-8 text-sm font-heading font-medium text-brand-muted items-center">
+                <a href="/" class="nav-link hover:text-brand-dark transition-colors" data-i18n="navHome">Home</a>
+                <a href="/programs/" class="nav-link hover:text-brand-dark transition-colors" data-i18n="navPrograms">Programs</a>
+                <a href="/contact/" class="nav-link hover:text-brand-dark transition-colors" data-i18n="navContact">Contact</a>
                 
                 <div class="relative group py-2">
-                    <span class="nav-link active flex items-center gap-1.5"><span data-i18n="navMore">More</span> <i class="fa-solid fa-chevron-down text-[9px] mt-0.5 opacity-60"></i></span>
-                    <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-56 bg-white rounded-2xl shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 border border-gray-100 flex flex-col py-3 translate-y-3 group-hover:translate-y-1">
-                        <div class="px-5 pb-2 mb-2 border-b border-gray-50 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Resources</div>
-                        <a href="/get-involved/" class="px-5 py-2.5 text-sm font-medium text-brand-dark hover:bg-gray-50 transition-colors flex items-center justify-between" data-i18n="navInvolved">Get Involved <i class="fa-solid fa-arrow-right text-[10px] opacity-0 group-hover:opacity-100 transition-opacity"></i></a>
-                        <a href="/partners/" class="px-5 py-2.5 text-sm font-bold text-eco-green bg-eco-light/50 transition-colors" data-i18n="navPartners">Our Partners</a>
-                        <a href="/team/" class="px-5 py-2.5 text-sm font-medium text-brand-dark hover:bg-gray-50 transition-colors" data-i18n="navTeam">Meet the Board</a>
-                        <a href="/legal/" class="px-5 py-2.5 text-sm font-medium text-brand-dark hover:bg-gray-50 transition-colors" data-i18n="navLegal">Legal</a>
+                    <span class="nav-link active flex items-center gap-1 hover:text-brand-dark transition-colors"><span data-i18n="navMore">More</span> <i class="fa-solid fa-chevron-down text-[10px] mt-0.5"></i></span>
+                    <div class="absolute top-full left-0 w-48 bg-white rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 border border-gray-100 flex flex-col py-2 transform translate-y-2 group-hover:translate-y-0">
+                        <a href="/about/" class="px-5 py-2.5 text-sm font-medium text-brand-dark hover:bg-eco-light hover:text-eco-green transition-colors" data-i18n="navAboutUs">About Us</a>
+                        <a href="/get-involved/" class="px-5 py-2.5 text-sm font-medium text-brand-dark hover:bg-eco-light hover:text-eco-green transition-colors" data-i18n="navInvolved">Get Involved</a>
+                        <a href="/legal/" class="px-5 py-2.5 text-sm font-medium text-brand-dark hover:bg-eco-light hover:text-eco-green transition-colors" data-i18n="navLegal">Legal</a>
+                        <a href="/partners/" class="px-5 py-2.5 text-sm font-medium text-eco-green bg-eco-light transition-colors" data-i18n="navPartners">Our Partners</a>
+                        <a href="/team/" class="px-5 py-2.5 text-sm font-medium text-brand-dark hover:bg-eco-light hover:text-eco-green transition-colors" data-i18n="navTeam">Meet the Team</a>
                     </div>
                 </div>
             </div>
 
             <div class="hidden lg:flex items-center space-x-6">
-                <button onclick="toggleSearch()" class="text-brand-dark hover:text-eco-green transition-colors text-lg"><i class="fa-solid fa-magnifying-glass"></i></button>
+                <button onclick="toggleSearch()" class="text-brand-muted hover:text-eco-green transition-colors text-lg"><i class="fa-solid fa-magnifying-glass"></i></button>
                 
                 <div class="relative group py-2">
-                    <button class="flex items-center text-sm font-heading font-semibold text-brand-dark hover:text-eco-green transition-colors">
-                        <span id="current-lang">EN</span> <i class="fa-solid fa-chevron-down ml-1.5 text-[9px] opacity-60"></i>
+                    <button class="flex items-center text-sm font-heading font-semibold text-brand-dark hover:text-eco-green">
+                        <i class="fa-solid fa-globe mr-1.5 text-brand-muted"></i> <span id="current-lang">EN</span> <i class="fa-solid fa-chevron-down ml-1 text-[10px]"></i>
                     </button>
-                    <div class="absolute right-0 top-full w-32 bg-white rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 border border-gray-100 overflow-hidden transform translate-y-3 group-hover:translate-y-1">
-                        <button onclick="changeLang('en')" class="w-full text-left px-4 py-3 hover:bg-gray-50 text-sm font-medium text-brand-dark transition-colors">English</button>
-                        <button onclick="changeLang('fr')" class="w-full text-left px-4 py-3 hover:bg-gray-50 text-sm font-medium text-brand-dark transition-colors">Français</button>
-                        <button onclick="changeLang('crs')" class="w-full text-left px-4 py-3 hover:bg-gray-50 text-sm font-medium text-brand-dark transition-colors">Seselwa</button>
+                    <div class="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all border border-gray-100 overflow-hidden transform translate-y-2 group-hover:translate-y-0">
+                        <button onclick="changeLang('en')" class="w-full text-left px-4 py-3 hover:bg-eco-light text-sm font-medium text-eco-dark">English</button>
+                        <button onclick="changeLang('fr')" class="w-full text-left px-4 py-3 hover:bg-eco-light text-sm font-medium text-eco-dark">Français</button>
+                        <button onclick="changeLang('crs')" class="w-full text-left px-4 py-3 hover:bg-eco-light text-sm font-medium text-eco-dark">Seselwa</button>
                     </div>
                 </div>
 
-                <a href="/get-involved/" class="bg-brand-dark hover:bg-eco-green text-white px-7 py-2.5 rounded-full font-heading font-medium transition-all duration-300 shadow-md hover:shadow-glow transform hover:-translate-y-0.5 inline-block text-sm" data-i18n="btnDonate">
+                <a href="/get-involved/" class="bg-eco-green hover:bg-eco-dark text-white px-6 py-2.5 rounded-lg font-heading font-medium transition-colors shadow-soft hover:shadow-md transform hover:-translate-y-0.5 inline-block" data-i18n="btnDonate">
                     Donate
                 </a>
             </div>
@@ -123,77 +119,87 @@
     </nav>
 
     <div id="search-overlay" class="fixed inset-0 bg-white/95 backdrop-blur-md z-[200] hidden flex flex-col items-center justify-center p-6">
-        <button onclick="toggleSearch()" class="absolute top-8 right-8 text-4xl text-brand-muted hover:text-brand-dark transition-transform hover:rotate-90"><i class="fa-solid fa-xmark"></i></button>
+        <button onclick="toggleSearch()" class="absolute top-8 right-8 text-4xl text-brand-muted hover:text-brand-dark"><i class="fa-solid fa-xmark"></i></button>
         <div class="w-full max-w-3xl">
-            <h3 class="text-xl font-heading font-bold text-gray-400 mb-4 uppercase tracking-widest" data-i18n="searchTitle">Search Directory</h3>
+            <h3 class="text-2xl font-heading font-bold text-brand-dark mb-4" data-i18n="searchTitle">Search Foundation Directory</h3>
             <div class="relative">
-                <i class="fa-solid fa-magnifying-glass absolute left-6 top-1/2 transform -translate-y-1/2 text-2xl text-brand-dark"></i>
-                <input type="text" id="search-input" data-i18n-placeholder="searchPlaceholder" onkeydown="executeSearch(event)" placeholder="Search programs, news..." class="w-full bg-transparent border-b-2 border-gray-200 focus:border-eco-green py-6 pl-16 pr-6 text-2xl md:text-4xl font-heading font-light text-brand-dark outline-none transition-colors placeholder-gray-300">
+                <i class="fa-solid fa-magnifying-glass absolute left-6 top-1/2 transform -translate-y-1/2 text-2xl text-brand-muted"></i>
+                <input type="text" id="search-input" data-i18n-placeholder="searchPlaceholder" onkeydown="executeSearch(event)" placeholder="Search programs, news, and initiatives..." class="w-full bg-gray-100 border-2 border-transparent focus:border-eco-green rounded-2xl py-6 pl-16 pr-6 text-xl md:text-2xl font-heading outline-none transition-all shadow-inner">
             </div>
         </div>
     </div>
 
-    <div id="accessibility-panel" class="shadow-card rounded-r-xl overflow-hidden bg-white border border-l-0 border-gray-100">
-        <div class="bg-brand-dark text-white text-[9px] font-bold uppercase tracking-widest py-2 px-2 text-center w-12" data-i18n="accRead">A11Y</div>
+    <div id="discord-popup" class="fixed bottom-6 left-6 z-[90] w-[350px] bg-white rounded-2xl shadow-2xl border border-gray-100 p-6 hide">
+        <button onclick="closeDiscordPopup()" class="absolute top-4 right-4 text-gray-400 hover:text-brand-dark"><i class="fa-solid fa-xmark"></i></button>
+        <div class="w-12 h-12 bg-[#5865F2]/10 text-[#5865F2] rounded-xl flex items-center justify-center text-2xl mb-4">
+            <i class="fa-brands fa-discord"></i>
+        </div>
+        <h4 class="font-heading font-bold text-lg text-brand-dark mb-2" data-i18n="discordTitle">Join the Community</h4>
+        <p class="text-sm text-brand-muted mb-4 leading-relaxed" data-i18n="discordDesc">Engage with our volunteers, join discussions on sustainability, and get live updates on our projects.</p>
+        <a href="https://discord.gg/DMaJmWChP4" target="_blank" onclick="closeDiscordPopup()" class="block w-full bg-[#5865F2] hover:bg-[#4752C4] text-white text-center font-heading font-bold py-3 rounded-lg transition-colors text-sm" data-i18n="discordBtn">
+            Join Discord Server
+        </a>
+    </div>
+
+    <div id="accessibility-panel" class="shadow-lg rounded-r-xl overflow-hidden bg-white border border-l-0 border-gray-200">
+        <div class="bg-eco-dark text-white text-[9px] font-bold uppercase tracking-widest py-1.5 px-2 text-center w-12" data-i18n="accRead">Read</div>
         <div class="acc-btn" onclick="adjustTextSize(1)" title="Increase Text Size"><i class="fa-solid fa-a text-lg"></i><i class="fa-solid fa-plus text-[10px] ml-0.5"></i></div>
         <div class="acc-btn" onclick="adjustTextSize(-1)" title="Decrease Text Size"><i class="fa-solid fa-a text-sm"></i><i class="fa-solid fa-minus text-[10px] ml-0.5"></i></div>
         <div class="acc-btn" onclick="toggleHighContrast()" title="Toggle High Contrast"><i class="fa-solid fa-circle-half-stroke text-lg"></i></div>
     </div>
 
-    <div id="mobile-menu-overlay" class="fixed inset-0 bg-white z-[100] transform translate-x-full transition-transform duration-500 ease-in-out flex flex-col lg:hidden overflow-y-auto">
+    <div id="mobile-menu-overlay" class="fixed inset-0 bg-white z-[100] transform translate-x-full transition-transform duration-300 flex flex-col lg:hidden overflow-y-auto">
         <div class="p-6 flex justify-between items-center border-b border-gray-100">
             <div class="flex items-center gap-3">
-                <img src="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" alt="TNF Logo" class="w-10 h-10 rounded-full">
+                <img src="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" alt="TNF Logo" class="w-8 h-8 rounded-full">
                 <h1 class="font-heading font-bold text-xl text-brand-dark">TNF</h1>
             </div>
-            <button id="mobile-menu-close" class="text-brand-dark text-3xl hover:rotate-90 transition-transform"><i class="fa-solid fa-xmark"></i></button>
+            <button id="mobile-menu-close" class="text-brand-dark text-3xl"><i class="fa-solid fa-xmark"></i></button>
         </div>
-        <div class="p-8 flex flex-col space-y-6 text-brand-dark flex-grow font-heading font-semibold text-3xl">
+        <div class="p-8 flex flex-col space-y-6 text-brand-dark flex-grow font-heading font-semibold text-2xl">
             <a href="/" class="hover:text-eco-green transition-colors" data-i18n="navHome">Home</a>
             <a href="/programs/" class="hover:text-eco-green transition-colors" data-i18n="navPrograms">Programs</a>
             <a href="/about/" class="hover:text-eco-green transition-colors" data-i18n="navAboutUs">About Us</a>
             <a href="/contact/" class="hover:text-eco-green transition-colors" data-i18n="navContact">Contact</a>
-            <div class="h-px bg-gray-100 w-full my-4"></div>
-            <a href="/get-involved/" class="text-xl text-gray-500 hover:text-eco-green transition-colors" data-i18n="navInvolved">Get Involved</a>
-            <a href="/partners/" class="text-xl text-eco-green transition-colors" data-i18n="navPartners">Our Partners</a>
-            <a href="/team/" class="text-xl text-gray-500 hover:text-eco-green transition-colors" data-i18n="navTeam">Meet the Board</a>
-        </div>
-        <div class="p-8">
-            <a href="/get-involved/" class="block w-full bg-brand-dark text-white text-center py-5 rounded-2xl font-heading font-bold text-xl shadow-lg" data-i18n="btnDonate">Donate</a>
+            <a href="/get-involved/" class="hover:text-eco-green transition-colors" data-i18n="navInvolved">Get Involved</a>
+            <a href="/legal/" class="hover:text-eco-green transition-colors" data-i18n="navLegal">Legal</a>
+            <a href="/partners/" class="text-eco-green transition-colors" data-i18n="navPartners">Our Partners</a>
+            <a href="/team/" class="hover:text-eco-green transition-colors" data-i18n="navTeam">Meet the Team</a>
+            <a href="/get-involved/" class="mt-4 inline-block bg-eco-green text-white text-center py-4 rounded-xl font-bold text-lg shadow-soft" data-i18n="btnDonate">Donate</a>
         </div>
     </div>
 
     <main class="flex-grow">
         
         <section class="pt-32 pb-24 bg-white text-center px-6 relative overflow-hidden">
-            <div class="absolute top-10 left-1/2 transform -translate-x-1/2 text-[180px] font-heading font-black text-gray-50 leading-none whitespace-nowrap z-0 select-none pointer-events-none opacity-60">NETWORK</div>
+            <div class="absolute top-10 left-1/2 transform -translate-x-1/2 text-[100px] md:text-[180px] font-heading font-black text-gray-50 leading-none whitespace-nowrap z-0 select-none pointer-events-none opacity-60">NETWORK</div>
             
-            <div class="relative z-10 fade-up max-w-4xl mx-auto observer-target">
+            <div class="relative z-10 fade-up max-w-4xl mx-auto">
                 <div class="inline-flex items-center gap-3 bg-gray-50 border border-gray-100 rounded-full px-4 py-2 mb-8">
                     <span class="text-eco-green text-[10px] font-heading font-bold uppercase tracking-widest" data-i18n="heroSub">Our Alliance</span>
                 </div>
-                <h1 class="text-5xl md:text-6xl lg:text-[80px] font-heading font-black text-brand-dark mb-6 leading-none tracking-tighter" data-i18n="heroTitle">
+                <h1 class="text-4xl md:text-5xl lg:text-7xl font-heading font-black text-brand-dark mb-6 leading-none tracking-tighter" data-i18n="heroTitle">
                     Collaboration drives impact.
                 </h1>
-                <p class="text-gray-500 text-xl font-light leading-relaxed max-w-2xl mx-auto" data-i18n="heroDesc">
+                <p class="text-gray-500 text-lg md:text-xl font-medium leading-relaxed max-w-2xl mx-auto" data-i18n="heroDesc">
                     We achieve more together. The Tyler Nicholas Foundation is supported by a robust ecosystem of corporate partners, parent organizations, and allied NGOs.
                 </p>
             </div>
         </section>
 
-        <section class="py-24 bg-brand-dark text-white relative overflow-hidden">
+        <section class="py-24 bg-[#111827] text-white relative overflow-hidden">
             <div class="absolute inset-0 z-0">
-                <div class="absolute -right-40 -top-40 w-[600px] h-[600px] bg-brand-dark rounded-full blur-[120px] mix-blend-screen opacity-50"></div>
+                <div class="absolute -right-40 -top-40 w-[600px] h-[600px] bg-blue-900/30 rounded-full blur-[120px] mix-blend-screen opacity-50"></div>
             </div>
             
-            <div class="max-w-7xl mx-auto px-6 md:px-12 relative z-10 fade-up observer-target flex flex-col lg:flex-row items-center justify-between gap-16">
+            <div class="max-w-7xl mx-auto px-6 md:px-12 relative z-10 fade-up delay-100 flex flex-col lg:flex-row items-center justify-between gap-16">
                 <div class="w-full lg:w-1/2 read-area text-lvl-1 order-2 lg:order-1">
                     <div class="flex items-center gap-4 mb-6">
                         <div class="h-px bg-white/30 w-12"></div>
                         <h2 class="text-xs font-heading font-bold text-gray-400 uppercase tracking-widest" data-i18n="tngSub">Parent Organization</h2>
                     </div>
-                    <h3 class="text-4xl md:text-5xl font-heading font-bold text-white mb-8 tracking-tight" data-i18n="tngTitle">The Tyler Nicholas Group</h3>
-                    <p class="text-gray-300 text-lg leading-relaxed mb-10 font-light" data-i18n="tngDesc">
+                    <h3 class="text-3xl md:text-4xl font-heading font-bold text-white mb-6 tracking-tight" data-i18n="tngTitle">The Tyler Nicholas Group</h3>
+                    <p class="text-gray-300 text-lg leading-relaxed mb-8 font-medium" data-i18n="tngDesc">
                         The Tyler Nicholas Foundation is a proud member of The Tyler Nicholas Group. By leveraging the enterprise infrastructure, top-tier talent, and technological resources of our parent company, the Foundation is able to maximize its philanthropic footprint across Seychelles without the massive administrative overhead that slows down traditional charities.
                     </p>
                     <a href="https://tylernicholasgroup.com" target="_blank" class="inline-flex items-center gap-3 text-white font-heading font-bold uppercase tracking-widest text-sm hover-line pb-1">
@@ -207,29 +213,29 @@
             </div>
         </section>
 
-        <section class="py-32 bg-[#FAFAFA]">
+        <section class="py-24 bg-[#FAFAFA]">
             <div class="max-w-7xl mx-auto px-6 md:px-12">
-                <div class="mb-20 fade-up observer-target">
+                <div class="mb-16 fade-up text-center lg:text-left">
                     <h2 class="text-xs font-heading font-bold text-eco-green uppercase tracking-widest mb-3" data-i18n="partSub">Strategic Partners</h2>
-                    <h3 class="text-4xl md:text-5xl font-heading font-black text-brand-dark tracking-tight" data-i18n="partTitle">Allied for Action</h3>
+                    <h3 class="text-3xl md:text-4xl font-heading font-black text-brand-dark tracking-tight" data-i18n="partTitle">Allied for Action</h3>
                 </div>
 
-                <div class="flex flex-col gap-24">
+                <div class="flex flex-col gap-20">
                     
-                    <div class="flex flex-col lg:flex-row gap-12 items-center fade-up observer-target">
+                    <div class="flex flex-col lg:flex-row gap-12 items-center fade-up delay-100">
                         <div class="w-full lg:w-[45%]">
-                            <div class="bg-orange-50/50 rounded-[2rem] p-12 flex items-center justify-center border border-orange-100/50 aspect-square relative group">
-                                <div class="absolute inset-0 bg-white opacity-0 group-hover:opacity-50 transition-opacity duration-500 rounded-[2rem]"></div>
+                            <div class="bg-orange-50/50 rounded-3xl p-12 flex items-center justify-center border border-orange-100 aspect-square relative group">
+                                <div class="absolute inset-0 bg-white opacity-0 group-hover:opacity-50 transition-opacity duration-500 rounded-3xl"></div>
                                 <img src="https://i.ibb.co/XZqSwFXB/Food-Share-Seychelles-Logo.png" alt="FoodShare Logo" class="w-full max-w-[280px] object-contain relative z-10 filter drop-shadow-sm transform group-hover:scale-105 transition-transform duration-500">
                             </div>
                         </div>
                         
-                        <div class="w-full lg:w-[55%] lg:pl-10">
+                        <div class="w-full lg:w-[55%] lg:pl-8">
                             <div class="flex items-center gap-3 mb-6">
                                 <span class="bg-orange-100 text-orange-600 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest" data-i18n="tagFood">Food Security</span>
                             </div>
-                            <h4 class="text-4xl font-heading font-bold text-brand-dark mb-6">FoodShare Seychelles</h4>
-                            <p class="text-gray-500 text-lg leading-relaxed mb-10 font-light" data-i18n="descFood">
+                            <h4 class="text-3xl md:text-4xl font-heading font-bold text-brand-dark mb-6">FoodShare Seychelles</h4>
+                            <p class="text-gray-500 text-lg leading-relaxed mb-10 font-medium" data-i18n="descFood">
                                 Partnering closely with the Foundation to manage community food logistics, organize major donation drives, and ensure essential nutrition reaches the most vulnerable demographics across the islands.
                             </p>
                             
@@ -246,27 +252,27 @@
                                 </a>
                             </div>
 
-                            <a href="https://foodshare-seychelles.online" target="_blank" class="inline-flex items-center justify-center gap-2 bg-brand-dark text-white hover:bg-eco-green font-heading font-bold py-4 px-8 rounded-full transition-all text-sm uppercase tracking-wide shadow-md">
+                            <a href="https://foodshare-seychelles.online" target="_blank" class="inline-flex items-center justify-center gap-2 bg-brand-dark text-white hover:bg-eco-green font-heading font-bold py-3.5 px-8 rounded-xl transition-all text-sm uppercase tracking-wide shadow-md">
                                 Visit Initiative <i class="fa-solid fa-arrow-up-right-from-square"></i>
                             </a>
                         </div>
                     </div>
 
-                    <div class="flex flex-col lg:flex-row-reverse gap-12 items-center fade-up observer-target delay-100">
+                    <div class="flex flex-col lg:flex-row-reverse gap-12 items-center fade-up delay-200">
                         <div class="w-full lg:w-[45%]">
-                            <div class="bg-blue-50/50 rounded-[2rem] p-12 flex items-center justify-center border border-blue-100/50 aspect-square relative group">
-                                <div class="absolute inset-0 bg-white opacity-0 group-hover:opacity-50 transition-opacity duration-500 rounded-[2rem]"></div>
+                            <div class="bg-blue-50/50 rounded-3xl p-12 flex items-center justify-center border border-blue-100 aspect-square relative group">
+                                <div class="absolute inset-0 bg-white opacity-0 group-hover:opacity-50 transition-opacity duration-500 rounded-3xl"></div>
                                 <img src="https://bluewave-digital.tylernicholasgroup.com/images/logo.png" alt="BlueWave Digital Logo" class="w-full max-w-[280px] object-contain relative z-10 filter drop-shadow-sm transform group-hover:scale-105 transition-transform duration-500">
                             </div>
                         </div>
                         
-                        <div class="w-full lg:w-[55%] lg:pr-10">
+                        <div class="w-full lg:w-[55%] lg:pr-8">
                             <div class="flex items-center gap-3 mb-6">
                                 <span class="bg-blue-100 text-blue-600 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest" data-i18n="tagTech">Digital Agency</span>
                                 <span class="text-gray-400 text-xs font-medium" data-i18n="subTech">&bull; Proud Member of TNG</span>
                             </div>
-                            <h4 class="text-4xl font-heading font-bold text-brand-dark mb-6">BlueWave Digital</h4>
-                            <p class="text-gray-500 text-lg leading-relaxed mb-10 font-light" data-i18n="descTech">
+                            <h4 class="text-3xl md:text-4xl font-heading font-bold text-brand-dark mb-6">BlueWave Digital</h4>
+                            <p class="text-gray-500 text-lg leading-relaxed mb-10 font-medium" data-i18n="descTech">
                                 The technical powerhouse behind "The Artisan Initiative" and our Digital Literacy programs. BlueWave donates premium web development, branding, and SEO services to local micro-vendors at zero cost.
                             </p>
                             
@@ -283,7 +289,7 @@
                                 </a>
                             </div>
 
-                            <a href="https://bluewave-digital.tylernicholasgroup.com" target="_blank" class="inline-flex items-center justify-center gap-2 bg-brand-dark text-white hover:bg-eco-green font-heading font-bold py-4 px-8 rounded-full transition-all text-sm uppercase tracking-wide shadow-md">
+                            <a href="https://bluewave-digital.tylernicholasgroup.com" target="_blank" class="inline-flex items-center justify-center gap-2 bg-brand-dark text-white hover:bg-eco-green font-heading font-bold py-3.5 px-8 rounded-xl transition-all text-sm uppercase tracking-wide shadow-md">
                                 Visit Agency <i class="fa-solid fa-arrow-up-right-from-square"></i>
                             </a>
                         </div>
@@ -293,83 +299,82 @@
             </div>
         </section>
 
-        <section class="py-32 bg-white border-t border-gray-100 text-center relative overflow-hidden">
-            <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-full max-w-lg h-1 bg-gradient-to-r from-transparent via-eco-green to-transparent opacity-20"></div>
-            <div class="max-w-3xl mx-auto px-6 fade-up observer-target">
-                <h2 class="text-4xl md:text-5xl font-heading font-black text-brand-dark mb-6 tracking-tight" data-i18n="ctaTitle">Ready to align with our mission?</h2>
-                <p class="text-gray-500 mb-10 text-xl font-light" data-i18n="ctaDesc">We are actively seeking corporate partners, local businesses, and NGOs to expand our community infrastructure.</p>
-                <a href="/contact/" class="inline-flex items-center gap-3 bg-white border-2 border-brand-dark text-brand-dark hover:bg-brand-dark hover:text-white font-heading font-bold py-4 px-10 rounded-full transition-all text-sm uppercase tracking-wide">
-                    <span data-i18n="btnPartner">Become a Partner</span> <i class="fa-solid fa-handshake"></i>
+        <section class="py-24 bg-white border-t border-gray-100 text-center relative overflow-hidden">
+            <div class="max-w-3xl mx-auto px-6 fade-up">
+                <h2 class="text-3xl md:text-4xl font-heading font-black text-brand-dark mb-4 tracking-tight" data-i18n="ctaTitle">Ready to align with our mission?</h2>
+                <p class="text-gray-500 mb-8 text-lg font-medium" data-i18n="ctaDesc">We are actively seeking corporate partners, local businesses, and NGOs to expand our community infrastructure.</p>
+                <a href="/contact/" class="inline-block bg-eco-green hover:bg-eco-dark text-white font-heading font-semibold py-4 px-10 rounded-xl transition-all shadow-md text-center text-sm uppercase tracking-widest" data-i18n="btnPartner">
+                    Become a Partner
                 </a>
             </div>
         </section>
 
     </main>
 
-    <footer class="bg-white border-t border-gray-100 pt-24 pb-10 px-6 md:px-12 mt-auto">
+    <footer class="bg-white border-t border-gray-200 pt-20 pb-10 px-6 md:px-12 mt-auto">
         <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
             <div class="md:col-span-4">
-                <div class="flex items-center gap-4 mb-6">
-                    <img src="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" alt="TNF Logo" class="w-12 h-12 rounded-full object-cover shadow-sm">
-                    <h3 class="font-heading font-bold text-xl tracking-tight text-brand-dark">Tyler Nicholas <br><span class="text-eco-green text-lg">Foundation</span></h3>
+                <div class="flex items-center gap-3 mb-4">
+                    <img src="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" alt="TNF Logo" class="w-10 h-10 rounded-full object-cover">
+                    <h3 class="font-heading font-bold text-xl tracking-tight text-brand-dark">Tyler Nicholas <span class="text-eco-green">Foundation</span></h3>
                 </div>
-                <p class="text-sm font-heading font-medium text-gray-500 italic mb-8" data-i18n="footerSlogan">"For the Youth. For the Islands. For Tomorrow."</p>
-                <div class="inline-block bg-[#FAFAFA] border border-gray-100 rounded-xl px-5 py-4 mb-8">
-                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-relaxed" data-i18n="footerTNG">
-                        A proud philanthropic subsidiary of <br><a href="https://tylernicholasgroup.com/" target="_blank" class="text-brand-dark hover:text-eco-green transition-colors mt-1 block text-xs">The Tyler Nicholas Group</a>
+                <p class="text-sm font-heading font-bold text-brand-dark italic mb-6" data-i18n="footerSlogan">"For the Youth. For the Islands. For Tomorrow."</p>
+                <div class="inline-block bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 mb-8">
+                    <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest leading-tight" data-i18n="footerTNG">
+                        The Tyler Nicholas Foundation is a proud member of <br><a href="https://tylernicholasgroup.com/" target="_blank" class="text-brand-dark hover:text-eco-green transition-colors">The Tyler Nicholas Group</a>
                     </p>
                 </div>
             </div>
 
             <div class="md:col-span-2">
-                <h4 class="text-brand-dark font-heading font-bold text-sm uppercase tracking-widest mb-6" data-i18n="footerDir">Directory</h4>
-                <ul class="space-y-4 text-sm font-medium text-gray-500">
+                <h4 class="text-brand-dark font-heading font-bold text-base mb-6" data-i18n="footerDir">Directory</h4>
+                <ul class="space-y-4 text-sm font-medium text-brand-muted">
                     <li><a href="/" class="hover:text-eco-green transition-colors" data-i18n="navHome">Home</a></li>
                     <li><a href="/about/" class="hover:text-eco-green transition-colors" data-i18n="navAboutUs">About Us</a></li>
                     <li><a href="/programs/" class="hover:text-eco-green transition-colors" data-i18n="navPrograms">Programs</a></li>
                     <li><a href="/contact/" class="hover:text-eco-green transition-colors" data-i18n="navContact">Contact</a></li>
+                    <li><a href="/get-involved/" class="hover:text-eco-green transition-colors" data-i18n="navInvolved">Get Involved</a></li>
                 </ul>
             </div>
 
             <div class="md:col-span-3">
-                <h4 class="text-brand-dark font-heading font-bold text-sm uppercase tracking-widest mb-6" data-i18n="footerAffil">Network Partners</h4>
-                <ul class="space-y-4 text-sm font-medium text-gray-500">
-                    <li><a href="https://nicholasoffice.online" target="_blank" class="flex items-center hover:text-eco-green transition-colors group"><span data-i18n="footLinkOffice">Office of Tyler Nicholas</span> <i class="fa-solid fa-arrow-up-right-from-square text-[9px] ml-2 opacity-50 group-hover:opacity-100 transition-opacity"></i></a></li>
-                    <li><a href="https://foodshare-seychelles.online" target="_blank" class="flex items-center hover:text-eco-green transition-colors group"><span data-i18n="footLinkFood">FoodShare Seychelles</span> <i class="fa-solid fa-arrow-up-right-from-square text-[9px] ml-2 opacity-50 group-hover:opacity-100 transition-opacity"></i></a></li>
-                    <li><a href="https://tylernicholasgroup.com" target="_blank" class="flex items-center hover:text-eco-green transition-colors group"><span data-i18n="footLinkTNG">Tyler Nicholas Group</span> <i class="fa-solid fa-arrow-up-right-from-square text-[9px] ml-2 opacity-50 group-hover:opacity-100 transition-opacity"></i></a></li>
-                    <li><a href="https://tyler.tylernicholasgroup.com" target="_blank" class="flex items-center hover:text-eco-green transition-colors group"><span data-i18n="footLinkPersonal">Tyler Nicholas Profile</span> <i class="fa-solid fa-arrow-up-right-from-square text-[9px] ml-2 opacity-50 group-hover:opacity-100 transition-opacity"></i></a></li>
+                <h4 class="text-brand-dark font-heading font-bold text-base mb-6" data-i18n="footerAffil">Network Partners</h4>
+                <ul class="space-y-4 text-sm font-medium text-brand-muted">
+                    <li><a href="https://nicholasoffice.online" target="_blank" class="flex items-center hover:text-eco-green transition-colors"><span data-i18n="footLinkOffice">Office of Tyler Nicholas</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-2"></i></a></li>
+                    <li><a href="https://foodshare-seychelles.online" target="_blank" class="flex items-center hover:text-eco-green transition-colors"><span data-i18n="footLinkFood">FoodShare Seychelles</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-2"></i></a></li>
+                    <li><a href="https://tylernicholasgroup.com" target="_blank" class="flex items-center hover:text-eco-green transition-colors"><span data-i18n="footLinkTNG">Tyler Nicholas Group</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-2"></i></a></li>
+                    <li><a href="https://tyler.tylernicholasgroup.com" target="_blank" class="flex items-center hover:text-eco-green transition-colors"><span data-i18n="footLinkPersonal">Tyler Nicholas Profile</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-2"></i></a></li>
                 </ul>
             </div>
 
             <div class="md:col-span-3">
-                <h4 class="text-brand-dark font-heading font-bold text-sm uppercase tracking-widest mb-6" data-i18n="footerContact">Contact</h4>
-                <ul class="space-y-4 text-sm font-medium text-gray-500 mb-8">
-                    <li><a href="mailto:nicholasfoundation.sc@gmail.com" class="hover:text-eco-green transition-colors break-all flex items-center"><i class="fa-solid fa-envelope w-4 mr-3 opacity-50"></i> nicholasfoundation.sc@gmail.com</a></li>
+                <h4 class="text-brand-dark font-heading font-bold text-base mb-6" data-i18n="footerContact">Contact</h4>
+                <ul class="space-y-4 text-sm font-medium text-brand-muted mb-6">
+                    <li><a href="mailto:nicholasfoundation.sc@gmail.com" class="hover:text-eco-green transition-colors break-all flex items-center"><i class="fa-solid fa-envelope w-5 mr-2"></i> nicholasfoundation.sc@gmail.com</a></li>
                 </ul>
                 <div class="flex flex-wrap gap-3">
-                    <a href="https://www.linkedin.com/company/tylernicholas-foundation" target="_blank" class="w-10 h-10 rounded-full bg-gray-50 border border-gray-100 text-gray-400 flex items-center justify-center hover:bg-[#0A66C2] hover:text-white hover:border-[#0A66C2] transition-all shadow-sm"><i class="fa-brands fa-linkedin-in text-sm"></i></a>
-                    <a href="https://x.com/tnfseychelles" target="_blank" class="w-10 h-10 rounded-full bg-gray-50 border border-gray-100 text-gray-400 flex items-center justify-center hover:bg-black hover:text-white hover:border-black transition-all shadow-sm"><i class="fa-brands fa-x-twitter text-sm"></i></a>
+                    <a href="https://www.linkedin.com/company/tylernicholas-foundation" target="_blank" class="w-10 h-10 rounded-full bg-gray-100 text-brand-muted flex items-center justify-center hover:bg-eco-green hover:text-white transition-all shadow-sm"><i class="fa-brands fa-linkedin-in"></i></a>
+                    <a href="https://x.com/tnfseychelles" target="_blank" class="w-10 h-10 rounded-full bg-gray-100 text-brand-muted flex items-center justify-center hover:bg-eco-green hover:text-white transition-all shadow-sm"><i class="fa-brands fa-x-twitter"></i></a>
                 </div>
             </div>
         </div>
         
-        <div class="max-w-7xl mx-auto border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-medium text-gray-400 relative">
+        <div class="max-w-7xl mx-auto border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-medium text-brand-muted relative">
             <p data-i18n="footerRights">Copyright 2026 &copy; Tyler Nicholas Foundation. All Rights Reserved.</p>
             <div class="flex gap-6 items-center">
-                <a href="/legal/" class="hover:text-brand-dark transition-colors" data-i18n="navLegal">Legal</a>
-                <a href="/admin/" class="hover:text-brand-dark transition-colors" title="Secure Staff Portal"><i class="fa-solid fa-lock text-[10px]"></i></a>
+                <a href="/legal/" class="hover:text-eco-green transition-colors" data-i18n="navLegal">Legal</a>
+                <a href="/admin/" class="text-gray-300 hover:text-eco-green transition-colors" title="Secure Staff Portal"><i class="fa-solid fa-lock"></i></a>
             </div>
         </div>
     </footer>
 
     <script>
-        // --- I18N DICTIONARY FOR FOUNDATION PARTNERS PAGE ---
         const translations = {
             en: {
                 banner: "Empowering the youth and protecting the environment of the Republic of Seychelles",
                 navHome: "Home", navPrograms: "Programs", navMore: "More", navAboutUs: "About Us", navContact: "Contact", navInvolved: "Get Involved", navLegal: "Legal", navPartners: "Our Partners", navTeam: "Meet the Board", btnDonate: "Donate",
-                searchTitle: "Search Directory", searchHint1: "Press", searchHint2: "to search.", searchPlaceholder: "Search programs, news...",
-                accRead: "A11Y",
+                searchTitle: "Search Foundation Directory", searchHint1: "Press", searchHint2: "to search.", searchPlaceholder: "Search programs, news, and initiatives...",
+                accRead: "Read",
                 discordTitle: "Join the Community", discordDesc: "Engage with our volunteers, join discussions on sustainability, and get live updates on our projects.", discordBtn: "Join Discord Server",
                 
                 heroSub: "Our Alliance", heroTitle: "Collaboration drives impact.", heroDesc: "We achieve more together. The Tyler Nicholas Foundation is supported by a robust ecosystem of corporate partners, parent organizations, and allied NGOs.",
@@ -384,16 +389,16 @@
                 ctaTitle: "Ready to align with our mission?", ctaDesc: "We are actively seeking corporate partners, local businesses, and NGOs to expand our community infrastructure.", btnPartner: "Become a Partner",
                 
                 footerSlogan: "\"For the Youth. For the Islands. For Tomorrow.\"",
-                footerTNG: "A proud philanthropic subsidiary of <br><a href='https://tylernicholasgroup.com/' target='_blank' class='text-brand-dark hover:text-eco-green transition-colors mt-1 block text-xs'>The Tyler Nicholas Group</a>",
-                footerDir: "Directory", footerAffil: "Network Partners", footerContact: "Contact",
+                footerTNG: "The Tyler Nicholas Foundation is a proud member of <br><a href='https://tylernicholasgroup.com/' target='_blank' class='text-brand-dark hover:text-eco-green transition-colors'>The Tyler Nicholas Group</a>",
+                footerDir: "Directory", footerAffil: "Network Partners", footerContact: "Contact Us",
                 footLinkOffice: "Office of Tyler Nicholas", footLinkFood: "FoodShare Seychelles", footLinkTNG: "Tyler Nicholas Group", footLinkPersonal: "Tyler Nicholas Profile",
                 footerRights: "Copyright 2026 &copy; Tyler Nicholas Foundation. All Rights Reserved."
             },
             fr: {
                 banner: "Autonomiser la jeunesse et protéger l'environnement de la République des Seychelles",
                 navHome: "Accueil", navPrograms: "Programmes", navMore: "Plus", navAboutUs: "À Propos", navContact: "Contact", navInvolved: "S'impliquer", navLegal: "Légal", navPartners: "Nos Partenaires", navTeam: "L'Équipe", btnDonate: "Faire un Don",
-                searchTitle: "Rechercher", searchHint1: "Appuyez sur", searchHint2: "pour rechercher.", searchPlaceholder: "Rechercher des programmes, actualités...",
-                accRead: "A11Y",
+                searchTitle: "Rechercher dans l'Annuaire", searchHint1: "Appuyez sur", searchHint2: "pour rechercher.", searchPlaceholder: "Rechercher des programmes, des actualités...",
+                accRead: "Lire",
                 discordTitle: "Rejoignez la Communauté", discordDesc: "Échangez avec nos bénévoles et suivez nos projets en direct.", discordBtn: "Rejoindre le Serveur",
                 
                 heroSub: "Notre Alliance", heroTitle: "La collaboration stimule l'impact.", heroDesc: "Nous accomplissons plus ensemble. La Fondation est soutenue par un écosystème robuste de partenaires commerciaux et d'ONG alliées.",
@@ -408,21 +413,21 @@
                 ctaTitle: "Prêt à vous aligner sur notre mission ?", ctaDesc: "Nous recherchons activement des partenaires commerciaux, des entreprises locales et des ONG pour étendre notre infrastructure communautaire.", btnPartner: "Devenir Partenaire",
                 
                 footerSlogan: "\"Pour les Jeunes. Pour les Îles. Pour Demain.\"",
-                footerTNG: "Une fière filiale philanthropique de <br><a href='https://tylernicholasgroup.com/' target='_blank' class='text-brand-dark hover:text-eco-green transition-colors mt-1 block text-xs'>The Tyler Nicholas Group</a>",
-                footerDir: "Annuaire", footerAffil: "Partenaires du Réseau", footerContact: "Contact",
+                footerTNG: "La Fondation Tyler Nicholas est fière d'être membre de <br><a href='https://tylernicholasgroup.com/' target='_blank' class='text-brand-dark hover:text-eco-green transition-colors'>The Tyler Nicholas Group</a>",
+                footerDir: "Annuaire", footerAffil: "Partenaires du Réseau", footerContact: "Nous Contacter",
                 footLinkOffice: "Bureau de Tyler Nicholas", footLinkFood: "FoodShare Seychelles", footLinkTNG: "Tyler Nicholas Group", footLinkPersonal: "Profil Tyler Nicholas",
                 footerRights: "Copyright 2026 &copy; Fondation Tyler Nicholas. Tous droits réservés."
             },
             crs: {
                 banner: "Donn lafors lazenes e protez lanvironnman Repiblik Sesel",
-                navHome: "Akey", navPrograms: "Progranm", navMore: "Plis", navAboutUs: "Apropo", navContact: "Kontak", navInvolved: "Partisipe", navLegal: "Legal", navPartners: "Nou Partener", navTeam: "Lekip", btnDonate: "Donasyon",
-                searchTitle: "Rod", searchHint1: "Pese", searchHint2: "pour rode.", searchPlaceholder: "Rod progranm, nouvel...",
-                accRead: "A11Y",
+                navHome: "Akey", navPrograms: "Progranm", navMore: "Plis", navAboutUs: "Apropo Nou", navContact: "Kontak", navInvolved: "Partisipe", navLegal: "Legal", navPartners: "Nou Partener", navTeam: "Lekip", btnDonate: "Fer en Donasyon",
+                searchTitle: "Rod dan Lalis", searchHint1: "Pese", searchHint2: "pour rode.", searchPlaceholder: "Rod bann progranm ek nouvel...",
+                accRead: "Lir",
                 discordTitle: "Zwenn Kominote", discordDesc: "Koz avek nou bann volonter e ganny bann nouvel an direk lo nou bann proze.", discordBtn: "Zwenn Servir Discord",
                 
                 heroSub: "Nou Lalyans", heroTitle: "Travay ansanm i anmenn rezilta.", heroDesc: "Nou fer plis ler nou ansanm. Fondasyon i ganny sipor avek en bon group biznes ek lezot lorganizasyon.",
                 
-                tngSub: "Lorganizasyon Prensipal", tngTitle: "The Tyler Nicholas Group", tngDesc: "Fondasyon Tyler Nicholas i fyer pour fer par The Tyler Nicholas Group. Par servi sistenm ek teknolozi nou biznes prensipal, Fondasyon i kapab fer bokou plis travay sarite dan Sesel san bezwen gaspiy larzan lo ladministrasyon parey lezot lorganizasyon.", btnTNG: "Vizit Sitweb",
+                tngSub: "Lorganizasyon Prensipal", tngTitle: "The Tyler Nicholas Group", tngDesc: "Fondasyon Tyler Nicholas i fyer pour fer par The Tyler Nicholas Group. Par servi sistenm ek teknolozi nou biznes prensipal, Fondasyon i kapab fer bokou plis travay sarite dan Sesel san bezwen gaspiy larzan lo ladministrasyon parey lezot lorganizasyon.", btnTNG: "Vizit Sitweb Biznes",
                 
                 partSub: "Nou Bann Partener", partTitle: "Alie pour Aksyon", partDesc: "Rankontre bann lorganizasyon ek lider ki pe travay dir ansanm avek nou lo teren.",
                 
@@ -432,8 +437,8 @@
                 ctaTitle: "Ou pare pour travay avek nou?", ctaDesc: "Nou pe aktivman rod bann biznes lokal ek lezot lorganizasyon pour ed nou proze grandi.", btnPartner: "Vin en Partener",
                 
                 footerSlogan: "\"Pour Lazenes. Pour Bann Zil. Pour Demen.\"",
-                footerTNG: "En branch sarite dirize par <br><a href='https://tylernicholasgroup.com/' target='_blank' class='text-brand-dark hover:text-eco-green transition-colors mt-1 block text-xs'>The Tyler Nicholas Group</a>",
-                footerDir: "Lalis", footerAffil: "Nou Partener", footerContact: "Kontak Nou",
+                footerTNG: "Fondasyon Tyler Nicholas i fyer pour fer par <br><a href='https://tylernicholasgroup.com/' target='_blank' class='text-brand-dark hover:text-eco-green transition-colors'>The Tyler Nicholas Group</a>",
+                footerDir: "Lalis", footerAffil: "Nou Bann Partener", footerContact: "Kontak Nou",
                 footLinkOffice: "Lobi Tyler Nicholas", footLinkFood: "FoodShare Seychelles", footLinkTNG: "Tyler Nicholas Group", footLinkPersonal: "Profil Tyler Nicholas",
                 footerRights: "Copyright 2026 &copy; Fondasyon Tyler Nicholas. Tou drwa rezerve."
             }
@@ -454,7 +459,6 @@
             });
         }
 
-        // Intersection Observer for animations
         document.addEventListener("DOMContentLoaded", () => {
             const observerOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
             const observer = new IntersectionObserver((entries, observer) => {
@@ -470,7 +474,6 @@
                 observer.observe(el);
             });
             
-            // Trigger top elements immediately
             setTimeout(() => {
                 document.querySelectorAll('.fade-up').forEach((el, index) => {
                     if(index < 2) el.classList.add('visible');
