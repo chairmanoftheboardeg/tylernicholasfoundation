@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Volunteer Application | Tyler Nicholas Foundation</title>
+    <title>Get Involved | Tyler Nicholas Foundation</title>
     
     <link rel="icon" href="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" type="image/jpeg" />
     
@@ -13,30 +13,31 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: { sans: ['Inter', 'sans-serif'], heading: ['Poppins', 'sans-serif'] },
-                    colors: { brand: { dark: '#111827', muted: '#6B7280' }, eco: { green: '#059669', light: '#D1FAE5', dark: '#065F46', sand: '#FDFBF7' } },
-                    boxShadow: { 'soft': '0 10px 40px -10px rgba(5, 150, 105, 0.15)', 'card': '0 4px 20px rgba(0,0,0,0.04)' }
+                    colors: { brand: { dark: '#0A0F1C', muted: '#6B7280' }, eco: { green: '#059669', light: '#ECFDF5', dark: '#047857', sand: '#FDFBF7' } },
+                    boxShadow: { 'soft': '0 20px 40px -15px rgba(0,0,0,0.05)', 'card': '0 10px 30px -10px rgba(5, 150, 105, 0.15)', 'glow': '0 0 40px -10px rgba(5, 150, 105, 0.3)' }
                 }
             }
         }
     </script>
 
     <style>
-        body { background-color: #F9FAFB; -webkit-font-smoothing: antialiased; }
+        body { background-color: #FAFAFA; -webkit-font-smoothing: antialiased; }
         .fade-up { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; transform: translateY(20px); }
-        .delay-100 { animation-delay: 100ms; }
+        .delay-100 { animation-delay: 100ms; } .delay-200 { animation-delay: 200ms; }
         @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
 
-        .nav-link { position: relative; cursor: pointer; }
-        .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -4px; left: 0; background-color: #059669; transition: width 0.3s ease; }
-        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
-        .nav-link.active { color: #059669; }
+        .nav-link { position: relative; cursor: pointer; color: #4B5563; font-weight: 500; transition: color 0.3s ease; }
+        .nav-link:hover { color: #059669; }
+        .nav-link::after { content: ''; position: absolute; width: 4px; height: 4px; bottom: -8px; left: 50%; transform: translateX(-50%) scale(0); background-color: #059669; border-radius: 50%; transition: transform 0.3s ease; }
+        .nav-link:hover::after, .nav-link.active::after { transform: translateX(-50%) scale(1); }
+        .nav-link.active { color: #0A0F1C; font-weight: 600; }
 
         /* Floating Accessibility Panel */
         #accessibility-panel { position: fixed; left: 0; top: 50%; transform: translateY(-50%); z-index: 80; transition: transform 0.3s ease; }
@@ -44,13 +45,9 @@
         .acc-btn { @apply w-10 h-10 flex items-center justify-center bg-white border-b border-gray-100 text-brand-dark hover:bg-eco-light hover:text-eco-green transition-colors cursor-pointer; }
         
         .read-area { transition: all 0.3s ease; }
-        .read-area.high-contrast { background-color: #111827 !important; color: #F9FAFB !important; border-color: #374151 !important; }
+        .read-area.high-contrast { background-color: #0A0F1C !important; color: #F9FAFB !important; border-color: #1F2937 !important; }
         .read-area.high-contrast h2, .read-area.high-contrast h3, .read-area.high-contrast h4, .read-area.high-contrast p, .read-area.high-contrast span, .read-area.high-contrast label { color: #F9FAFB !important; }
         .read-area.high-contrast input, .read-area.high-contrast textarea, .read-area.high-contrast select { background-color: #1F2937 !important; color: #FFFFFF !important; border-color: #4B5563 !important; }
-        
-        .read-area.text-lvl-1 p, .read-area.text-lvl-1 label, .read-area.text-lvl-1 input, .read-area.text-lvl-1 textarea, .read-area.text-lvl-1 select { font-size: 1rem; line-height: 1.75; }
-        .read-area.text-lvl-2 p, .read-area.text-lvl-2 label, .read-area.text-lvl-2 input, .read-area.text-lvl-2 textarea, .read-area.text-lvl-2 select { font-size: 1.125rem; line-height: 1.8; }
-        .read-area.text-lvl-3 p, .read-area.text-lvl-3 label, .read-area.text-lvl-3 input, .read-area.text-lvl-3 textarea, .read-area.text-lvl-3 select { font-size: 1.25rem; line-height: 1.9; }
 
         #search-overlay { transition: opacity 0.3s ease; }
         #search-overlay.hidden { opacity: 0; pointer-events: none; }
@@ -60,68 +57,74 @@
         #discord-popup.show { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
         #discord-popup.hide { opacity: 0; transform: translateY(20px) scale(0.95); pointer-events: none; }
 
-        /* Professional Form Inputs */
-        .pro-input { @apply w-full px-0 py-3 bg-transparent border-0 border-b-2 border-gray-200 text-brand-dark text-base transition-all outline-none focus:ring-0 focus:border-eco-green rounded-none; }
+        /* Modern Professional Inputs */
+        .pro-input { @apply w-full px-5 py-4 bg-gray-50 border border-gray-200 text-brand-dark text-sm font-medium rounded-xl transition-all outline-none focus:ring-4 focus:ring-eco-green/10 focus:border-eco-green focus:bg-white shadow-sm; }
         .pro-input::placeholder { color: #9CA3AF; font-weight: 400; }
         
         /* Toast Notification */
         #toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
-        .toast { background: white; color: #111827; padding: 16px 24px; border-radius: 8px; box-shadow: 0 10px 30px -5px rgba(0,0,0,0.1); border-left: 4px solid #059669; font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600; text-transform: uppercase; transform: translateX(120%); transition: transform 0.4s ease; display: flex; align-items: center; gap: 12px; }
+        .toast { background: white; color: #0A0F1C; padding: 16px 24px; border-radius: 12px; box-shadow: 0 20px 40px -10px rgba(0,0,0,0.1); border-left: 4px solid #059669; font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600; transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); display: flex; align-items: center; gap: 12px; }
         .toast.show { transform: translateX(0); }
         .toast.error { border-left-color: #EF4444; }
 
         .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; opacity: 0; }
         .faq-item.active .faq-answer { max-height: 200px; padding-top: 1rem; opacity: 1; }
         .faq-item.active .faq-icon { transform: rotate(180deg); }
+
+        /* Custom Amount Button styling */
+        .amt-btn { @apply py-3 px-4 rounded-xl border-2 border-gray-200 text-brand-dark font-heading font-bold text-sm transition-all cursor-pointer hover:border-eco-green hover:bg-eco-light; }
+        .amt-btn.selected { @apply border-eco-green bg-eco-green text-white shadow-md; }
     </style>
 </head>
 <body class="flex flex-col min-h-screen text-brand-dark">
 
-    <div class="bg-eco-green text-white text-[11px] md:text-xs font-medium py-2.5 px-4 text-center tracking-wide" data-i18n="banner">
+    <div class="bg-brand-dark text-white text-[11px] md:text-xs font-medium py-3 px-4 text-center tracking-wider uppercase" data-i18n="banner">
         Empowering the youth and protecting the environment of the Republic of Seychelles
     </div>
 
-    <nav class="bg-white py-4 px-6 md:px-12 sticky top-0 z-50 transition-shadow duration-300 shadow-sm" id="navbar">
+    <nav class="bg-white/90 backdrop-blur-md py-4 px-6 md:px-12 sticky top-0 z-50 transition-all duration-300 border-b border-gray-100" id="navbar">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             
-            <a href="/" class="flex items-center gap-3 group">
-                <img src="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" alt="TNF Logo" class="w-10 h-10 rounded-full object-cover shadow-sm group-hover:scale-105 transition-transform duration-300">
+            <a href="/" class="flex items-center gap-4 group">
+                <img src="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" alt="TNF Logo" class="w-11 h-11 rounded-full object-cover shadow-sm group-hover:shadow-md transition-all duration-300">
                 <h1 class="font-heading font-bold text-xl tracking-tight text-brand-dark hidden sm:block">Tyler Nicholas <span class="text-eco-green">Foundation</span></h1>
             </a>
 
-            <button id="mobile-menu-btn" class="lg:hidden text-brand-dark text-2xl focus:outline-none"><i class="fa-solid fa-bars"></i></button>
+            <button id="mobile-menu-btn" class="lg:hidden text-brand-dark text-2xl focus:outline-none hover:text-eco-green transition-colors"><i class="fa-solid fa-bars-staggered"></i></button>
 
-            <div class="hidden lg:flex space-x-6 lg:space-x-8 text-sm font-heading font-medium text-brand-muted items-center">
-                <a href="/" class="nav-link hover:text-brand-dark transition-colors" data-i18n="navHome">Home</a>
-                <a href="/programs/" class="nav-link hover:text-brand-dark transition-colors" data-i18n="navPrograms">Programs</a>
+            <div class="hidden lg:flex space-x-8 text-sm font-heading items-center">
+                <a href="/" class="nav-link" data-i18n="navHome">Home</a>
+                <a href="/programs/" class="nav-link" data-i18n="navPrograms">Programs</a>
+                <a href="/about/" class="nav-link" data-i18n="navAboutUs">About</a>
+                <a href="/contact/" class="nav-link" data-i18n="navContact">Contact</a>
                 
                 <div class="relative group py-2">
-                    <span class="nav-link active flex items-center gap-1 hover:text-brand-dark transition-colors"><span data-i18n="navMore">More</span> <i class="fa-solid fa-chevron-down text-[10px] mt-0.5"></i></span>
-                    <div class="absolute top-full left-0 w-48 bg-white rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 border border-gray-100 flex flex-col py-2 transform translate-y-2 group-hover:translate-y-0">
-                        <a href="/about/" class="px-5 py-2.5 text-sm font-medium text-brand-dark hover:bg-eco-light hover:text-eco-green transition-colors" data-i18n="navAboutUs">About Us</a>
-                        <a href="/get-involved/" class="px-5 py-2.5 text-sm font-medium text-eco-green bg-eco-light transition-colors" data-i18n="navInvolved">Get Involved</a>
-                        <a href="/legal/" class="px-5 py-2.5 text-sm font-medium text-brand-dark hover:bg-eco-light hover:text-eco-green transition-colors" data-i18n="navLegal">Legal</a>
-                        <a href="/partners/" class="px-5 py-2.5 text-sm font-medium text-brand-dark hover:bg-eco-light hover:text-eco-green transition-colors" data-i18n="navPartners">Our Partners</a>
-                        <a href="/team/" class="px-5 py-2.5 text-sm font-medium text-brand-dark hover:bg-eco-light hover:text-eco-green transition-colors" data-i18n="navTeam">Meet the Team</a>
+                    <span class="nav-link active flex items-center gap-1.5"><span data-i18n="navMore">More</span> <i class="fa-solid fa-chevron-down text-[9px] mt-0.5 opacity-60"></i></span>
+                    <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-56 bg-white rounded-2xl shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 border border-gray-100 flex flex-col py-3 translate-y-3 group-hover:translate-y-1">
+                        <div class="px-5 pb-2 mb-2 border-b border-gray-50 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Resources</div>
+                        <a href="/get-involved/" class="px-5 py-2.5 text-sm font-bold text-eco-green bg-eco-light/50 transition-colors flex items-center justify-between" data-i18n="navInvolved">Get Involved <i class="fa-solid fa-arrow-right text-[10px] opacity-100 transition-opacity"></i></a>
+                        <a href="/partners/" class="px-5 py-2.5 text-sm font-medium text-brand-dark hover:bg-gray-50 transition-colors" data-i18n="navPartners">Our Partners</a>
+                        <a href="/team/" class="px-5 py-2.5 text-sm font-medium text-brand-dark hover:bg-gray-50 transition-colors" data-i18n="navTeam">Meet the Board</a>
+                        <a href="/legal/" class="px-5 py-2.5 text-sm font-medium text-brand-dark hover:bg-gray-50 transition-colors" data-i18n="navLegal">Legal</a>
                     </div>
                 </div>
             </div>
 
             <div class="hidden lg:flex items-center space-x-6">
-                <button onclick="toggleSearch()" class="text-brand-muted hover:text-eco-green transition-colors text-lg"><i class="fa-solid fa-magnifying-glass"></i></button>
+                <button onclick="toggleSearch()" class="text-brand-dark hover:text-eco-green transition-colors text-lg"><i class="fa-solid fa-magnifying-glass"></i></button>
                 
                 <div class="relative group py-2">
-                    <button class="flex items-center text-sm font-heading font-semibold text-brand-dark hover:text-eco-green">
-                        <i class="fa-solid fa-globe mr-1.5 text-brand-muted"></i> <span id="current-lang">EN</span> <i class="fa-solid fa-chevron-down ml-1 text-[10px]"></i>
+                    <button class="flex items-center text-sm font-heading font-semibold text-brand-dark hover:text-eco-green transition-colors">
+                        <span id="current-lang">EN</span> <i class="fa-solid fa-chevron-down ml-1.5 text-[9px] opacity-60"></i>
                     </button>
-                    <div class="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all border border-gray-100 overflow-hidden transform translate-y-2 group-hover:translate-y-0">
-                        <button onclick="changeLang('en')" class="w-full text-left px-4 py-3 hover:bg-eco-light text-sm font-medium text-eco-dark">English</button>
-                        <button onclick="changeLang('fr')" class="w-full text-left px-4 py-3 hover:bg-eco-light text-sm font-medium text-eco-dark">Français</button>
-                        <button onclick="changeLang('crs')" class="w-full text-left px-4 py-3 hover:bg-eco-light text-sm font-medium text-eco-dark">Seselwa</button>
+                    <div class="absolute right-0 top-full w-32 bg-white rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 border border-gray-100 overflow-hidden transform translate-y-3 group-hover:translate-y-1">
+                        <button onclick="changeLang('en')" class="w-full text-left px-4 py-3 hover:bg-gray-50 text-sm font-medium text-brand-dark transition-colors">English</button>
+                        <button onclick="changeLang('fr')" class="w-full text-left px-4 py-3 hover:bg-gray-50 text-sm font-medium text-brand-dark transition-colors">Français</button>
+                        <button onclick="changeLang('crs')" class="w-full text-left px-4 py-3 hover:bg-gray-50 text-sm font-medium text-brand-dark transition-colors">Seselwa</button>
                     </div>
                 </div>
 
-                <a href="/get-involved/" class="bg-eco-green hover:bg-eco-dark text-white px-6 py-2.5 rounded-lg font-heading font-medium transition-colors shadow-soft hover:shadow-md transform hover:-translate-y-0.5 inline-block" data-i18n="btnDonate">
+                <a href="#donate-section" class="bg-brand-dark hover:bg-eco-green text-white px-7 py-2.5 rounded-full font-heading font-medium transition-all duration-300 shadow-md hover:shadow-glow transform hover:-translate-y-0.5 inline-block text-sm" data-i18n="btnDonate">
                     Donate
                 </a>
             </div>
@@ -134,7 +137,7 @@
             <h3 class="text-2xl font-heading font-bold text-brand-dark mb-4" data-i18n="searchTitle">Search Foundation Directory</h3>
             <div class="relative">
                 <i class="fa-solid fa-magnifying-glass absolute left-6 top-1/2 transform -translate-y-1/2 text-2xl text-brand-muted"></i>
-                <input type="text" id="search-input" data-i18n-placeholder="searchPlaceholder" onkeydown="executeSearch(event)" placeholder="Search programs, news, and initiatives..." class="w-full bg-gray-100 border-2 border-transparent focus:border-eco-green rounded-2xl py-6 pl-16 pr-6 text-xl md:text-2xl font-heading outline-none transition-all shadow-inner">
+                <input type="text" id="search-input" data-i18n-placeholder="searchPlaceholder" onkeydown="executeSearch(event)" placeholder="Search programs, news, and initiatives..." class="w-full bg-transparent border-b-2 border-gray-200 focus:border-eco-green py-6 pl-16 pr-6 text-xl md:text-2xl font-heading outline-none transition-all placeholder-gray-300">
             </div>
         </div>
     </div>
@@ -151,118 +154,154 @@
         </a>
     </div>
 
-    <div id="accessibility-panel" class="shadow-lg rounded-r-xl overflow-hidden bg-white border border-l-0 border-gray-200">
-        <div class="bg-eco-dark text-white text-[9px] font-bold uppercase tracking-widest py-1.5 px-2 text-center w-12" data-i18n="accRead">Read</div>
+    <div id="accessibility-panel" class="shadow-card rounded-r-xl overflow-hidden bg-white border border-l-0 border-gray-100">
+        <div class="bg-brand-dark text-white text-[9px] font-bold uppercase tracking-widest py-2 px-2 text-center w-12" data-i18n="accRead">A11Y</div>
         <div class="acc-btn" onclick="adjustTextSize(1)" title="Increase Text Size"><i class="fa-solid fa-a text-lg"></i><i class="fa-solid fa-plus text-[10px] ml-0.5"></i></div>
         <div class="acc-btn" onclick="adjustTextSize(-1)" title="Decrease Text Size"><i class="fa-solid fa-a text-sm"></i><i class="fa-solid fa-minus text-[10px] ml-0.5"></i></div>
         <div class="acc-btn" onclick="toggleHighContrast()" title="Toggle High Contrast"><i class="fa-solid fa-circle-half-stroke text-lg"></i></div>
     </div>
 
-    <div id="mobile-menu-overlay" class="fixed inset-0 bg-white z-[100] transform translate-x-full transition-transform duration-300 flex flex-col lg:hidden overflow-y-auto">
+    <div id="mobile-menu-overlay" class="fixed inset-0 bg-white z-[100] transform translate-x-full transition-transform duration-500 ease-in-out flex flex-col lg:hidden overflow-y-auto">
         <div class="p-6 flex justify-between items-center border-b border-gray-100">
             <div class="flex items-center gap-3">
-                <img src="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" alt="TNF Logo" class="w-8 h-8 rounded-full">
+                <img src="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" alt="TNF Logo" class="w-10 h-10 rounded-full">
                 <h1 class="font-heading font-bold text-xl text-brand-dark">TNF</h1>
             </div>
-            <button id="mobile-menu-close" class="text-brand-dark text-3xl"><i class="fa-solid fa-xmark"></i></button>
+            <button id="mobile-menu-close" class="text-brand-dark text-3xl hover:rotate-90 transition-transform"><i class="fa-solid fa-xmark"></i></button>
         </div>
-        <div class="p-8 flex flex-col space-y-6 text-brand-dark flex-grow font-heading font-semibold text-2xl">
+        <div class="p-8 flex flex-col space-y-6 text-brand-dark flex-grow font-heading font-semibold text-3xl">
             <a href="/" class="hover:text-eco-green transition-colors" data-i18n="navHome">Home</a>
             <a href="/programs/" class="hover:text-eco-green transition-colors" data-i18n="navPrograms">Programs</a>
             <a href="/about/" class="hover:text-eco-green transition-colors" data-i18n="navAboutUs">About Us</a>
-            <a href="/get-involved/" class="text-eco-green transition-colors" data-i18n="navInvolved">Get Involved</a>
-            <a href="/legal/" class="hover:text-eco-green transition-colors" data-i18n="navLegal">Legal</a>
-            <a href="/partners/" class="hover:text-eco-green transition-colors" data-i18n="navPartners">Our Partners</a>
-            <a href="/team/" class="hover:text-eco-green transition-colors" data-i18n="navTeam">Meet the Team</a>
+            <a href="/contact/" class="hover:text-eco-green transition-colors" data-i18n="navContact">Contact</a>
+            <div class="h-px bg-gray-100 w-full my-4"></div>
+            <a href="/get-involved/" class="text-xl text-eco-green transition-colors" data-i18n="navInvolved">Get Involved</a>
+            <a href="/partners/" class="text-xl text-gray-500 hover:text-eco-green transition-colors" data-i18n="navPartners">Our Partners</a>
+            <a href="/team/" class="text-xl text-gray-500 hover:text-eco-green transition-colors" data-i18n="navTeam">Meet the Board</a>
+        </div>
+        <div class="p-8">
+            <a href="#donate-section" onclick="document.getElementById('mobile-menu-close').click()" class="block w-full bg-brand-dark text-white text-center py-5 rounded-2xl font-heading font-bold text-xl shadow-lg" data-i18n="btnDonate">Donate</a>
         </div>
     </div>
 
     <main class="flex-grow">
         
-        <div class="bg-brand-dark text-white text-sm font-medium py-3 px-6 text-center tracking-wide">
-            <span data-i18n="bannerContact">For corporate partnerships, donations, or general support, please visit the</span> 
-            <a href="/contact/" class="text-eco-green hover:underline font-bold ml-1" data-i18n="bannerContactLink">Official Contact Portal</a>.
-        </div>
-        <div class="bg-gray-100 text-brand-dark text-xs md:text-sm font-medium py-3 px-6 text-center border-b border-gray-200">
-            <span data-i18n="bannerCareers">Seeking professional employment? View open positions at The Tyler Nicholas Group at</span> 
-            <a href="https://careers.tylernicholasgroup.com" target="_blank" class="text-brand-blue hover:underline font-bold ml-1">careers.tylernicholasgroup.com</a>
-        </div>
-
-        <section class="pt-20 pb-16 bg-white text-center px-6 fade-up">
-            <h1 class="text-4xl md:text-5xl lg:text-6xl font-heading font-black text-brand-dark mb-6 tracking-tight" data-i18n="heroTitle">
-                Volunteer Application
-            </h1>
-            <p class="text-brand-muted text-lg max-w-2xl mx-auto leading-relaxed" data-i18n="heroDesc">
-                This portal is strictly for individuals applying to join our grassroots initiatives, mentor programs, and community support network.
-            </p>
+        <section class="pt-24 pb-16 bg-white text-center px-6 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-eco-green to-transparent opacity-30"></div>
+            <div class="relative z-10 fade-up max-w-3xl mx-auto">
+                <span class="text-eco-green font-heading font-bold uppercase tracking-widest text-xs mb-3 block" data-i18n="heroSub">Action & Support</span>
+                <h1 class="text-5xl md:text-6xl font-heading font-black text-brand-dark mb-6 tracking-tight" data-i18n="heroTitle">
+                    Get Involved.
+                </h1>
+                <p class="text-brand-muted text-lg leading-relaxed" data-i18n="heroDesc">
+                    Whether you are contributing your time as a volunteer or funding our grassroots initiatives through a donation, your support builds the infrastructure of tomorrow.
+                </p>
+            </div>
         </section>
 
-        <section id="intake-section" class="pb-24 bg-white">
-            <div class="max-w-5xl mx-auto px-6 md:px-12 flex flex-col lg:flex-row gap-16 read-area text-lvl-1 fade-up delay-100">
+        <section id="intake-section" class="pb-32 bg-white">
+            <div class="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-2 gap-12 read-area text-lvl-1 fade-up delay-100">
                 
-                <div class="w-full lg:w-[35%] pt-2">
-                    <h3 class="text-xl font-heading font-bold text-brand-dark mb-4" data-i18n="guidelinesTitle">Application Guidelines</h3>
-                    <div class="space-y-6 text-sm text-brand-muted leading-relaxed">
-                        <p data-i18n="guide1">Please ensure all legal information provided matches your official identification. This is required for our internal security and volunteer verification protocols.</p>
-                        <p data-i18n="guide2">Select the specific foundation pillar you wish to dedicate your time to. If you are open to any role, please select "General Volunteer".</p>
-                        <div class="pt-6 border-t border-gray-100">
-                            <h4 class="font-heading font-bold text-brand-dark mb-2" data-i18n="formGuarantee">The 48-Hour Guarantee</h4>
-                            <p data-i18n="formGuaranteeDesc">Our executive team reviews applications systematically and commits to responding to all serious volunteer inquiries within 48 hours.</p>
+                <div class="bg-[#FAFAFA] border border-gray-100 rounded-[2rem] p-8 md:p-12 shadow-sm relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-eco-light rounded-bl-full -z-0"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-center gap-3 mb-2">
+                            <i class="fa-solid fa-handshake text-eco-green text-xl"></i>
+                            <h3 class="text-2xl font-heading font-bold text-brand-dark" data-i18n="volTitle">Volunteer Application</h3>
                         </div>
+                        <p class="text-gray-500 text-sm mb-8 leading-relaxed" data-i18n="volDesc">Join our grassroots initiatives, mentor programs, and community support network. We guarantee a response to serious inquiries within 48 hours.</p>
+                        
+                        <form onsubmit="submitIntakeForm(event)" id="intake-form" class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-[11px] font-bold text-brand-dark uppercase tracking-widest mb-2" data-i18n="labelName">Full Legal Name *</label>
+                                    <input type="text" id="intake-name" class="pro-input" required data-i18n-placeholder="placeName" placeholder="John Doe">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-bold text-brand-dark uppercase tracking-widest mb-2" data-i18n="labelEmail">Email Address *</label>
+                                    <input type="email" id="intake-email" class="pro-input" required data-i18n-placeholder="placeEmail" placeholder="john@example.com">
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-[11px] font-bold text-brand-dark uppercase tracking-widest mb-2" data-i18n="labelPhone">Phone Number</label>
+                                    <input type="tel" id="intake-phone" class="pro-input" data-i18n-placeholder="placePhone" placeholder="+248 ...">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-bold text-brand-dark uppercase tracking-widest mb-2" data-i18n="labelPath">Interest Area *</label>
+                                    <select id="interest-area" class="pro-input appearance-none cursor-pointer" required>
+                                        <option value="" disabled selected data-i18n="optSelect">-- Select an area --</option>
+                                        <option value="The Generations Archive" data-i18n="opt1">The Generations Archive</option>
+                                        <option value="The Artisan Initiative" data-i18n="opt2">The Artisan Initiative</option>
+                                        <option value="Mental Health Support" data-i18n="opt3">Mental Health Support Network</option>
+                                        <option value="Open-Access Education" data-i18n="opt4">Open-Access Education Library</option>
+                                        <option value="Coastal Restoration" data-i18n="opt5">Coastal Restoration & Eco</option>
+                                        <option value="General Volunteer" data-i18n="opt6">General Volunteer</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-[11px] font-bold text-brand-dark uppercase tracking-widest mb-2" data-i18n="labelMsg">Why are you applying? (Skills) *</label>
+                                <textarea id="intake-msg" rows="4" class="pro-input resize-none" required data-i18n-placeholder="placeMsg" placeholder="Briefly describe why you want to volunteer and any relevant skills you bring..."></textarea>
+                            </div>
+
+                            <div class="pt-2">
+                                <button type="submit" id="btn-submit" class="w-full bg-brand-dark hover:bg-black text-white font-heading font-bold py-4 rounded-xl transition-all shadow-md text-sm uppercase tracking-widest">
+                                    <span data-i18n="btnSubmit">Submit Application</span>
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
 
-                <div class="w-full lg:w-[65%] bg-white border border-gray-200 rounded-2xl p-8 md:p-12 shadow-sm">
-                    <form onsubmit="submitIntakeForm(event)" id="intake-form" class="space-y-8">
+                <div id="donate-section" class="bg-white border border-gray-200 rounded-[2rem] p-8 md:p-12 shadow-card relative overflow-hidden flex flex-col">
+                    <div class="absolute top-0 right-0 w-full h-2 bg-gradient-to-r from-eco-green to-emerald-400"></div>
+                    
+                    <div class="flex items-center gap-3 mb-2">
+                        <i class="fa-solid fa-circle-dollar-to-slot text-eco-green text-xl"></i>
+                        <h3 class="text-2xl font-heading font-bold text-brand-dark" data-i18n="donTitle">Make a Donation</h3>
+                    </div>
+                    <p class="text-gray-500 text-sm mb-8 leading-relaxed" data-i18n="donDesc">Fund our grassroots programs. Due to our zero-overhead model, 100% of your donation goes directly toward community initiatives in Seychelles. <br><span class="text-eco-green font-bold block mt-1">Maximum limit: 1500 SCR per transaction.</span></p>
+
+                    <div class="flex-grow">
+                        <label class="block text-[11px] font-bold text-brand-dark uppercase tracking-widest mb-3" data-i18n="donAmountLabel">Select Amount (SCR)</label>
                         
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div class="relative">
-                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1" data-i18n="labelName">Full Legal Name *</label>
-                                <input type="text" id="intake-name" class="pro-input" required data-i18n-placeholder="placeName" placeholder="John Doe">
-                            </div>
-                            <div class="relative">
-                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1" data-i18n="labelEmail">Email Address *</label>
-                                <input type="email" id="intake-email" class="pro-input" required data-i18n-placeholder="placeEmail" placeholder="john@example.com">
-                            </div>
+                        <div class="grid grid-cols-3 gap-3 mb-4">
+                            <button type="button" class="amt-btn" onclick="setDonationAmount(100, this)">100</button>
+                            <button type="button" class="amt-btn" onclick="setDonationAmount(500, this)">500</button>
+                            <button type="button" class="amt-btn selected" onclick="setDonationAmount(1000, this)">1,000</button>
                         </div>
                         
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div class="relative">
-                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1" data-i18n="labelPhone">Phone Number</label>
-                                <input type="tel" id="intake-phone" class="pro-input" data-i18n-placeholder="placePhone" placeholder="+248 ...">
+                        <div class="relative mb-8">
+                            <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                                <span class="text-gray-500 font-heading font-bold">SCR</span>
                             </div>
-                            <div class="relative">
-                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1" data-i18n="labelPath">Interest Area *</label>
-                                <select id="interest-area" class="pro-input appearance-none cursor-pointer" required>
-                                    <option value="" disabled selected data-i18n="optSelect">-- Select an area --</option>
-                                    <option value="The Generations Archive" data-i18n="opt1">The Generations Archive</option>
-                                    <option value="The Artisan Initiative" data-i18n="opt2">The Artisan Initiative</option>
-                                    <option value="Mental Health Support" data-i18n="opt3">Mental Health Support Network</option>
-                                    <option value="Open-Access Education" data-i18n="opt4">Open-Access Education Library</option>
-                                    <option value="Coastal Restoration" data-i18n="opt5">Coastal Restoration & Eco</option>
-                                    <option value="General Volunteer" data-i18n="opt6">General Volunteer</option>
-                                </select>
-                            </div>
+                            <input type="number" id="custom-amount" value="1000" min="1" max="1500" oninput="validateAmount(this)" class="pro-input pl-16 text-xl font-heading font-bold bg-white border-2 border-gray-200 focus:border-eco-green" placeholder="Custom amount">
+                            <div id="amount-warning" class="absolute -bottom-6 left-0 text-red-500 text-xs font-bold hidden"><i class="fa-solid fa-circle-exclamation"></i> Maximum 1500 SCR allowed.</div>
                         </div>
 
-                        <div class="relative">
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2" data-i18n="labelMsg">Why are you applying? (Skills / Experience) *</label>
-                            <textarea id="intake-msg" rows="4" class="pro-input resize-none border-2 rounded-xl px-4 py-3" required data-i18n-placeholder="placeMsg" placeholder="Briefly describe why you want to volunteer and any relevant skills you bring..."></textarea>
+                        <div class="space-y-4">
+                            <label class="block text-[11px] font-bold text-brand-dark uppercase tracking-widest mb-2" data-i18n="donDetailsLabel">Donor Details</label>
+                            <input type="text" class="pro-input bg-white border-gray-200" placeholder="Full Name">
+                            <input type="email" class="pro-input bg-white border-gray-200" placeholder="Email Address for Receipt">
                         </div>
+                    </div>
 
-                        <div class="pt-4">
-                            <button type="submit" id="btn-submit" class="w-full bg-brand-dark hover:bg-eco-green text-white font-heading font-bold py-4 rounded-xl transition-all text-sm uppercase tracking-widest">
-                                <span data-i18n="btnSubmit">Submit Application</span>
-                            </button>
-                        </div>
-                    </form>
+                    <div class="pt-8 mt-auto border-t border-gray-100">
+                        <button type="button" onclick="processDonation()" class="w-full flex items-center justify-center gap-3 bg-eco-green hover:bg-eco-dark text-white font-heading font-bold py-4 rounded-xl transition-all shadow-md text-sm uppercase tracking-widest">
+                            <span data-i18n="btnDonateConfirm">Proceed to Secure Payment</span> <i class="fa-solid fa-lock"></i>
+                        </button>
+                        <p class="text-center text-[10px] text-gray-400 mt-4 uppercase tracking-widest"><i class="fa-solid fa-shield-halved mr-1"></i> SSL Encrypted Checkout</p>
+                    </div>
                 </div>
 
             </div>
         </section>
 
         <section class="py-24 bg-[#F9FAFB] border-t border-gray-100">
-            <div class="max-w-3xl mx-auto px-6">
+            <div class="max-w-3xl mx-auto px-6 fade-up">
                 <div class="text-center mb-12">
                     <h2 class="text-3xl font-heading font-bold text-brand-dark mb-4" data-i18n="faqTitle">Frequently Asked Questions</h2>
                 </div>
@@ -286,6 +325,15 @@
                             <p data-i18n="faq2A">For technical roles (like The Artisan Initiative), baseline skills are preferred. However, for general community engagement and environmental stewardship, all you need is a willingness to learn and work hard.</p>
                         </div>
                     </div>
+                    <div class="faq-item bg-white border border-gray-200 rounded-xl overflow-hidden cursor-pointer" onclick="this.classList.toggle('active')">
+                        <div class="p-6 flex justify-between items-center font-heading font-bold text-brand-dark">
+                            <h4 data-i18n="faq3Q">How are donations processed?</h4>
+                            <span class="faq-icon text-brand-muted font-bold text-xl">+</span>
+                        </div>
+                        <div class="faq-answer px-6 pb-6 text-brand-muted text-sm leading-relaxed border-t border-gray-50">
+                            <p data-i18n="faq3A">All online donations are capped at 1,500 SCR per transaction for security and compliance. Funds are routed directly into the Foundation's secure banking infrastructure via our payment gateway partner.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -295,55 +343,55 @@
     <footer class="bg-white border-t border-gray-200 pt-20 pb-10 px-6 md:px-12 mt-auto">
         <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
             <div class="md:col-span-4">
-                <div class="flex items-center gap-3 mb-4">
-                    <img src="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" alt="TNF Logo" class="w-10 h-10 rounded-full object-cover">
-                    <h3 class="font-heading font-bold text-xl tracking-tight text-brand-dark">Tyler Nicholas <span class="text-eco-green">Foundation</span></h3>
+                <div class="flex items-center gap-4 mb-6">
+                    <img src="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" alt="TNF Logo" class="w-12 h-12 rounded-full object-cover shadow-sm">
+                    <h3 class="font-heading font-bold text-xl tracking-tight text-brand-dark">Tyler Nicholas <br><span class="text-eco-green text-lg">Foundation</span></h3>
                 </div>
-                <p class="text-sm font-heading font-bold text-brand-dark italic mb-6" data-i18n="footerSlogan">"For the Youth. For the Islands. For Tomorrow."</p>
-                <div class="inline-block bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 mb-8">
-                    <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest leading-tight" data-i18n="footerTNG">
-                        The Tyler Nicholas Foundation is a proud member of <br><a href="https://tylernicholasgroup.com/" target="_blank" class="text-brand-dark hover:text-eco-green transition-colors">The Tyler Nicholas Group</a>
+                <p class="text-sm font-heading font-medium text-gray-500 italic mb-8" data-i18n="footerSlogan">"For the Youth. For the Islands. For Tomorrow."</p>
+                <div class="inline-block bg-[#FAFAFA] border border-gray-100 rounded-xl px-5 py-4 mb-8">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-relaxed" data-i18n="footerTNG">
+                        A proud philanthropic subsidiary of <br><a href="https://tylernicholasgroup.com/" target="_blank" class="text-brand-dark hover:text-eco-green transition-colors mt-1 block text-xs">The Tyler Nicholas Group</a>
                     </p>
                 </div>
             </div>
 
             <div class="md:col-span-2">
-                <h4 class="text-brand-dark font-heading font-bold text-base mb-6" data-i18n="footerDir">Directory</h4>
-                <ul class="space-y-4 text-sm font-medium text-brand-muted">
+                <h4 class="text-brand-dark font-heading font-bold text-sm uppercase tracking-widest mb-6" data-i18n="footerDir">Directory</h4>
+                <ul class="space-y-4 text-sm font-medium text-gray-500">
                     <li><a href="/" class="hover:text-eco-green transition-colors" data-i18n="navHome">Home</a></li>
                     <li><a href="/about/" class="hover:text-eco-green transition-colors" data-i18n="navAboutUs">About Us</a></li>
                     <li><a href="/programs/" class="hover:text-eco-green transition-colors" data-i18n="navPrograms">Programs</a></li>
-                    <li><a href="/get-involved/" class="text-eco-green transition-colors" data-i18n="navInvolved">Get Involved</a></li>
+                    <li><a href="/contact/" class="hover:text-eco-green transition-colors" data-i18n="navContact">Contact</a></li>
                 </ul>
             </div>
 
             <div class="md:col-span-3">
-                <h4 class="text-brand-dark font-heading font-bold text-base mb-6" data-i18n="footerAffil">Network Partners</h4>
-                <ul class="space-y-4 text-sm font-medium text-brand-muted">
-                    <li><a href="https://nicholasoffice.online" target="_blank" class="flex items-center hover:text-eco-green transition-colors"><span data-i18n="footLinkOffice">Office of Tyler Nicholas</span></a></li>
-                    <li><a href="https://foodshare-seychelle.online" target="_blank" class="flex items-center hover:text-eco-green transition-colors"><span data-i18n="footLinkFood">FoodShare Seychelles</span></a></li>
-                    <li><a href="https://tylernicholasgroup.com" target="_blank" class="flex items-center hover:text-eco-green transition-colors"><span data-i18n="footLinkTNG">Tyler Nicholas Group</span></a></li>
-                    <li><a href="https://tyler.tylernicholasgroup.com" target="_blank" class="flex items-center hover:text-eco-green transition-colors"><span data-i18n="footLinkPersonal">Tyler Nicholas Profile</span></a></li>
+                <h4 class="text-brand-dark font-heading font-bold text-sm uppercase tracking-widest mb-6" data-i18n="footerAffil">Network Partners</h4>
+                <ul class="space-y-4 text-sm font-medium text-gray-500">
+                    <li><a href="https://nicholasoffice.online" target="_blank" class="flex items-center hover:text-eco-green transition-colors group"><span data-i18n="footLinkOffice">Office of Tyler Nicholas</span> <i class="fa-solid fa-arrow-up-right-from-square text-[9px] ml-2 opacity-50 group-hover:opacity-100 transition-opacity"></i></a></li>
+                    <li><a href="https://foodshare-seychelles.online" target="_blank" class="flex items-center hover:text-eco-green transition-colors group"><span data-i18n="footLinkFood">FoodShare Seychelles</span> <i class="fa-solid fa-arrow-up-right-from-square text-[9px] ml-2 opacity-50 group-hover:opacity-100 transition-opacity"></i></a></li>
+                    <li><a href="https://tylernicholasgroup.com" target="_blank" class="flex items-center hover:text-eco-green transition-colors group"><span data-i18n="footLinkTNG">Tyler Nicholas Group</span> <i class="fa-solid fa-arrow-up-right-from-square text-[9px] ml-2 opacity-50 group-hover:opacity-100 transition-opacity"></i></a></li>
+                    <li><a href="https://tyler.tylernicholasgroup.com" target="_blank" class="flex items-center hover:text-eco-green transition-colors group"><span data-i18n="footLinkPersonal">Tyler Nicholas Profile</span> <i class="fa-solid fa-arrow-up-right-from-square text-[9px] ml-2 opacity-50 group-hover:opacity-100 transition-opacity"></i></a></li>
                 </ul>
             </div>
 
             <div class="md:col-span-3">
-                <h4 class="text-brand-dark font-heading font-bold text-base mb-6" data-i18n="footerContact">Contact</h4>
-                <ul class="space-y-4 text-sm font-medium text-brand-muted mb-6">
-                    <li><a href="mailto:nicholasfoundation.sc@gmail.com" class="hover:text-eco-green transition-colors break-all flex items-center"><i class="fa-solid fa-envelope w-5 mr-2"></i> nicholasfoundation.sc@gmail.com</a></li>
+                <h4 class="text-brand-dark font-heading font-bold text-sm uppercase tracking-widest mb-6" data-i18n="footerContact">Contact</h4>
+                <ul class="space-y-4 text-sm font-medium text-gray-500 mb-8">
+                    <li><a href="mailto:nicholasfoundation.sc@gmail.com" class="hover:text-eco-green transition-colors break-all flex items-center"><i class="fa-solid fa-envelope w-4 mr-3 opacity-50"></i> nicholasfoundation.sc@gmail.com</a></li>
                 </ul>
                 <div class="flex flex-wrap gap-3">
-                    <a href="https://www.linkedin.com/company/tylernicholas-foundation" target="_blank" class="w-10 h-10 rounded-full bg-gray-100 text-brand-muted flex items-center justify-center hover:bg-eco-green hover:text-white transition-all shadow-sm"><i class="fa-brands fa-linkedin-in"></i></a>
-                    <a href="https://x.com/tnfseychelles" target="_blank" class="w-10 h-10 rounded-full bg-gray-100 text-brand-muted flex items-center justify-center hover:bg-eco-green hover:text-white transition-all shadow-sm"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="https://www.linkedin.com/company/tylernicholas-foundation" target="_blank" class="w-10 h-10 rounded-full bg-gray-50 border border-gray-100 text-gray-400 flex items-center justify-center hover:bg-[#0A66C2] hover:text-white hover:border-[#0A66C2] transition-all shadow-sm"><i class="fa-brands fa-linkedin-in text-sm"></i></a>
+                    <a href="https://x.com/tnfseychelles" target="_blank" class="w-10 h-10 rounded-full bg-gray-50 border border-gray-100 text-gray-400 flex items-center justify-center hover:bg-black hover:text-white hover:border-black transition-all shadow-sm"><i class="fa-brands fa-x-twitter text-sm"></i></a>
                 </div>
             </div>
         </div>
         
-        <div class="max-w-7xl mx-auto border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-medium text-brand-muted relative">
+        <div class="max-w-7xl mx-auto border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-medium text-gray-400 relative">
             <p data-i18n="footerRights">Copyright 2026 &copy; Tyler Nicholas Foundation. All Rights Reserved.</p>
             <div class="flex gap-6 items-center">
-                <a href="/legal/" class="hover:text-eco-green transition-colors" data-i18n="navLegal">Legal</a>
-                <a href="/admin/" class="text-gray-300 hover:text-eco-green transition-colors" title="Secure Staff Portal"><i class="fa-solid fa-lock"></i></a>
+                <a href="/legal/" class="hover:text-brand-dark transition-colors" data-i18n="navLegal">Legal</a>
+                <a href="/admin/" class="hover:text-brand-dark transition-colors" title="Secure Staff Portal"><i class="fa-solid fa-lock text-[10px]"></i></a>
             </div>
         </div>
     </footer>
@@ -355,118 +403,118 @@
         const translations = {
             en: {
                 banner: "Empowering the youth and protecting the environment of the Republic of Seychelles",
-                navHome: "Home", navPrograms: "Programs", navMore: "More", navAboutUs: "About Us", navInvolved: "Get Involved", navLegal: "Legal", navPartners: "Our Partners", navTeam: "Meet the Team", btnDonate: "Donate",
+                navHome: "Home", navPrograms: "Programs", navMore: "More", navAboutUs: "About Us", navContact: "Contact", navInvolved: "Get Involved", navLegal: "Legal", navPartners: "Our Partners", navTeam: "Meet the Board", btnDonate: "Donate",
                 searchTitle: "Search Foundation Directory", searchHint1: "Press", searchHint2: "to search.", searchPlaceholder: "Search programs, news, and initiatives...",
-                accRead: "Read",
+                accRead: "A11Y",
                 discordTitle: "Join the Community", discordDesc: "Engage with our volunteers, join discussions on sustainability, and get live updates on our projects.", discordBtn: "Join Discord Server",
                 
-                bannerContact: "For corporate partnerships, donations, or general support, please visit the",
-                bannerContactLink: "Official Contact Portal",
-                bannerCareers: "Seeking professional employment? View open positions at The Tyler Nicholas Group at",
+                heroSub: "Action & Support",
+                heroTitle: "Get Involved.",
+                heroDesc: "Whether you are contributing your time as a volunteer or funding our grassroots initiatives through a donation, your support builds the infrastructure of tomorrow.",
                 
-                heroTitle: "Volunteer Application",
-                heroDesc: "This portal is strictly for individuals applying to join our grassroots initiatives, mentor programs, and community support network.",
-                
-                guidelinesTitle: "Application Guidelines",
-                guide1: "Please ensure all legal information provided matches your official identification. This is required for our internal security and volunteer verification protocols.",
-                guide2: "Select the specific foundation pillar you wish to dedicate your time to. If you are open to any role, please select \"General Volunteer\".",
-                
-                formTitle: "Secure Intake Portal",
-                formGuarantee: "The 48-Hour Guarantee", formGuaranteeDesc: "Our executive team reviews applications systematically and commits to responding to all serious volunteer inquiries within 48 hours.",
+                volTitle: "Volunteer Application",
+                volDesc: "Join our grassroots initiatives, mentor programs, and community support network. We guarantee a response to serious inquiries within 48 hours.",
                 labelName: "Full Legal Name *", placeName: "John Doe",
                 labelEmail: "Email Address *", placeEmail: "john@example.com",
                 labelPhone: "Phone Number", placePhone: "+248 ...",
                 labelPath: "Interest Area *", optSelect: "-- Select an area --", 
                 opt1: "The Generations Archive", opt2: "The Artisan Initiative", opt3: "Mental Health Support Network", opt4: "Open-Access Education Library", opt5: "Coastal Restoration & Eco", opt6: "General Volunteer",
-                labelMsg: "Why are you applying? (Skills / Experience) *", placeMsg: "Briefly describe why you want to volunteer and any relevant skills you bring...",
+                labelMsg: "Why are you applying? (Skills) *", placeMsg: "Briefly describe why you want to volunteer and any relevant skills you bring...",
                 btnSubmit: "Submit Application",
                 formSuccess: "Application received securely. We will be in touch shortly.", formError: "Error transmitting application. Please try again.",
                 
+                donTitle: "Make a Donation",
+                donDesc: "Fund our grassroots programs. Due to our zero-overhead model, 100% of your donation goes directly toward community initiatives in Seychelles. <br><span class=\"text-eco-green font-bold block mt-1\">Maximum limit: 1500 SCR per transaction.</span>",
+                donAmountLabel: "Select Amount (SCR)",
+                donDetailsLabel: "Donor Details",
+                btnDonateConfirm: "Proceed to Secure Payment",
+
                 faqTitle: "Frequently Asked Questions",
                 faq1Q: "How much time do I have to commit to volunteer?", faq1A: "We are highly flexible. You can volunteer for a single weekend event (like a coastal cleanup) or commit to a long-term role (like mentoring for The Artisan Initiative). Let us know your availability during onboarding.",
                 faq2Q: "Do I need specific professional qualifications?", faq2A: "For technical roles (like The Artisan Initiative), baseline skills are preferred. However, for general community engagement and environmental stewardship, all you need is a willingness to learn and work hard.",
+                faq3Q: "How are donations processed?", faq3A: "All online donations are capped at 1,500 SCR per transaction for security and compliance. Funds are routed directly into the Foundation's secure banking infrastructure via our payment gateway partner.",
                 
                 footerSlogan: "\"For the Youth. For the Islands. For Tomorrow.\"",
-                footerTNG: "The Tyler Nicholas Foundation is a proud member of <br><a href='https://tylernicholasgroup.com/' target='_blank' class='text-brand-dark hover:text-eco-green transition-colors'>The Tyler Nicholas Group</a>",
-                footerDir: "Directory", footerAffil: "Network Partners", footerContact: "Contact Us",
+                footerTNG: "A proud philanthropic subsidiary of <br><a href='https://tylernicholasgroup.com/' target='_blank' class='text-brand-dark hover:text-eco-green transition-colors mt-1 block text-xs'>The Tyler Nicholas Group</a>",
+                footerDir: "Directory", footerAffil: "Network Partners", footerContact: "Contact",
                 footLinkOffice: "Office of Tyler Nicholas", footLinkFood: "FoodShare Seychelles", footLinkTNG: "Tyler Nicholas Group", footLinkPersonal: "Tyler Nicholas Profile",
                 footerRights: "Copyright 2026 &copy; Tyler Nicholas Foundation. All Rights Reserved."
             },
             fr: {
                 banner: "Autonomiser la jeunesse et protéger l'environnement de la République des Seychelles",
-                navHome: "Accueil", navPrograms: "Programmes", navMore: "Plus", navAboutUs: "À Propos", navInvolved: "S'impliquer", navLegal: "Légal", navPartners: "Nos Partenaires", navTeam: "L'Équipe", btnDonate: "Faire un Don",
-                searchTitle: "Rechercher dans l'Annuaire", searchHint1: "Appuyez sur", searchHint2: "pour rechercher.", searchPlaceholder: "Rechercher des programmes, des actualités...",
-                accRead: "Lire",
+                navHome: "Accueil", navPrograms: "Programmes", navMore: "Plus", navAboutUs: "À Propos", navContact: "Contact", navInvolved: "S'impliquer", navLegal: "Légal", navPartners: "Nos Partenaires", navTeam: "L'Équipe", btnDonate: "Faire un Don",
+                searchTitle: "Rechercher dans l'Annuaire", searchHint1: "Appuyez sur", searchHint2: "pour rechercher.", searchPlaceholder: "Rechercher des programmes...",
+                accRead: "A11Y",
                 discordTitle: "Rejoignez la Communauté", discordDesc: "Échangez avec nos bénévoles et suivez nos projets en direct.", discordBtn: "Rejoindre le Serveur",
                 
-                bannerContact: "Pour les partenariats, les dons ou le support général, veuillez visiter le",
-                bannerContactLink: "Portail de Contact Officiel",
-                bannerCareers: "Vous cherchez un emploi professionnel ? Voir les postes ouverts chez The Tyler Nicholas Group à",
+                heroSub: "Action et Soutien",
+                heroTitle: "Impliquez-vous.",
+                heroDesc: "Que vous contribuiez en tant que bénévole ou que vous financiez nos initiatives par un don, votre soutien construit l'infrastructure de demain.",
                 
-                heroTitle: "Candidature Bénévole",
-                heroDesc: "Ce portail est strictement réservé aux personnes postulant pour rejoindre nos initiatives de base et notre réseau de soutien communautaire.",
-                
-                guidelinesTitle: "Directives de Candidature",
-                guide1: "Veuillez vous assurer que toutes les informations correspondent à votre identification officielle. Ceci est requis pour nos protocoles de sécurité.",
-                guide2: "Sélectionnez le pilier de la fondation auquel vous souhaitez consacrer votre temps. Si vous êtes ouvert à tout rôle, sélectionnez \"Bénévole Général\".",
-                
-                formTitle: "Portail Sécurisé",
-                formGuarantee: "La Garantie de 48 Heures", formGuaranteeDesc: "Notre équipe exécutive examine les candidatures et s'engage à répondre à toutes les demandes sérieuses dans les 48 heures.",
+                volTitle: "Candidature Bénévole",
+                volDesc: "Rejoignez nos initiatives et notre réseau de soutien. Nous garantissons une réponse aux demandes sérieuses dans les 48 heures.",
                 labelName: "Nom Légal Complet *", placeName: "Jean Dupont",
                 labelEmail: "Adresse E-mail *", placeEmail: "jean@exemple.com",
                 labelPhone: "Numéro de Téléphone", placePhone: "+248 ...",
                 labelPath: "Domaine d'Intérêt *", optSelect: "-- Sélectionnez un domaine --", 
-                opt1: "Les Archives des Générations", opt2: "L'Initiative Artisanale", opt3: "Réseau de Santé Mentale", opt4: "Bibliothèque d'Éducation", opt5: "Restauration Côtière & Éco", opt6: "Bénévole Général",
-                labelMsg: "Pourquoi postulez-vous ? (Compétences / Expérience) *", placeMsg: "Décrivez brièvement pourquoi vous voulez faire du bénévolat...",
-                btnSubmit: "Soumettre la Candidature",
+                opt1: "Les Archives des Générations", opt2: "L'Initiative Artisanale", opt3: "Réseau de Santé Mentale", opt4: "Bibliothèque d'Éducation", opt5: "Restauration Côtière", opt6: "Bénévole Général",
+                labelMsg: "Pourquoi postulez-vous ? (Compétences) *", placeMsg: "Décrivez brièvement pourquoi vous voulez faire du bénévolat...",
+                btnSubmit: "Soumettre",
                 formSuccess: "Candidature reçue en toute sécurité.", formError: "Erreur de transmission. Veuillez réessayer.",
                 
-                faqTitle: "Questions Fréquemment Posées",
+                donTitle: "Faire un Don",
+                donDesc: "Financez nos programmes. 100 % de votre don va directement aux initiatives communautaires. <br><span class=\"text-eco-green font-bold block mt-1\">Limite maximale : 1500 SCR.</span>",
+                donAmountLabel: "Montant (SCR)",
+                donDetailsLabel: "Détails du Donateur",
+                btnDonateConfirm: "Procéder au Paiement Sécurisé",
+
+                faqTitle: "Questions Fréquentes",
                 faq1Q: "Combien de temps dois-je consacrer au bénévolat ?", faq1A: "Nous sommes très flexibles. Vous pouvez faire du bénévolat pour un seul événement ou vous engager à long terme.",
-                faq2Q: "Ai-je besoin de qualifications professionnelles spécifiques ?", faq2A: "Pour les rôles techniques, des compétences de base sont préférées. Pour l'engagement général, seule la volonté d'apprendre est requise.",
+                faq2Q: "Ai-je besoin de qualifications professionnelles ?", faq2A: "Pour les rôles techniques, des compétences de base sont préférées. Pour l'engagement général, seule la volonté d'apprendre est requise.",
+                faq3Q: "Comment les dons sont-ils traités ?", faq3A: "Tous les dons sont plafonnés à 1 500 SCR. Les fonds sont acheminés via notre partenaire de passerelle de paiement sécurisée.",
                 
                 footerSlogan: "\"Pour les Jeunes. Pour les Îles. Pour Demain.\"",
-                footerTNG: "La Fondation Tyler Nicholas est fière d'être membre de <br><a href='https://tylernicholasgroup.com/' target='_blank' class='text-brand-dark hover:text-eco-green transition-colors'>The Tyler Nicholas Group</a>",
-                footerDir: "Annuaire", footerAffil: "Partenaires du Réseau", footerContact: "Nous Contacter",
+                footerTNG: "Une fière filiale de <br><a href='https://tylernicholasgroup.com/' target='_blank' class='text-brand-dark hover:text-eco-green transition-colors mt-1 block text-xs'>The Tyler Nicholas Group</a>",
+                footerDir: "Annuaire", footerAffil: "Partenaires", footerContact: "Contact",
                 footLinkOffice: "Bureau de Tyler Nicholas", footLinkFood: "FoodShare Seychelles", footLinkTNG: "Tyler Nicholas Group", footLinkPersonal: "Profil Tyler Nicholas",
                 footerRights: "Copyright 2026 &copy; Fondation Tyler Nicholas. Tous droits réservés."
             },
             crs: {
                 banner: "Donn lafors lazenes e protez lanvironnman Repiblik Sesel",
-                navHome: "Akey", navPrograms: "Progranm", navMore: "Plis", navAboutUs: "Apropo Nou", navInvolved: "Partisipe", navLegal: "Legal", navPartners: "Nou Partener", navTeam: "Lekip", btnDonate: "Fer en Donasyon",
-                searchTitle: "Rod dan Lalis", searchHint1: "Pese", searchHint2: "pour rode.", searchPlaceholder: "Rod bann progranm ek nouvel...",
-                accRead: "Lir",
-                discordTitle: "Zwenn Kominote", discordDesc: "Koz avek nou bann volonter e ganny bann nouvel an direk lo nou bann proze.", discordBtn: "Zwenn Servir Discord",
+                navHome: "Akey", navPrograms: "Progranm", navMore: "Plis", navAboutUs: "Apropo", navContact: "Kontak", navInvolved: "Partisipe", navLegal: "Legal", navPartners: "Nou Partener", navTeam: "Lekip", btnDonate: "Donasyon",
+                searchTitle: "Rod dan Lalis", searchHint1: "Pese", searchHint2: "pour rode.", searchPlaceholder: "Rod bann progranm...",
+                accRead: "A11Y",
+                discordTitle: "Zwenn Kominote", discordDesc: "Koz avek nou bann volonter e ganny bann nouvel an direk.", discordBtn: "Zwenn Discord",
                 
-                bannerContact: "Pour bann partener biznes, donasyon, oubyen sipor zeneral, silvouple vizit",
-                bannerContactLink: "Portay Kontak Ofisyel",
-                bannerCareers: "Pe rod en lanplwa profesyonel? Vwar bann pozisyon ouver kot Tyler Nicholas Group lo",
+                heroSub: "Aksyon ek Sipor",
+                heroTitle: "Partisipe.",
+                heroDesc: "Ki swa ou donn ou letan koman volonter oubyen fer en donasyon, ou sipor pe ed batir fitir Sesel.",
                 
-                heroTitle: "Aplikasyon Volonter",
-                heroDesc: "Sa portay i strikman pour bann dimoun ki oule aplik pour zwenn nou bann inisyativ e sipor kominote.",
-                
-                guidelinesTitle: "Gid pour Aplikasyon",
-                guide1: "Silvouple fer sir ki tou lenformasyon legal i parèy ou kart idantite ofisyel. Sa i enportan pour nou sekirite.",
-                guide2: "Swazir sa progranm spesifik ki ou oule ed avek. Si ou ouver pour fer nenport kwa, swazir \"Volonter Zeneral\".",
-                
-                formTitle: "Portay Sekirize",
-                formGuarantee: "Garanti 48-Er", formGuaranteeDesc: "Nou lekip i revwar tou aplikasyon e pou reponn tou demann serye dan lespas 48 er-d-tan.",
+                volTitle: "Aplikasyon Volonter",
+                volDesc: "Zwenn nou bann proze kominote. Nou garanti en repons dan 48 er-d-tan pour bann demann serye.",
                 labelName: "Non Legal An Antye *", placeName: "Zan Pye",
                 labelEmail: "Ladres Email *", placeEmail: "zan@egzanp.com",
                 labelPhone: "Nimero Telefon", placePhone: "+248 ...",
                 labelPath: "Entere Prensipal *", optSelect: "-- Swazir en progranm --", 
-                opt1: "Larsiv bann Zenerasyon", opt2: "Inisyativ bann Artizan", opt3: "Sipor Lasante Mantal", opt4: "Libreri Ledikasyon", opt5: "Restorasyon Lans ek Eko", opt6: "Volonter Zeneral",
-                labelMsg: "Akoz ou pe aplike? (Skill / Leksperyans) *", placeMsg: "Ekri en pe akoz ou oule vin volonter ek ki skill ou anmennen...",
+                opt1: "Larsiv bann Zenerasyon", opt2: "Inisyativ bann Artizan", opt3: "Sipor Lasante Mantal", opt4: "Libreri Ledikasyon", opt5: "Restorasyon Lans", opt6: "Volonter Zeneral",
+                labelMsg: "Akoz ou pe aplike? (Skill) *", placeMsg: "Ekri en pe akoz ou oule vin volonter...",
                 btnSubmit: "Anvoy Aplikasyon",
-                formSuccess: "Aplikasyon in ganny resevwar an sekirite.", formError: "I annan en lerer. Silvouple re-eseye.",
+                formSuccess: "Aplikasyon in ganny resevwar.", formError: "Lerer. Silvouple re-eseye.",
                 
+                donTitle: "Fer en Donasyon",
+                donDesc: "Siponser nou bann progranm. 100% ou donasyon i al direk dan bann proze kominote. <br><span class=\"text-eco-green font-bold block mt-1\">Limit maksimonm: 1500 SCR par tranzaksyon.</span>",
+                donAmountLabel: "Swazir Monntan (SCR)",
+                donDetailsLabel: "Detay Donater",
+                btnDonateConfirm: "Al lo Peman Sekirize",
+
                 faqTitle: "Kestyon Ki Dimoun Demann Souvan",
                 faq1Q: "Konbyen letan mon bezwen donnen pour volonter?", faq1A: "Nou fleksib. Ou kapab ed zis pour en wikenn, oubyen reste pour plizyer mwan.",
-                faq2Q: "Eski mon bezwen diplonm oubyen skill spesifik?", faq2A: "Pour bann travay teknik, i bon si ou annan skill. Me pour travay kominote zeneral, zis ou volonte pour aprann e travay dir ki neseser.",
+                faq2Q: "Eski mon bezwen diplonm oubyen skill spesifik?", faq2A: "Pour bann travay teknik, i bon si ou annan skill. Me pour travay kominote zeneral, zis volonte pour travay i asz.",
+                faq3Q: "Koman donasyon i ganny trete?", faq3A: "Tou donasyon lo lenternet i ganny limite a 1,500 SCR pour sekirite. Larzan i al direk dan kont labank Fondasyon a traver nou sistenm peman sekirize.",
                 
                 footerSlogan: "\"Pour Lazenes. Pour Bann Zil. Pour Demen.\"",
-                footerTNG: "Fondasyon Tyler Nicholas i fyer pour fer par <br><a href='https://tylernicholasgroup.com/' target='_blank' class='text-brand-dark hover:text-eco-green transition-colors'>The Tyler Nicholas Group</a>",
-                footerDir: "Lalis", footerAffil: "Nou Bann Partener", footerContact: "Kontak Nou",
+                footerTNG: "En branch sarite dirize par <br><a href='https://tylernicholasgroup.com/' target='_blank' class='text-brand-dark hover:text-eco-green transition-colors mt-1 block text-xs'>The Tyler Nicholas Group</a>",
+                footerDir: "Lalis", footerAffil: "Nou Partener", footerContact: "Kontak Nou",
                 footLinkOffice: "Lobi Tyler Nicholas", footLinkFood: "FoodShare Seychelles", footLinkTNG: "Tyler Nicholas Group", footLinkPersonal: "Profil Tyler Nicholas",
                 footerRights: "Copyright 2026 &copy; Fondasyon Tyler Nicholas. Tou drwa rezerve."
             }
@@ -514,6 +562,13 @@
         document.getElementById('mobile-menu-close').addEventListener('click', () => mobileMenu.classList.toggle('translate-x-full'));
 
         window.addEventListener('load', () => {
+            // Reveal animations
+            setTimeout(() => {
+                document.querySelectorAll('.fade-up').forEach((el, index) => {
+                    if(index < 2) el.classList.add('visible');
+                });
+            }, 100);
+
             if (!localStorage.getItem('discordPopupSeen')) {
                 setTimeout(() => {
                     const popup = document.getElementById('discord-popup');
@@ -521,6 +576,7 @@
                 }, 3000); 
             }
         });
+
         function closeDiscordPopup() {
             const popup = document.getElementById('discord-popup');
             popup.classList.remove('show'); popup.classList.add('hide');
@@ -556,6 +612,44 @@
                 else area.classList.remove('high-contrast');
             });
         }
+
+        // --- DONATION LOGIC ---
+        function setDonationAmount(amount, btnElement) {
+            document.querySelectorAll('.amt-btn').forEach(btn => btn.classList.remove('selected'));
+            btnElement.classList.add('selected');
+            document.getElementById('custom-amount').value = amount;
+            document.getElementById('amount-warning').classList.add('hidden');
+            document.getElementById('custom-amount').classList.remove('border-red-500');
+        }
+
+        function validateAmount(input) {
+            document.querySelectorAll('.amt-btn').forEach(btn => btn.classList.remove('selected'));
+            const warning = document.getElementById('amount-warning');
+            
+            if (input.value > 1500) {
+                input.value = 1500;
+                warning.classList.remove('hidden');
+                input.classList.add('border-red-500');
+                input.classList.remove('focus:border-eco-green');
+            } else {
+                warning.classList.add('hidden');
+                input.classList.remove('border-red-500');
+                input.classList.add('focus:border-eco-green');
+            }
+        }
+
+        function processDonation() {
+            // Note: HTML/JS frontend cannot process real bank transfers. 
+            // This button should eventually trigger a Stripe Checkout session or redirect to a secure payment gateway.
+            const amount = document.getElementById('custom-amount').value;
+            if(!amount || amount <= 0) {
+                showToast("Please enter a valid amount.", "error");
+                return;
+            }
+            showToast(`Redirecting to secure gateway for ${amount} SCR...`, "success");
+            // Example redirect: window.location.href = `https://checkout.stripe.com/pay/...`;
+        }
+
 
         // --- SUPABASE INTAKE LOGIC ---
         const SUPABASE_URL = 'https://eeqgfchvchpdulfybsjg.supabase.co';
