@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard | Tyler Nicholas Foundation</title>
+    <title>System Portal | Tyler Nicholas Foundation</title>
     
     <link rel="icon" href="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" type="image/jpeg" />
     
@@ -21,7 +21,7 @@
                 extend: {
                     fontFamily: { sans: ['Inter', 'sans-serif'], heading: ['Poppins', 'sans-serif'] },
                     colors: { brand: { dark: '#0A0F1C', muted: '#6B7280' }, eco: { green: '#059669', light: '#ECFDF5', dark: '#047857', sand: '#FDFBF7' } },
-                    boxShadow: { 'soft': '0 20px 40px -15px rgba(0,0,0,0.05)', 'card': '0 10px 30px -10px rgba(5, 150, 105, 0.15)' }
+                    boxShadow: { 'soft': '0 20px 40px -15px rgba(0,0,0,0.05)', 'card': '0 10px 30px -10px rgba(5, 150, 105, 0.15)', 'glow': '0 0 40px -10px rgba(5, 150, 105, 0.3)' }
                 }
             }
         }
@@ -57,9 +57,9 @@
         ::-webkit-scrollbar-thumb:hover { background: #9CA3AF; }
     </style>
 </head>
-<body class="text-brand-dark h-screen overflow-hidden flex">
+<body class="text-brand-dark h-screen overflow-hidden flex relative">
 
-    <div id="login-view" class="fixed inset-0 flex items-center justify-center bg-brand-dark z-50 transition-opacity duration-500">
+    <div id="login-view" class="fixed inset-0 flex items-center justify-center bg-brand-dark z-[200] transition-opacity duration-500">
         <div class="absolute inset-0 z-0 opacity-20">
             <div class="absolute -top-40 -left-40 w-96 h-96 bg-eco-green rounded-full blur-[100px]"></div>
             <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-eco-green rounded-full blur-[100px]"></div>
@@ -69,96 +69,110 @@
             <div class="text-center mb-8">
                 <img src="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" alt="TNF Logo" class="w-16 h-16 rounded-full mx-auto mb-4 border border-gray-100 shadow-sm">
                 <h2 class="text-2xl font-heading font-black text-brand-dark tracking-tight">System Portal</h2>
-                <p class="text-gray-500 text-sm mt-2">Authorized personnel only.</p>
+                <p class="text-gray-500 text-sm mt-2">Staff & Administrator Access Only.</p>
             </div>
             
             <form onsubmit="handleLogin(event)" class="space-y-5">
                 <div>
-                    <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-2">Admin Email</label>
-                    <input type="email" id="login-email" class="admin-input" required placeholder="admin@tylernicholasgroup.com">
+                    <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-2">Email Address</label>
+                    <input type="email" id="login-email" class="admin-input" required placeholder="name@tylernicholasgroup.com">
                 </div>
                 <div>
                     <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-2">Password</label>
                     <input type="password" id="login-pass" class="admin-input" required placeholder="••••••••">
                 </div>
-                <button type="submit" id="btn-login" class="w-full bg-brand-dark hover:bg-eco-green text-white font-heading font-bold py-3.5 rounded-xl transition-all shadow-md text-sm uppercase tracking-widest mt-4">
-                    Authenticate <i class="fa-solid fa-lock ml-2"></i>
+                <button type="submit" id="btn-login" class="w-full bg-brand-dark hover:bg-eco-green text-white font-heading font-bold py-4 rounded-xl transition-all shadow-md text-sm uppercase tracking-widest mt-4 flex items-center justify-center gap-2">
+                    Authenticate <i class="fa-solid fa-lock"></i>
                 </button>
             </form>
+            
             <div class="mt-8 text-center text-xs text-gray-400">
-                <a href="/" class="hover:text-eco-green transition-colors"><i class="fa-solid fa-arrow-left mr-1"></i> Return to main site</a>
+                <a href="/" class="hover:text-eco-green transition-colors flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-arrow-left"></i> Return to main site
+                </a>
             </div>
         </div>
     </div>
 
+    <div id="routing-loader" class="fixed inset-0 bg-white z-[150] hidden flex-col items-center justify-center">
+        <i class="fa-solid fa-circle-notch fa-spin text-4xl text-eco-green mb-4"></i>
+        <p class="font-heading font-bold text-brand-dark tracking-widest uppercase text-sm animate-pulse" id="routing-text">Authenticating...</p>
+    </div>
+
     <div id="dashboard-view" class="hidden w-full h-full flex bg-[#F9FAFB]">
         
-        <aside class="w-64 bg-brand-dark text-white flex flex-col h-full shadow-2xl z-20 flex-shrink-0">
-            <div class="p-6 border-b border-white/10 flex items-center gap-3">
-                <img src="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" alt="TNF Logo" class="w-8 h-8 rounded-full">
+        <aside class="w-64 bg-brand-dark text-white flex flex-col h-full shadow-2xl z-20 flex-shrink-0 relative overflow-hidden">
+            <div class="absolute -top-20 -left-20 w-40 h-40 bg-eco-green rounded-full blur-[80px] opacity-20 pointer-events-none"></div>
+            
+            <div class="p-6 border-b border-white/10 flex items-center gap-3 relative z-10">
+                <img src="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" alt="TNF Logo" class="w-8 h-8 rounded-full border border-white/20">
                 <span class="font-heading font-bold text-lg tracking-tight">TNF Admin</span>
             </div>
             
-            <div class="flex-grow py-6 px-4 overflow-y-auto space-y-1">
-                <p class="px-3 text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Database Tables</p>
-                
-                <button onclick="switchTab('tab-news', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white transition-all bg-white/10 text-white">
+            <div class="flex-grow py-6 px-4 overflow-y-auto space-y-1 relative z-10">
+                <p class="px-3 text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3 mt-2">Public Content</p>
+                <button onclick="switchTab('tab-news', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium hover:bg-white/10 hover:text-white transition-all bg-white/10 text-white">
                     <i class="fa-solid fa-newspaper w-5 text-center"></i> News & Updates
                 </button>
-                
-                <button onclick="switchTab('tab-volunteers', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white transition-all">
-                    <i class="fa-solid fa-users w-5 text-center"></i> Volunteers
-                </button>
-                
-                <button onclick="switchTab('tab-contacts', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white transition-all">
-                    <i class="fa-solid fa-inbox w-5 text-center"></i> Contact Inquiries
-                </button>
-                
-                <button onclick="switchTab('tab-metrics', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white transition-all">
+                <button onclick="switchTab('tab-metrics', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-white/10 hover:text-white transition-all">
                     <i class="fa-solid fa-chart-line w-5 text-center"></i> Impact Metrics
                 </button>
 
-                <p class="px-3 text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-8 mb-2">System</p>
-                <button onclick="switchTab('tab-settings', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white transition-all">
-                    <i class="fa-solid fa-gear w-5 text-center"></i> Settings
+                <p class="px-3 text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-8 mb-3">Intake Forms</p>
+                <button onclick="switchTab('tab-volunteers', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-white/10 hover:text-white transition-all">
+                    <i class="fa-solid fa-handshake w-5 text-center"></i> Volunteer Apps
+                </button>
+                <button onclick="switchTab('tab-contacts', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-white/10 hover:text-white transition-all">
+                    <i class="fa-solid fa-inbox w-5 text-center"></i> Contact Inquiries
+                </button>
+                
+                <p class="px-3 text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-8 mb-3">Internal Operations</p>
+                <button onclick="switchTab('tab-events', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-white/10 hover:text-white transition-all">
+                    <i class="fa-solid fa-calendar-day w-5 text-center"></i> Event Manager
+                </button>
+                <button onclick="switchTab('tab-announcements', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-white/10 hover:text-white transition-all">
+                    <i class="fa-solid fa-bullhorn w-5 text-center"></i> Staff Broadcasts
+                </button>
+                <button onclick="switchTab('tab-staff', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-white/10 hover:text-white transition-all">
+                    <i class="fa-solid fa-id-badge w-5 text-center"></i> Staff Directory
                 </button>
             </div>
 
-            <div class="p-6 border-t border-white/10">
+            <div class="p-6 border-t border-white/10 bg-black/20 relative z-10">
                 <div class="flex items-center gap-3 mb-4">
-                    <div class="w-8 h-8 rounded-full bg-eco-green flex items-center justify-center text-xs font-bold text-white shadow-glow">TN</div>
+                    <div class="w-10 h-10 rounded-full bg-eco-green flex items-center justify-center text-sm font-bold text-white shadow-glow border-2 border-white/10">TN</div>
                     <div class="overflow-hidden">
-                        <p id="admin-user-email" class="text-xs font-medium text-white truncate w-32">admin@tnf.sc</p>
-                        <p class="text-[10px] text-eco-green uppercase tracking-widest">Administrator</p>
+                        <p id="admin-user-name" class="text-sm font-bold text-white truncate w-32">Loading...</p>
+                        <p id="admin-user-email" class="text-[10px] text-gray-400 truncate w-32">admin@tnf.sc</p>
                     </div>
                 </div>
-                <button onclick="handleLogout()" class="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg border border-white/20 text-xs font-bold text-gray-300 hover:bg-red-500 hover:border-red-500 hover:text-white transition-all">
-                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Terminate Session
+                <button onclick="handleLogout()" class="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-white/10 text-xs font-bold text-gray-300 hover:bg-red-500/10 hover:border-red-500/50 hover:text-red-400 transition-all">
+                    <i class="fa-solid fa-power-off"></i> Terminate Session
                 </button>
             </div>
         </aside>
 
         <main class="flex-grow flex flex-col h-full overflow-hidden relative">
             
-            <header class="h-20 bg-white border-b border-gray-200 flex items-center justify-between px-8 flex-shrink-0 z-10">
+            <header class="h-24 bg-white border-b border-gray-100 flex items-center justify-between px-10 flex-shrink-0 z-10 shadow-sm">
                 <div>
-                    <h2 id="header-title" class="text-2xl font-heading font-bold text-brand-dark tracking-tight">News & Updates</h2>
-                    <p class="text-xs text-gray-500 font-medium">Manage and edit database records directly.</p>
+                    <h2 id="header-title" class="text-3xl font-heading font-black text-brand-dark tracking-tight">News & Updates</h2>
+                    <p class="text-sm text-gray-500 font-medium mt-1">Manage public foundation announcements.</p>
                 </div>
-                <div class="flex gap-3">
-                    <button onclick="fetchCurrentTabData()" class="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors" title="Refresh Data">
+                <div class="flex items-center gap-4">
+                    <button onclick="fetchCurrentTabData()" class="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 hover:text-brand-dark transition-all hover:shadow-sm" title="Force Sync Database">
                         <i class="fa-solid fa-rotate-right"></i>
                     </button>
-                    <button onclick="openModal('news')" id="btn-add-new" class="bg-eco-green hover:bg-eco-dark text-white px-5 py-2 rounded-xl font-heading font-bold text-sm shadow-soft transition-colors flex items-center gap-2">
-                        <i class="fa-solid fa-plus"></i> Add Record
+                    <button onclick="openModal('news')" id="btn-add-new" class="bg-brand-dark hover:bg-eco-green text-white px-6 py-3 rounded-xl font-heading font-bold text-sm shadow-md transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-plus"></i> <span id="btn-add-text">Add Record</span>
                     </button>
                 </div>
             </header>
 
-            <div class="flex-grow overflow-y-auto p-8">
+            <div class="flex-grow overflow-y-auto p-10">
                 
                 <div id="tab-news" class="tab-content fade-in">
-                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                    <div class="bg-white border border-gray-100 rounded-[2rem] shadow-card overflow-hidden">
                         <div class="overflow-x-auto">
                             <table class="admin-table">
                                 <thead>
@@ -171,15 +185,34 @@
                                     </tr>
                                 </thead>
                                 <tbody id="table-news">
-                                    <tr><td colspan="5" class="text-center py-8 text-gray-400"><i class="fa-solid fa-circle-notch fa-spin text-2xl mb-2"></i><br>Loading data...</td></tr>
+                                    <tr><td colspan="5" class="text-center py-12 text-gray-400"><i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3 text-eco-green"></i><br>Syncing database...</td></tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
 
+                <div id="tab-metrics" class="tab-content hidden fade-in">
+                    <div class="bg-white border border-gray-100 rounded-[2rem] shadow-card overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Label</th>
+                                        <th>Value</th>
+                                        <th>Icon Class</th>
+                                        <th>Last Updated</th>
+                                        <th class="text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-metrics"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
                 <div id="tab-volunteers" class="tab-content hidden fade-in">
-                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                    <div class="bg-white border border-gray-100 rounded-[2rem] shadow-card overflow-hidden">
                         <div class="overflow-x-auto">
                             <table class="admin-table">
                                 <thead>
@@ -192,15 +225,14 @@
                                         <th class="text-right">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody id="table-volunteers">
-                                    </tbody>
+                                <tbody id="table-volunteers"></tbody>
                             </table>
                         </div>
                     </div>
                 </div>
 
                 <div id="tab-contacts" class="tab-content hidden fade-in">
-                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                    <div class="bg-white border border-gray-100 rounded-[2rem] shadow-card overflow-hidden">
                         <div class="overflow-x-auto">
                             <table class="admin-table">
                                 <thead>
@@ -213,40 +245,73 @@
                                         <th class="text-right">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody id="table-contacts">
-                                    </tbody>
+                                <tbody id="table-contacts"></tbody>
                             </table>
                         </div>
                     </div>
                 </div>
 
-                <div id="tab-metrics" class="tab-content hidden fade-in">
-                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                <div id="tab-events" class="tab-content hidden fade-in">
+                    <div class="bg-white border border-gray-100 rounded-[2rem] shadow-card overflow-hidden">
                         <div class="overflow-x-auto">
                             <table class="admin-table">
                                 <thead>
                                     <tr>
-                                        <th>Label</th>
-                                        <th>Value</th>
-                                        <th>Icon Class</th>
-                                        <th>Last Updated</th>
+                                        <th>Title</th>
+                                        <th>Date</th>
+                                        <th>Location</th>
+                                        <th>Capacity</th>
+                                        <th>Status</th>
                                         <th class="text-right">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody id="table-metrics">
-                                    </tbody>
+                                <tbody id="table-events"></tbody>
                             </table>
                         </div>
                     </div>
                 </div>
 
-                <div id="tab-settings" class="tab-content hidden fade-in max-w-2xl">
-                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm p-8">
-                        <h3 class="text-xl font-heading font-bold mb-6">Database Security Warning</h3>
-                        <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-xl mb-6">
-                            <p class="text-sm text-red-700 font-medium">To ensure full functionality of this dashboard, you must enable Row Level Security (RLS) in your Supabase dashboard and create policies allowing authenticated users to INSERT, UPDATE, and DELETE rows.</p>
+                <div id="tab-announcements" class="tab-content hidden fade-in">
+                    <div class="bg-white border border-gray-100 rounded-[2rem] shadow-card overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Broadcast Title</th>
+                                        <th>Content Preview</th>
+                                        <th>Date Sent</th>
+                                        <th class="text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-announcements"></tbody>
+                            </table>
                         </div>
-                        <p class="text-sm text-gray-500 mb-8">This admin panel communicates directly with your connected Supabase instance. Deleting records here will permanently wipe them from the live database.</p>
+                    </div>
+                </div>
+
+                <div id="tab-staff" class="tab-content hidden fade-in">
+                    <div class="mb-8 bg-blue-50 border border-blue-100 p-6 rounded-2xl flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 flex-shrink-0"><i class="fa-solid fa-shield-halved"></i></div>
+                        <div>
+                            <h4 class="font-bold text-brand-dark mb-1">Staff Management Protocol</h4>
+                            <p class="text-sm text-gray-600 leading-relaxed">To add a new staff member, they must first create an account via the portal. Once they exist in the Auth system, you can assign them the "staff" role here. Do not grant "admin" access unless explicitly authorized.</p>
+                        </div>
+                    </div>
+                    <div class="bg-white border border-gray-100 rounded-[2rem] shadow-card overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Full Name</th>
+                                        <th>Email Account</th>
+                                        <th>System Role</th>
+                                        <th>Date Registered</th>
+                                        <th class="text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-staff"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
@@ -254,27 +319,28 @@
         </main>
     </div>
 
-    <div id="edit-modal" class="fixed inset-0 modal-overlay z-[100] hidden flex items-center justify-center p-6 opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden transform scale-95 transition-transform duration-300" id="edit-modal-content">
+    <div id="edit-modal" class="fixed inset-0 modal-overlay z-[300] hidden flex items-center justify-center p-6 opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-2xl overflow-hidden transform scale-95 transition-transform duration-300" id="edit-modal-content">
             
-            <div class="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-                <h3 id="modal-title" class="text-xl font-heading font-bold text-brand-dark">Edit Record</h3>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-brand-dark transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <div class="px-10 py-8 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                <h3 id="modal-title" class="text-2xl font-heading font-black text-brand-dark tracking-tight">Edit Record</h3>
+                <button onclick="closeModal()" class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-dark hover:bg-gray-50 transition-all"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             
-            <div class="p-8 max-h-[70vh] overflow-y-auto">
-                <form id="edit-form" class="space-y-5" onsubmit="saveRecord(event)">
+            <div class="p-10 max-h-[65vh] overflow-y-auto">
+                <form id="edit-form" class="space-y-6" onsubmit="saveRecord(event)">
                     <input type="hidden" id="edit-id" value="">
                     <input type="hidden" id="edit-table" value="">
                     
-                    <div id="dynamic-form-fields" class="space-y-5"></div>
-                    
+                    <div id="dynamic-form-fields" class="space-y-6"></div>
                 </form>
             </div>
             
-            <div class="px-8 py-5 border-t border-gray-100 bg-gray-50 flex justify-end gap-3">
-                <button onclick="closeModal()" class="px-6 py-2.5 rounded-xl border border-gray-200 text-gray-600 font-bold text-sm hover:bg-gray-100 transition-colors">Cancel</button>
-                <button onclick="document.getElementById('edit-form').requestSubmit()" class="px-6 py-2.5 rounded-xl bg-brand-dark text-white font-bold text-sm hover:bg-eco-green transition-colors shadow-md">Save Changes</button>
+            <div class="px-10 py-6 border-t border-gray-100 bg-gray-50 flex justify-end gap-4">
+                <button onclick="closeModal()" class="px-8 py-3.5 rounded-xl border border-gray-200 text-gray-600 font-bold text-sm hover:bg-white hover:shadow-sm transition-all">Cancel</button>
+                <button onclick="document.getElementById('edit-form').requestSubmit()" class="px-8 py-3.5 rounded-xl bg-brand-dark text-white font-bold text-sm hover:bg-eco-green transition-all shadow-md flex items-center gap-2">
+                    <i class="fa-solid fa-hard-drive"></i> Commit Changes
+                </button>
             </div>
         </div>
     </div>
@@ -282,12 +348,13 @@
     <div id="toast-container"></div>
 
     <script>
-        // --- SUPABASE INITIALIZATION ---
+        // --- SUPABASE CONFIGURATION ---
         const SUPABASE_URL = 'https://eeqgfchvchpdulfybsjg.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVlcWdmY2h2Y2hwZHVsZnlic2pnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3MDEyMzYsImV4cCI6MjA5MDI3NzIzNn0.2Psw_X2TB1r8iLb46WWWANhVuDvoDPnUMjaWykvqd1s';
         
         let supabase;
         let currentTab = 'news';
+        let currentUserProfile = null;
 
         document.addEventListener("DOMContentLoaded", () => {
             const checkSupabase = setInterval(() => {
@@ -299,17 +366,62 @@
             }, 100);
         });
 
-        // --- AUTH LOGIC ---
+        // --- AUTH & ROUTING LOGIC ---
         async function checkUserSession() {
             const { data: { session } } = await supabase.auth.getSession();
-            if (session) {
-                document.getElementById('login-view').classList.add('hidden');
-                document.getElementById('dashboard-view').classList.remove('hidden');
-                document.getElementById('admin-user-email').innerText = session.user.email;
-                fetchCurrentTabData();
+            const loader = document.getElementById('routing-loader');
+            const loginView = document.getElementById('login-view');
+            const dashView = document.getElementById('dashboard-view');
+            
+            if (!session) {
+                loader.classList.add('hidden');
+                loginView.classList.remove('hidden');
+                dashView.classList.add('hidden');
+                return;
+            }
+
+            // User is logged in, show loader while we check role
+            loginView.classList.add('hidden');
+            loader.classList.remove('hidden');
+            loader.classList.add('flex');
+            document.getElementById('routing-text').innerText = "Verifying Clearance Level...";
+
+            // Fetch user profile to get role
+            const { data: profile, error } = await supabase
+                .from('tnf_profiles')
+                .select('*')
+                .eq('id', session.user.id)
+                .single();
+
+            if (error || !profile) {
+                // If they don't have a profile yet (new signup), create one as default 'staff'
+                const { data: newProfile, err: insertErr } = await supabase
+                    .from('tnf_profiles')
+                    .insert({ id: session.user.id, email: session.user.email, full_name: 'New User', role: 'staff' })
+                    .select()
+                    .single();
+                
+                currentUserProfile = newProfile;
             } else {
-                document.getElementById('login-view').classList.remove('hidden');
-                document.getElementById('dashboard-view').classList.add('hidden');
+                currentUserProfile = profile;
+            }
+
+            // ROUTING DECISION
+            if (currentUserProfile && currentUserProfile.role === 'admin') {
+                // Let them into Admin Dashboard
+                setTimeout(() => {
+                    loader.classList.add('hidden');
+                    dashView.classList.remove('hidden');
+                    document.getElementById('admin-user-email').innerText = currentUserProfile.email;
+                    document.getElementById('admin-user-name').innerText = currentUserProfile.full_name;
+                    fetchCurrentTabData();
+                }, 800);
+            } else {
+                // They are Staff (or something else). Redirect them to the Staff Portal.
+                document.getElementById('routing-text').innerText = "Routing to Staff Portal...";
+                setTimeout(() => {
+                    window.location.href = '/staff/'; 
+                }, 800);
             }
         }
 
@@ -322,15 +434,14 @@
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-pass').value;
 
-            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+            const { error } = await supabase.auth.signInWithPassword({ email, password });
 
             if (error) {
                 showToast(error.message, 'error');
                 btn.innerHTML = 'Authenticate <i class="fa-solid fa-lock ml-2"></i>';
                 btn.disabled = false;
             } else {
-                checkUserSession();
-                showToast('Authentication successful.', 'success');
+                checkUserSession(); // This will trigger the routing logic
             }
         }
 
@@ -341,59 +452,61 @@
 
         // --- NAVIGATION LOGIC ---
         function switchTab(tabId, btnElement) {
-            // Update buttons
             document.querySelectorAll('.sidebar-btn').forEach(btn => {
                 btn.classList.remove('bg-white/10', 'text-white');
-                btn.classList.add('text-gray-300');
+                btn.classList.add('text-gray-400');
             });
-            btnElement.classList.remove('text-gray-300');
+            btnElement.classList.remove('text-gray-400');
             btnElement.classList.add('bg-white/10', 'text-white');
 
-            // Hide all tabs
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
-            
-            // Show target tab
             document.getElementById(tabId).classList.remove('hidden');
             
-            // Update Header
             currentTab = tabId.replace('tab-', '');
+            
             let title = "Dashboard";
-            if(currentTab === 'news') title = "News & Updates";
-            if(currentTab === 'volunteers') title = "Volunteer Applications";
-            if(currentTab === 'contacts') title = "Contact Inquiries";
-            if(currentTab === 'metrics') title = "Impact Metrics";
-            if(currentTab === 'settings') title = "System Settings";
+            let btnText = "Add Record";
+            if(currentTab === 'news') { title = "News & Updates"; btnText = "Post News"; }
+            if(currentTab === 'metrics') { title = "Impact Metrics"; btnText = "Update Metric"; }
+            if(currentTab === 'volunteers') { title = "Volunteer Applications"; btnText = "Manual Entry"; }
+            if(currentTab === 'contacts') { title = "Contact Inquiries"; btnText = "Manual Entry"; }
+            if(currentTab === 'events') { title = "Event Manager"; btnText = "Create Event"; }
+            if(currentTab === 'announcements') { title = "Staff Broadcasts"; btnText = "New Broadcast"; }
+            if(currentTab === 'staff') { title = "Staff Directory"; btnText = "Register Staff"; }
             
             document.getElementById('header-title').innerText = title;
-            
-            // Update "Add" button target
+            document.getElementById('btn-add-text').innerText = btnText;
             document.getElementById('btn-add-new').setAttribute('onclick', `openModal('${currentTab}')`);
-            if(currentTab === 'settings') document.getElementById('btn-add-new').classList.add('hidden');
-            else document.getElementById('btn-add-new').classList.remove('hidden');
+
+            // Hide add button for staff directory (they must sign up themselves first)
+            if(currentTab === 'staff') {
+                document.getElementById('btn-add-new').classList.add('hidden');
+            } else {
+                document.getElementById('btn-add-new').classList.remove('hidden');
+            }
 
             fetchCurrentTabData();
         }
 
-        // --- CRUD LOGIC ---
+        // --- CRUD READ LOGIC ---
         async function fetchCurrentTabData() {
-            if(currentTab === 'settings') return;
-            
             const tableId = `table-${currentTab}`;
             const tbody = document.getElementById(tableId);
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-gray-400"><i class="fa-solid fa-circle-notch fa-spin text-2xl mb-2"></i><br>Loading data...</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-12 text-gray-400"><i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3 text-eco-green"></i><br>Syncing database...</td></tr>`;
 
             let tableName = `tnf_${currentTab}`;
-            if(currentTab === 'metrics') tableName = 'tnf_impact_metrics'; // Edge case naming
+            if(currentTab === 'metrics') tableName = 'tnf_impact_metrics';
+            if(currentTab === 'staff') tableName = 'tnf_profiles'; // Profiles act as the staff directory
 
-            const { data, error } = await supabase.from(tableName).select('*').order('id', { ascending: false });
+            const { data, error } = await supabase.from(tableName).select('*').order(currentTab === 'staff' ? 'created_at' : 'id', { ascending: false });
 
             if (error) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-red-500">Error loading data: ${error.message}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-12 text-red-500 font-bold bg-red-50"><i class="fa-solid fa-triangle-exclamation mb-2 text-2xl"></i><br>Database Error: ${error.message}</td></tr>`;
                 return;
             }
 
             if (!data || data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-gray-400">No records found.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-12 text-gray-400 font-medium">No records found in this table.</td></tr>`;
                 return;
             }
 
@@ -401,50 +514,93 @@
             data.forEach(row => {
                 if (currentTab === 'news') {
                     html += `<tr>
-                        <td class="font-bold text-gray-500">#${row.id}</td>
-                        <td class="font-medium">${row.title}</td>
-                        <td class="truncate max-w-xs text-gray-500">${row.short_summary || ''}</td>
-                        <td>${new Date(row.published_at || row.created_at).toLocaleDateString()}</td>
+                        <td class="font-bold text-gray-400">#${row.id}</td>
+                        <td class="font-bold text-brand-dark">${row.title}</td>
+                        <td class="text-gray-500 truncate max-w-[200px]">${row.short_summary || ''}</td>
+                        <td class="font-mono text-xs text-gray-500">${new Date(row.published_at || row.created_at).toLocaleDateString()}</td>
                         <td class="text-right whitespace-nowrap">
-                            <button onclick="openModal('${currentTab}', ${row.id})" class="text-blue-500 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg mr-2 transition-colors"><i class="fa-solid fa-pen text-xs"></i> Edit</button>
-                            <button onclick="deleteRecord('${tableName}', ${row.id})" class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors"><i class="fa-solid fa-trash text-xs"></i></button>
+                            <button onclick="openModal('${currentTab}', ${row.id})" class="text-brand-blue hover:text-blue-700 bg-blue-50 hover:bg-blue-100 w-8 h-8 rounded-lg mr-2 transition-colors"><i class="fa-solid fa-pen text-xs"></i></button>
+                            <button onclick="deleteRecord('${tableName}', ${row.id})" class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 w-8 h-8 rounded-lg transition-colors"><i class="fa-solid fa-trash text-xs"></i></button>
                         </td>
                     </tr>`;
                 } else if (currentTab === 'volunteers') {
-                    const statusColor = row.status === 'New' ? 'text-orange-600 bg-orange-100' : 'text-green-600 bg-green-100';
+                    const statusColor = row.status === 'New' ? 'text-orange-600 bg-orange-50 border border-orange-200' : 'text-eco-green bg-eco-light border border-eco-green/20';
                     html += `<tr>
-                        <td class="font-medium">${row.full_name}</td>
+                        <td class="font-bold text-brand-dark">${row.full_name}</td>
                         <td class="text-gray-500">${row.email}</td>
-                        <td><span class="bg-gray-100 px-2 py-1 rounded text-xs font-medium text-gray-600 border border-gray-200">${row.interest_area}</span></td>
-                        <td><span class="px-2 py-1 rounded text-xs font-bold uppercase tracking-widest ${statusColor}">${row.status || 'New'}</span></td>
-                        <td>${new Date(row.created_at).toLocaleDateString()}</td>
+                        <td><span class="bg-gray-100 px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest text-gray-600">${row.interest_area}</span></td>
+                        <td><span class="px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest ${statusColor}">${row.status || 'New'}</span></td>
+                        <td class="font-mono text-xs text-gray-500">${new Date(row.created_at).toLocaleDateString()}</td>
                         <td class="text-right whitespace-nowrap">
-                            <button onclick="openModal('${currentTab}', ${row.id})" class="text-blue-500 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg mr-2"><i class="fa-solid fa-pen text-xs"></i> Edit</button>
-                            <button onclick="deleteRecord('${tableName}', ${row.id})" class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg"><i class="fa-solid fa-trash text-xs"></i></button>
+                            <button onclick="openModal('${currentTab}', ${row.id})" class="text-brand-dark border border-gray-200 hover:border-eco-green hover:text-eco-green px-4 py-1.5 rounded-lg mr-2 text-xs font-bold transition-all">Review</button>
+                            <button onclick="deleteRecord('${tableName}', ${row.id})" class="text-gray-400 hover:text-red-600 w-8 h-8 transition-colors"><i class="fa-solid fa-trash text-xs"></i></button>
                         </td>
                     </tr>`;
                 } else if (currentTab === 'contacts') {
-                    const statusColor = row.status === 'New' ? 'text-orange-600 bg-orange-100' : 'text-gray-600 bg-gray-100';
+                    const statusColor = row.status === 'New' ? 'text-orange-600 bg-orange-50 border border-orange-200' : 'text-gray-600 bg-gray-100 border border-gray-200';
                     html += `<tr>
-                        <td class="font-medium">${row.full_name}</td>
+                        <td class="font-bold text-brand-dark">${row.full_name}</td>
                         <td class="text-gray-500">${row.email}</td>
-                        <td class="truncate max-w-[150px]">${row.subject}</td>
-                        <td><span class="px-2 py-1 rounded text-xs font-bold uppercase tracking-widest ${statusColor}">${row.status || 'New'}</span></td>
-                        <td>${new Date(row.created_at).toLocaleDateString()}</td>
+                        <td class="truncate max-w-[150px] font-medium">${row.subject}</td>
+                        <td><span class="px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest ${statusColor}">${row.status || 'New'}</span></td>
+                        <td class="font-mono text-xs text-gray-500">${new Date(row.created_at).toLocaleDateString()}</td>
                         <td class="text-right whitespace-nowrap">
-                            <button onclick="openModal('${currentTab}', ${row.id})" class="text-blue-500 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg mr-2"><i class="fa-solid fa-pen text-xs"></i> View/Edit</button>
-                            <button onclick="deleteRecord('${tableName}', ${row.id})" class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg"><i class="fa-solid fa-trash text-xs"></i></button>
+                            <button onclick="openModal('${currentTab}', ${row.id})" class="text-brand-dark border border-gray-200 hover:border-eco-green hover:text-eco-green px-4 py-1.5 rounded-lg mr-2 text-xs font-bold transition-all">Review</button>
+                            <button onclick="deleteRecord('${tableName}', ${row.id})" class="text-gray-400 hover:text-red-600 w-8 h-8 transition-colors"><i class="fa-solid fa-trash text-xs"></i></button>
                         </td>
                     </tr>`;
                 } else if (currentTab === 'metrics') {
                     html += `<tr>
-                        <td class="font-medium">${row.metric_label}</td>
-                        <td class="font-bold text-eco-green">${row.metric_value}</td>
-                        <td class="text-gray-400 font-mono text-xs">${row.icon_class || 'N/A'}</td>
-                        <td>${new Date(row.created_at).toLocaleDateString()}</td>
+                        <td class="font-bold text-brand-dark">${row.metric_label}</td>
+                        <td class="font-black text-xl text-eco-green">${row.metric_value}</td>
+                        <td class="text-gray-400 font-mono text-xs bg-gray-50 px-2 py-1 rounded">${row.icon_class || 'N/A'}</td>
+                        <td class="font-mono text-xs text-gray-500">${new Date(row.created_at).toLocaleDateString()}</td>
                         <td class="text-right whitespace-nowrap">
-                            <button onclick="openModal('${currentTab}', ${row.id})" class="text-blue-500 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg mr-2"><i class="fa-solid fa-pen text-xs"></i> Edit</button>
-                            <button onclick="deleteRecord('${tableName}', ${row.id})" class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg"><i class="fa-solid fa-trash text-xs"></i></button>
+                            <button onclick="openModal('${currentTab}', ${row.id})" class="text-brand-blue hover:text-blue-700 bg-blue-50 hover:bg-blue-100 w-8 h-8 rounded-lg mr-2 transition-colors"><i class="fa-solid fa-pen text-xs"></i></button>
+                            <button onclick="deleteRecord('${tableName}', ${row.id})" class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 w-8 h-8 rounded-lg transition-colors"><i class="fa-solid fa-trash text-xs"></i></button>
+                        </td>
+                    </tr>`;
+                } else if (currentTab === 'events') {
+                    const statusColors = {
+                        'upcoming': 'text-blue-600 bg-blue-50 border-blue-200',
+                        'ongoing': 'text-eco-green bg-eco-light border-eco-green/20',
+                        'completed': 'text-gray-600 bg-gray-100 border-gray-200',
+                        'cancelled': 'text-red-600 bg-red-50 border-red-200'
+                    };
+                    const sc = statusColors[row.status] || statusColors['upcoming'];
+                    html += `<tr>
+                        <td class="font-bold text-brand-dark">${row.title}</td>
+                        <td class="font-mono text-xs text-gray-500">${new Date(row.event_date).toLocaleString()}</td>
+                        <td class="text-gray-500"><i class="fa-solid fa-location-dot mr-1 text-gray-300"></i> ${row.location || 'TBA'}</td>
+                        <td class="font-medium">${row.capacity ? row.capacity + ' spots' : 'Unlimited'}</td>
+                        <td><span class="px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest border ${sc}">${row.status || 'upcoming'}</span></td>
+                        <td class="text-right whitespace-nowrap">
+                            <button onclick="openModal('${currentTab}', ${row.id})" class="text-brand-blue hover:text-blue-700 bg-blue-50 hover:bg-blue-100 w-8 h-8 rounded-lg mr-2 transition-colors"><i class="fa-solid fa-pen text-xs"></i></button>
+                            <button onclick="deleteRecord('${tableName}', ${row.id})" class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 w-8 h-8 rounded-lg transition-colors"><i class="fa-solid fa-trash text-xs"></i></button>
+                        </td>
+                    </tr>`;
+                } else if (currentTab === 'announcements') {
+                    html += `<tr>
+                        <td class="font-bold text-brand-dark">${row.title}</td>
+                        <td class="text-gray-500 truncate max-w-[250px]">${row.content}</td>
+                        <td class="font-mono text-xs text-gray-500">${new Date(row.created_at).toLocaleString()}</td>
+                        <td class="text-right whitespace-nowrap">
+                            <button onclick="openModal('${currentTab}', ${row.id})" class="text-brand-blue hover:text-blue-700 bg-blue-50 hover:bg-blue-100 w-8 h-8 rounded-lg mr-2 transition-colors"><i class="fa-solid fa-pen text-xs"></i></button>
+                            <button onclick="deleteRecord('${tableName}', ${row.id})" class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 w-8 h-8 rounded-lg transition-colors"><i class="fa-solid fa-trash text-xs"></i></button>
+                        </td>
+                    </tr>`;
+                } else if (currentTab === 'staff') {
+                    const roleColor = row.role === 'admin' ? 'text-purple-600 bg-purple-50 border-purple-200' : 'text-blue-600 bg-blue-50 border-blue-200';
+                    html += `<tr>
+                        <td class="font-bold text-brand-dark flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs text-gray-500 uppercase">${row.full_name.substring(0,2)}</div>
+                            ${row.full_name}
+                        </td>
+                        <td class="text-gray-500">${row.email}</td>
+                        <td><span class="px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest border ${roleColor}">${row.role}</span></td>
+                        <td class="font-mono text-xs text-gray-500">${new Date(row.created_at).toLocaleDateString()}</td>
+                        <td class="text-right whitespace-nowrap">
+                            <button onclick="openModal('${currentTab}', '${row.id}')" class="text-brand-dark border border-gray-200 hover:border-brand-dark px-4 py-1.5 rounded-lg text-xs font-bold transition-all">Manage Role</button>
                         </td>
                     </tr>`;
                 }
@@ -453,39 +609,36 @@
         }
 
         async function deleteRecord(tableName, id) {
-            if(!confirm(`Are you absolutely sure you want to permanently delete record #${id} from ${tableName}? This cannot be undone.`)) return;
+            if(!confirm(`SYSTEM WARNING: You are about to permanently delete record from ${tableName}.\n\nProceed?`)) return;
             
             try {
                 const { error } = await supabase.from(tableName).delete().eq('id', id);
                 if (error) throw error;
-                showToast(`Record ${id} deleted successfully.`, 'success');
+                showToast(`Record purged successfully.`, 'success');
                 fetchCurrentTabData();
             } catch (error) {
-                showToast(`Error deleting: ${error.message}`, 'error');
+                showToast(`Access Denied or Database Error: ${error.message}`, 'error');
             }
         }
 
-        // --- MODAL LOGIC (Dynamic Form Generation) ---
+        // --- MODAL LOGIC (Dynamic Architecture) ---
         async function openModal(type, id = null) {
             const modal = document.getElementById('edit-modal');
             const content = document.getElementById('edit-modal-content');
             const formFields = document.getElementById('dynamic-form-fields');
             
-            document.getElementById('modal-title').innerText = id ? `Edit ${type.toUpperCase()} Record` : `Add New ${type.toUpperCase()}`;
+            document.getElementById('modal-title').innerText = id ? `Modify Record` : `Initialize New Record`;
             document.getElementById('edit-id').value = id || '';
             document.getElementById('edit-table').value = type;
 
             let tableName = `tnf_${type}`;
             if(type === 'metrics') tableName = 'tnf_impact_metrics';
+            if(type === 'staff') tableName = 'tnf_profiles';
 
-            formFields.innerHTML = '<div class="text-center py-4 text-gray-400"><i class="fa-solid fa-circle-notch fa-spin"></i> Loading schema...</div>';
+            formFields.innerHTML = '<div class="text-center py-10 text-gray-400"><i class="fa-solid fa-circle-notch fa-spin text-2xl mb-2"></i><br>Pulling schema...</div>';
             
-            // Show modal
             modal.classList.remove('hidden');
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                content.classList.remove('scale-95');
-            }, 10);
+            setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
 
             let rowData = {};
             if (id) {
@@ -493,32 +646,44 @@
                 if (!error) rowData = data;
             }
 
-            // Generate form fields dynamically based on the current tab
             let html = '';
             
             if (type === 'news') {
-                html += createField('Title', 'title', 'text', rowData.title, true);
-                html += createField('Short Summary', 'short_summary', 'textarea', rowData.short_summary, true);
-                html += createField('Full Content HTML', 'content', 'textarea', rowData.content, false, 8);
-                html += createField('Published Date', 'published_at', 'datetime-local', formatForInput(rowData.published_at || new Date().toISOString()), true);
+                html += createField('Headline Title', 'title', 'text', rowData.title, true);
+                html += createField('Brief Summary', 'short_summary', 'textarea', rowData.short_summary, true, 2);
+                html += createField('Full HTML Content', 'content', 'textarea', rowData.content, false, 8);
+                html += createField('Publication Timestamp', 'published_at', 'datetime-local', formatForInput(rowData.published_at || new Date().toISOString()), true);
             } else if (type === 'volunteers') {
-                html += createField('Status', 'status', 'select', rowData.status, true, 1, ['New', 'Reviewed', 'Accepted', 'Rejected']);
-                html += createField('Full Name', 'full_name', 'text', rowData.full_name, true);
-                html += createField('Email', 'email', 'email', rowData.email, true);
-                html += createField('Phone', 'phone', 'text', rowData.phone, false);
-                html += createField('Interest Area', 'interest_area', 'text', rowData.interest_area, true);
-                html += createField('Application Message', 'message', 'textarea', rowData.message, true, 5);
-                html += createField('Created At (Read Only)', 'created_at', 'text', rowData.created_at, false, 1, [], true);
+                html += createField('Processing Status', 'status', 'select', rowData.status, true, 1, ['New', 'Reviewed', 'Accepted', 'Rejected']);
+                html += createField('Applicant Name', 'full_name', 'text', rowData.full_name, true);
+                html += createField('Contact Email', 'email', 'email', rowData.email, true);
+                html += createField('Phone Number', 'phone', 'text', rowData.phone, false);
+                html += createField('Program of Interest', 'interest_area', 'text', rowData.interest_area, true);
+                html += createField('Applicant Message', 'message', 'textarea', rowData.message, true, 5);
             } else if (type === 'contacts') {
-                html += createField('Status', 'status', 'select', rowData.status, true, 1, ['New', 'In Progress', 'Resolved']);
-                html += createField('Full Name', 'full_name', 'text', rowData.full_name, true);
-                html += createField('Email', 'email', 'email', rowData.email, true);
-                html += createField('Subject', 'subject', 'text', rowData.subject, true);
-                html += createField('Message', 'message', 'textarea', rowData.message, true, 5);
+                html += createField('Resolution Status', 'status', 'select', rowData.status, true, 1, ['New', 'In Progress', 'Resolved']);
+                html += createField('Sender Name', 'full_name', 'text', rowData.full_name, true);
+                html += createField('Sender Email', 'email', 'email', rowData.email, true);
+                html += createField('Inquiry Subject', 'subject', 'text', rowData.subject, true);
+                html += createField('Full Message', 'message', 'textarea', rowData.message, true, 6);
             } else if (type === 'metrics') {
-                html += createField('Metric Label (e.g. Volunteers)', 'metric_label', 'text', rowData.metric_label, true);
-                html += createField('Numeric Value (e.g. 500)', 'metric_value', 'number', rowData.metric_value, true);
-                html += createField('FontAwesome Icon Class (e.g. fa-users)', 'icon_class', 'text', rowData.icon_class, true);
+                html += createField('Metric Display Label', 'metric_label', 'text', rowData.metric_label, true);
+                html += createField('Numeric Value', 'metric_value', 'number', rowData.metric_value, true);
+                html += createField('FontAwesome Icon Class', 'icon_class', 'text', rowData.icon_class, true);
+            } else if (type === 'events') {
+                html += createField('Event Status', 'status', 'select', rowData.status, true, 1, ['upcoming', 'ongoing', 'completed', 'cancelled']);
+                html += createField('Event Title', 'title', 'text', rowData.title, true);
+                html += createField('Event Description', 'description', 'textarea', rowData.description, true, 4);
+                html += createField('Scheduled Date & Time', 'event_date', 'datetime-local', formatForInput(rowData.event_date || new Date().toISOString()), true);
+                html += createField('Location / Venue', 'location', 'text', rowData.location, false);
+                html += createField('Maximum Capacity (Leave blank for unlimited)', 'capacity', 'number', rowData.capacity, false);
+            } else if (type === 'announcements') {
+                html += createField('Broadcast Headline', 'title', 'text', rowData.title, true);
+                html += createField('Broadcast Content (Visible to all staff)', 'content', 'textarea', rowData.content, true, 6);
+            } else if (type === 'staff') {
+                html += createField('Full Name', 'full_name', 'text', rowData.full_name, true, 1, [], true); // Readonly
+                html += createField('Email Account', 'email', 'email', rowData.email, true, 1, [], true); // Readonly
+                html += createField('System Access Role', 'role', 'select', rowData.role, true, 1, ['staff', 'admin']);
             }
 
             formFields.innerHTML = html;
@@ -533,7 +698,7 @@
             if (type === 'textarea') {
                 inputHtml = `<textarea id="form-${id}" rows="${rows}" ${reqStr} ${roStr}>${valStr}</textarea>`;
             } else if (type === 'select') {
-                inputHtml = `<select id="form-${id}" ${reqStr} ${roStr}>`;
+                inputHtml = `<select id="form-${id}" ${reqStr} ${roStr} class="admin-input appearance-none">`;
                 options.forEach(opt => {
                     let sel = valStr === opt ? 'selected' : '';
                     inputHtml += `<option value="${opt}" ${sel}>${opt}</option>`;
@@ -545,7 +710,7 @@
 
             return `
                 <div>
-                    <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">${label}</label>
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">${label}</label>
                     ${inputHtml}
                 </div>
             `;
@@ -554,7 +719,7 @@
         function formatForInput(dateString) {
             if(!dateString) return '';
             const d = new Date(dateString);
-            return d.toISOString().slice(0, 16); // format to yyyy-MM-ddThh:mm
+            return d.toISOString().slice(0, 16); 
         }
 
         function closeModal() {
@@ -563,9 +728,7 @@
             
             modal.classList.add('opacity-0');
             content.classList.add('scale-95');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 300);
+            setTimeout(() => { modal.classList.add('hidden'); }, 300);
         }
 
         async function saveRecord(e) {
@@ -575,66 +738,51 @@
             
             let tableName = `tnf_${type}`;
             if(type === 'metrics') tableName = 'tnf_impact_metrics';
+            if(type === 'staff') tableName = 'tnf_profiles';
 
-            // Gather dynamic payload based on type
             let payload = {};
             if (type === 'news') {
-                payload = {
-                    title: document.getElementById('form-title').value,
-                    short_summary: document.getElementById('form-short_summary').value,
-                    content: document.getElementById('form-content').value,
-                    published_at: document.getElementById('form-published_at').value
-                };
+                payload = { title: document.getElementById('form-title').value, short_summary: document.getElementById('form-short_summary').value, content: document.getElementById('form-content').value, published_at: document.getElementById('form-published_at').value };
             } else if (type === 'volunteers' || type === 'contacts') {
-                payload = {
-                    status: document.getElementById('form-status').value,
-                    full_name: document.getElementById('form-full_name').value,
-                    email: document.getElementById('form-email').value,
-                    message: document.getElementById('form-message').value
-                };
-                if(type === 'volunteers') {
-                    payload.phone = document.getElementById('form-phone').value;
-                    payload.interest_area = document.getElementById('form-interest_area').value;
-                } else {
-                    payload.subject = document.getElementById('form-subject').value;
-                }
+                payload = { status: document.getElementById('form-status').value, full_name: document.getElementById('form-full_name').value, email: document.getElementById('form-email').value, message: document.getElementById('form-message').value };
+                if(type === 'volunteers') { payload.phone = document.getElementById('form-phone').value; payload.interest_area = document.getElementById('form-interest_area').value; } 
+                else { payload.subject = document.getElementById('form-subject').value; }
             } else if (type === 'metrics') {
-                payload = {
-                    metric_label: document.getElementById('form-metric_label').value,
-                    metric_value: document.getElementById('form-metric_value').value,
-                    icon_class: document.getElementById('form-icon_class').value
-                };
+                payload = { metric_label: document.getElementById('form-metric_label').value, metric_value: document.getElementById('form-metric_value').value, icon_class: document.getElementById('form-icon_class').value };
+            } else if (type === 'events') {
+                payload = { title: document.getElementById('form-title').value, description: document.getElementById('form-description').value, event_date: document.getElementById('form-event_date').value, location: document.getElementById('form-location').value, capacity: document.getElementById('form-capacity').value || null, status: document.getElementById('form-status').value, created_by: currentUserProfile.id };
+            } else if (type === 'announcements') {
+                payload = { title: document.getElementById('form-title').value, content: document.getElementById('form-content').value, created_by: currentUserProfile.id };
+            } else if (type === 'staff') {
+                payload = { role: document.getElementById('form-role').value };
             }
 
             try {
                 let error;
                 if (id) {
-                    // Update
                     const result = await supabase.from(tableName).update(payload).eq('id', id);
                     error = result.error;
                 } else {
-                    // Insert
                     const result = await supabase.from(tableName).insert(payload);
                     error = result.error;
                 }
 
                 if (error) throw error;
                 
-                showToast(`Record ${id ? 'updated' : 'added'} successfully.`, 'success');
+                showToast(`Database updated successfully.`, 'success');
                 closeModal();
                 fetchCurrentTabData();
             } catch (err) {
                 console.error(err);
-                showToast(err.message || "Failed to save record.", 'error');
+                showToast(err.message || "Failed to save record. Check RLS policies.", 'error');
             }
         }
 
-        // --- TOAST UI ---
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
-            const icon = type === 'success' ? '<i class="fa-solid fa-circle-check text-[#10B981] text-xl"></i>' : '<i class="fa-solid fa-circle-exclamation text-[#EF4444] text-xl"></i>';
+            const icon = type === 'success' ? '<i class="fa-solid fa-circle-check text-[#10B981] text-xl"></i>' : '<i class="fa-solid fa-triangle-exclamation text-[#EF4444] text-xl"></i>';
             toast.innerHTML = `${icon} <span>${message}</span>`;
             container.appendChild(toast);
             setTimeout(() => toast.classList.add('show'), 10);
