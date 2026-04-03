@@ -4,254 +4,642 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard | Tyler Nicholas Foundation</title>
-    <link rel="icon" type="image/png" href="https://i.ibb.co/wNsNvyRw/TNF-Logo.png">
+    
+    <link rel="icon" href="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" type="image/jpeg" />
+    
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="../style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.min.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], heading: ['Poppins', 'sans-serif'] },
+                    colors: { brand: { dark: '#0A0F1C', muted: '#6B7280' }, eco: { green: '#059669', light: '#ECFDF5', dark: '#047857', sand: '#FDFBF7' } },
+                    boxShadow: { 'soft': '0 20px 40px -15px rgba(0,0,0,0.05)', 'card': '0 10px 30px -10px rgba(5, 150, 105, 0.15)' }
+                }
+            }
+        }
+    </script>
+
     <style>
-        .admin-container { max-width: 1000px; margin: 40px auto; padding: 20px; }
-        .admin-card { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 30px; border-top: 4px solid var(--primary-blue); }
-        .admin-card h3 { color: var(--primary-green); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
-        input, textarea { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; font-size: 1rem; }
-        
-        .admin-btn { background: var(--primary-blue); color: white; padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; transition: background 0.3s; }
-        .admin-btn:hover { background: var(--primary-green); }
-        
-        .logout-btn { background: #dc3545; width: auto; float: right; padding: 10px 20px; }
-        .logout-btn:hover { background: #c82333; }
-        
-        .delete-btn { background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 0.85rem; }
-        .delete-btn:hover { background: #c82333; }
+        body { background-color: #F9FAFB; -webkit-font-smoothing: antialiased; }
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Data Tables for Management */
-        .admin-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9rem; }
-        .admin-table th, .admin-table td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
-        .admin-table th { background-color: var(--light-bg); color: var(--primary-blue); }
-        .admin-table tr:hover { background-color: #fcfcfc; }
+        /* Professional Inputs */
+        .admin-input { @apply w-full rounded-xl bg-white border border-gray-200 px-4 py-3 text-brand-dark text-sm outline-none transition-all focus:border-eco-green focus:ring-2 focus:ring-eco-green/20; }
+        
+        /* Table Styles */
+        .admin-table { @apply w-full text-left border-collapse; }
+        .admin-table th { @apply px-6 py-4 bg-gray-50 text-xs font-bold text-gray-500 uppercase tracking-wider border-b border-gray-200 whitespace-nowrap; }
+        .admin-table td { @apply px-6 py-4 border-b border-gray-100 text-sm text-brand-dark align-middle; }
+        .admin-table tr:hover td { @apply bg-gray-50/50; }
 
-        /* Layout Toggles */
-        #dashboard-section { display: none; }
-        #login-section { max-width: 400px; margin: 100px auto; text-align: center; }
+        /* Toast */
+        #toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+        .toast { background: white; color: #0A0F1C; padding: 16px 24px; border-radius: 12px; box-shadow: 0 20px 40px -10px rgba(0,0,0,0.1); border-left: 4px solid #059669; font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600; transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); display: flex; align-items: center; gap: 12px; }
+        .toast.show { transform: translateX(0); }
+        .toast.error { border-left-color: #EF4444; }
+
+        /* Modal Overlay */
+        .modal-overlay { background: rgba(10, 15, 28, 0.6); backdrop-filter: blur(4px); }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #9CA3AF; }
     </style>
 </head>
-<body>
-    <nav class="navbar" style="background: var(--primary-blue);">
-        <a href="/" class="logo" style="color: white;">TNF <span style="color: var(--primary-green);">Admin</span></a>
-        <a href="/" style="color: white; text-decoration: none; font-weight: bold;">&larr; Back to Site</a>
-    </nav>
+<body class="text-brand-dark h-screen overflow-hidden flex">
 
-    <div class="admin-container">
-        
-        <div id="login-section" class="admin-card">
-            <img src="https://i.ibb.co/wNsNvyRw/TNF-Logo.png" alt="TNF Logo" style="height: 60px; margin-bottom: 20px;">
-            <h3 style="color: var(--primary-blue); justify-content: center;">Command Center Login</h3>
-            <p style="margin-bottom: 20px; color: #666; font-size: 0.9rem;">Authorized personnel only.</p>
-            <input type="email" id="admin-email" placeholder="Admin Email" required>
-            <input type="password" id="admin-password" placeholder="Password" required>
-            <button class="admin-btn" onclick="login()">Secure Login</button>
-            <p id="login-error" style="color: red; margin-top: 15px; display: none;">Invalid login credentials.</p>
+    <div id="login-view" class="fixed inset-0 flex items-center justify-center bg-brand-dark z-50 transition-opacity duration-500">
+        <div class="absolute inset-0 z-0 opacity-20">
+            <div class="absolute -top-40 -left-40 w-96 h-96 bg-eco-green rounded-full blur-[100px]"></div>
+            <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-eco-green rounded-full blur-[100px]"></div>
         </div>
-
-        <div id="dashboard-section">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-                <h1 style="color: var(--primary-blue);">Welcome, Commander.</h1>
-                <button class="admin-btn logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Log Out</button>
+        
+        <div class="bg-white rounded-3xl shadow-2xl p-10 md:p-12 w-full max-w-md relative z-10 fade-in">
+            <div class="text-center mb-8">
+                <img src="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" alt="TNF Logo" class="w-16 h-16 rounded-full mx-auto mb-4 border border-gray-100 shadow-sm">
+                <h2 class="text-2xl font-heading font-black text-brand-dark tracking-tight">System Portal</h2>
+                <p class="text-gray-500 text-sm mt-2">Authorized personnel only.</p>
             </div>
-
-            <div class="admin-card">
-                <h3><i class="fas fa-users"></i> Volunteer Roster</h3>
-                <div style="overflow-x: auto;">
-                    <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Age</th>
-                                <th>District</th>
-                                <th>Passion Area</th>
-                                <th>Date Joined</th>
-                            </tr>
-                        </thead>
-                        <tbody id="volunteer-list">
-                            <tr><td colspan="5" style="text-align: center;">Loading roster...</td></tr>
-                        </tbody>
-                    </table>
+            
+            <form onsubmit="handleLogin(event)" class="space-y-5">
+                <div>
+                    <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-2">Admin Email</label>
+                    <input type="email" id="login-email" class="admin-input" required placeholder="admin@tylernicholasgroup.com">
                 </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-2">Password</label>
+                    <input type="password" id="login-pass" class="admin-input" required placeholder="••••••••">
+                </div>
+                <button type="submit" id="btn-login" class="w-full bg-brand-dark hover:bg-eco-green text-white font-heading font-bold py-3.5 rounded-xl transition-all shadow-md text-sm uppercase tracking-widest mt-4">
+                    Authenticate <i class="fa-solid fa-lock ml-2"></i>
+                </button>
+            </form>
+            <div class="mt-8 text-center text-xs text-gray-400">
+                <a href="/" class="hover:text-eco-green transition-colors"><i class="fa-solid fa-arrow-left mr-1"></i> Return to main site</a>
             </div>
-
-            <div class="admin-card">
-                <h3><i class="fas fa-bullhorn"></i> Update Homepage Announcement</h3>
-                <input type="text" id="announcement-text" placeholder="E.g., Join our next beach cleanup this Saturday!">
-                <button class="admin-btn" onclick="postAnnouncement()">Set Active Announcement</button>
-                <p id="announce-status" style="color: green; margin-top: 10px; display: none;">Announcement updated successfully!</p>
-            </div>
-
-            <div class="admin-card">
-                <h3><i class="fas fa-newspaper"></i> Manage News</h3>
-                <div style="background: var(--light-bg); padding: 15px; border-radius: 5px; margin-bottom: 20px;">
-                    <h4 style="margin-bottom: 10px; color: var(--primary-blue);">Publish New Article</h4>
-                    <input type="text" id="news-title" placeholder="News Title">
-                    <textarea id="news-content" rows="4" placeholder="News Body..."></textarea>
-                    <button class="admin-btn" onclick="postNews()">Publish Article</button>
-                    <p id="news-status" style="color: green; margin-top: 10px; display: none;">News published successfully!</p>
-                </div>
-                
-                <h4 style="color: var(--primary-blue); margin-top: 20px;">Published Articles</h4>
-                <div style="overflow-x: auto;">
-                    <table class="admin-table">
-                        <thead><tr><th>Title</th><th>Date</th><th>Action</th></tr></thead>
-                        <tbody id="news-list"><tr><td colspan="3">Loading news...</td></tr></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="admin-card">
-                <h3><i class="fas fa-calendar-alt"></i> Manage Action Board Events</h3>
-                <div style="background: var(--light-bg); padding: 15px; border-radius: 5px; margin-bottom: 20px;">
-                    <h4 style="margin-bottom: 10px; color: var(--primary-blue);">Schedule New Event</h4>
-                    <input type="text" id="event-title" placeholder="Event Name">
-                    <input type="date" id="event-date">
-                    <input type="text" id="event-location" placeholder="Location">
-                    <button class="admin-btn" onclick="postEvent()">Schedule Event</button>
-                    <p id="event-status" style="color: green; margin-top: 10px; display: none;">Event scheduled successfully!</p>
-                </div>
-
-                <h4 style="color: var(--primary-blue); margin-top: 20px;">Scheduled Events</h4>
-                <div style="overflow-x: auto;">
-                    <table class="admin-table">
-                        <thead><tr><th>Event</th><th>Date</th><th>Location</th><th>Action</th></tr></thead>
-                        <tbody id="event-list"><tr><td colspan="4">Loading events...</td></tr></tbody>
-                    </table>
-                </div>
-            </div>
-
         </div>
     </div>
 
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
-        const supabase = createClient('https://hicowukbjsbpuebquqbh.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpY293dWtianNicHVlYnF1cWJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE5NzgyNzQsImV4cCI6MjA4NzU1NDI3NH0.sz7ZNU3-WcsskIaHC5Cjs_-WVmXLtYR15Iy8VGi8ch0')
+    <div id="dashboard-view" class="hidden w-full h-full flex bg-[#F9FAFB]">
+        
+        <aside class="w-64 bg-brand-dark text-white flex flex-col h-full shadow-2xl z-20 flex-shrink-0">
+            <div class="p-6 border-b border-white/10 flex items-center gap-3">
+                <img src="https://i.ibb.co/DgTcFQhD/non-profit-logo-Made-with-Poster-My-Wall.jpg" alt="TNF Logo" class="w-8 h-8 rounded-full">
+                <span class="font-heading font-bold text-lg tracking-tight">TNF Admin</span>
+            </div>
+            
+            <div class="flex-grow py-6 px-4 overflow-y-auto space-y-1">
+                <p class="px-3 text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Database Tables</p>
+                
+                <button onclick="switchTab('tab-news', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white transition-all bg-white/10 text-white">
+                    <i class="fa-solid fa-newspaper w-5 text-center"></i> News & Updates
+                </button>
+                
+                <button onclick="switchTab('tab-volunteers', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white transition-all">
+                    <i class="fa-solid fa-users w-5 text-center"></i> Volunteers
+                </button>
+                
+                <button onclick="switchTab('tab-contacts', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white transition-all">
+                    <i class="fa-solid fa-inbox w-5 text-center"></i> Contact Inquiries
+                </button>
+                
+                <button onclick="switchTab('tab-metrics', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white transition-all">
+                    <i class="fa-solid fa-chart-line w-5 text-center"></i> Impact Metrics
+                </button>
 
-        const loginSection = document.getElementById('login-section');
-        const dashboardSection = document.getElementById('dashboard-section');
+                <p class="px-3 text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-8 mb-2">System</p>
+                <button onclick="switchTab('tab-settings', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white transition-all">
+                    <i class="fa-solid fa-gear w-5 text-center"></i> Settings
+                </button>
+            </div>
 
-        // Check Session & Load Data
-        async function checkSession() {
+            <div class="p-6 border-t border-white/10">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-8 h-8 rounded-full bg-eco-green flex items-center justify-center text-xs font-bold text-white shadow-glow">TN</div>
+                    <div class="overflow-hidden">
+                        <p id="admin-user-email" class="text-xs font-medium text-white truncate w-32">admin@tnf.sc</p>
+                        <p class="text-[10px] text-eco-green uppercase tracking-widest">Administrator</p>
+                    </div>
+                </div>
+                <button onclick="handleLogout()" class="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg border border-white/20 text-xs font-bold text-gray-300 hover:bg-red-500 hover:border-red-500 hover:text-white transition-all">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Terminate Session
+                </button>
+            </div>
+        </aside>
+
+        <main class="flex-grow flex flex-col h-full overflow-hidden relative">
+            
+            <header class="h-20 bg-white border-b border-gray-200 flex items-center justify-between px-8 flex-shrink-0 z-10">
+                <div>
+                    <h2 id="header-title" class="text-2xl font-heading font-bold text-brand-dark tracking-tight">News & Updates</h2>
+                    <p class="text-xs text-gray-500 font-medium">Manage and edit database records directly.</p>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="fetchCurrentTabData()" class="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors" title="Refresh Data">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                    <button onclick="openModal('news')" id="btn-add-new" class="bg-eco-green hover:bg-eco-dark text-white px-5 py-2 rounded-xl font-heading font-bold text-sm shadow-soft transition-colors flex items-center gap-2">
+                        <i class="fa-solid fa-plus"></i> Add Record
+                    </button>
+                </div>
+            </header>
+
+            <div class="flex-grow overflow-y-auto p-8">
+                
+                <div id="tab-news" class="tab-content fade-in">
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Title</th>
+                                        <th>Summary</th>
+                                        <th>Published At</th>
+                                        <th class="text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-news">
+                                    <tr><td colspan="5" class="text-center py-8 text-gray-400"><i class="fa-solid fa-circle-notch fa-spin text-2xl mb-2"></i><br>Loading data...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-volunteers" class="tab-content hidden fade-in">
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Interest Area</th>
+                                        <th>Status</th>
+                                        <th>Date Applied</th>
+                                        <th class="text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-volunteers">
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-contacts" class="tab-content hidden fade-in">
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Subject</th>
+                                        <th>Status</th>
+                                        <th>Date Received</th>
+                                        <th class="text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-contacts">
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-metrics" class="tab-content hidden fade-in">
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Label</th>
+                                        <th>Value</th>
+                                        <th>Icon Class</th>
+                                        <th>Last Updated</th>
+                                        <th class="text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-metrics">
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-settings" class="tab-content hidden fade-in max-w-2xl">
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm p-8">
+                        <h3 class="text-xl font-heading font-bold mb-6">Database Security Warning</h3>
+                        <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-xl mb-6">
+                            <p class="text-sm text-red-700 font-medium">To ensure full functionality of this dashboard, you must enable Row Level Security (RLS) in your Supabase dashboard and create policies allowing authenticated users to INSERT, UPDATE, and DELETE rows.</p>
+                        </div>
+                        <p class="text-sm text-gray-500 mb-8">This admin panel communicates directly with your connected Supabase instance. Deleting records here will permanently wipe them from the live database.</p>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <div id="edit-modal" class="fixed inset-0 modal-overlay z-[100] hidden flex items-center justify-center p-6 opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden transform scale-95 transition-transform duration-300" id="edit-modal-content">
+            
+            <div class="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                <h3 id="modal-title" class="text-xl font-heading font-bold text-brand-dark">Edit Record</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-brand-dark transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            
+            <div class="p-8 max-h-[70vh] overflow-y-auto">
+                <form id="edit-form" class="space-y-5" onsubmit="saveRecord(event)">
+                    <input type="hidden" id="edit-id" value="">
+                    <input type="hidden" id="edit-table" value="">
+                    
+                    <div id="dynamic-form-fields" class="space-y-5"></div>
+                    
+                </form>
+            </div>
+            
+            <div class="px-8 py-5 border-t border-gray-100 bg-gray-50 flex justify-end gap-3">
+                <button onclick="closeModal()" class="px-6 py-2.5 rounded-xl border border-gray-200 text-gray-600 font-bold text-sm hover:bg-gray-100 transition-colors">Cancel</button>
+                <button onclick="document.getElementById('edit-form').requestSubmit()" class="px-6 py-2.5 rounded-xl bg-brand-dark text-white font-bold text-sm hover:bg-eco-green transition-colors shadow-md">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <script>
+        // --- SUPABASE INITIALIZATION ---
+        const SUPABASE_URL = 'https://eeqgfchvchpdulfybsjg.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVlcWdmY2h2Y2hwZHVsZnlic2pnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3MDEyMzYsImV4cCI6MjA5MDI3NzIzNn0.2Psw_X2TB1r8iLb46WWWANhVuDvoDPnUMjaWykvqd1s';
+        
+        let supabase;
+        let currentTab = 'news';
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const checkSupabase = setInterval(() => {
+                if (window.supabase) {
+                    clearInterval(checkSupabase); 
+                    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                    checkUserSession();
+                }
+            }, 100);
+        });
+
+        // --- AUTH LOGIC ---
+        async function checkUserSession() {
             const { data: { session } } = await supabase.auth.getSession();
             if (session) {
-                loginSection.style.display = 'none';
-                dashboardSection.style.display = 'block';
-                loadDashboardData();
-            }
-        }
-        checkSession();
-
-        // Login
-        window.login = async () => {
-            const email = document.getElementById('admin-email').value;
-            const password = document.getElementById('admin-password').value;
-            const { error } = await supabase.auth.signInWithPassword({ email, password });
-            if (error) {
-                document.getElementById('login-error').style.display = 'block';
-                document.getElementById('login-error').innerText = error.message;
+                document.getElementById('login-view').classList.add('hidden');
+                document.getElementById('dashboard-view').classList.remove('hidden');
+                document.getElementById('admin-user-email').innerText = session.user.email;
+                fetchCurrentTabData();
             } else {
-                document.getElementById('login-error').style.display = 'none';
-                loginSection.style.display = 'none';
-                dashboardSection.style.display = 'block';
-                loadDashboardData();
+                document.getElementById('login-view').classList.remove('hidden');
+                document.getElementById('dashboard-view').classList.add('hidden');
             }
-        };
+        }
 
-        // Logout
-        window.logout = async () => {
+        async function handleLogin(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-login');
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>';
+            btn.disabled = true;
+
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-pass').value;
+
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+            if (error) {
+                showToast(error.message, 'error');
+                btn.innerHTML = 'Authenticate <i class="fa-solid fa-lock ml-2"></i>';
+                btn.disabled = false;
+            } else {
+                checkUserSession();
+                showToast('Authentication successful.', 'success');
+            }
+        }
+
+        async function handleLogout() {
             await supabase.auth.signOut();
-            dashboardSection.style.display = 'none';
-            loginSection.style.display = 'block';
-            document.getElementById('admin-password').value = ''; 
-        };
-
-        // ---- LOAD MANAGEMENT DATA ----
-        async function loadDashboardData() {
-            fetchVolunteers();
-            fetchNews();
-            fetchEvents();
+            window.location.reload();
         }
 
-        async function fetchVolunteers() {
-            const { data } = await supabase.from('tnf_volunteers').select('*').order('created_at', { ascending: false });
-            const list = document.getElementById('volunteer-list');
-            list.innerHTML = '';
-            if (!data || data.length === 0) return list.innerHTML = '<tr><td colspan="5">No volunteers yet.</td></tr>';
-            data.forEach(v => {
-                const dateJoined = new Date(v.created_at).toLocaleDateString();
-                list.innerHTML += `<tr><td><strong>${v.name}</strong></td><td>${v.age}</td><td>${v.district}</td><td>${v.passion_area}</td><td>${dateJoined}</td></tr>`;
+        // --- NAVIGATION LOGIC ---
+        function switchTab(tabId, btnElement) {
+            // Update buttons
+            document.querySelectorAll('.sidebar-btn').forEach(btn => {
+                btn.classList.remove('bg-white/10', 'text-white');
+                btn.classList.add('text-gray-300');
             });
+            btnElement.classList.remove('text-gray-300');
+            btnElement.classList.add('bg-white/10', 'text-white');
+
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+            
+            // Show target tab
+            document.getElementById(tabId).classList.remove('hidden');
+            
+            // Update Header
+            currentTab = tabId.replace('tab-', '');
+            let title = "Dashboard";
+            if(currentTab === 'news') title = "News & Updates";
+            if(currentTab === 'volunteers') title = "Volunteer Applications";
+            if(currentTab === 'contacts') title = "Contact Inquiries";
+            if(currentTab === 'metrics') title = "Impact Metrics";
+            if(currentTab === 'settings') title = "System Settings";
+            
+            document.getElementById('header-title').innerText = title;
+            
+            // Update "Add" button target
+            document.getElementById('btn-add-new').setAttribute('onclick', `openModal('${currentTab}')`);
+            if(currentTab === 'settings') document.getElementById('btn-add-new').classList.add('hidden');
+            else document.getElementById('btn-add-new').classList.remove('hidden');
+
+            fetchCurrentTabData();
         }
 
-        async function fetchNews() {
-            const { data } = await supabase.from('tnf_news').select('*').order('publish_date', { ascending: false });
-            const list = document.getElementById('news-list');
-            list.innerHTML = '';
-            if (!data || data.length === 0) return list.innerHTML = '<tr><td colspan="3">No articles published.</td></tr>';
-            data.forEach(n => {
-                list.innerHTML += `<tr><td>${n.title}</td><td>${n.publish_date}</td><td><button class="delete-btn" onclick="deleteNews('${n.id}')"><i class="fas fa-trash"></i> Delete</button></td></tr>`;
-            });
-        }
+        // --- CRUD LOGIC ---
+        async function fetchCurrentTabData() {
+            if(currentTab === 'settings') return;
+            
+            const tableId = `table-${currentTab}`;
+            const tbody = document.getElementById(tableId);
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-gray-400"><i class="fa-solid fa-circle-notch fa-spin text-2xl mb-2"></i><br>Loading data...</td></tr>`;
 
-        async function fetchEvents() {
-            const { data } = await supabase.from('tnf_events').select('*').order('event_date', { ascending: true });
-            const list = document.getElementById('event-list');
-            list.innerHTML = '';
-            if (!data || data.length === 0) return list.innerHTML = '<tr><td colspan="4">No events scheduled.</td></tr>';
-            data.forEach(e => {
-                list.innerHTML += `<tr><td>${e.title}</td><td>${e.event_date}</td><td>${e.location}</td><td><button class="delete-btn" onclick="deleteEvent('${e.id}')"><i class="fas fa-trash"></i> Delete</button></td></tr>`;
-            });
-        }
+            let tableName = `tnf_${currentTab}`;
+            if(currentTab === 'metrics') tableName = 'tnf_impact_metrics'; // Edge case naming
 
-        // ---- ADD & DELETE FUNCTIONS ----
-        window.postAnnouncement = async () => {
-            const text = document.getElementById('announcement-text').value;
-            if(!text) return alert("Enter announcement text.");
-            await supabase.from('tnf_announcements').update({ is_active: false }).neq('id', '00000000-0000-0000-0000-000000000000'); 
-            await supabase.from('tnf_announcements').insert([{ announcement_text: text, is_active: true }]);
-            document.getElementById('announce-status').style.display = 'block';
-            setTimeout(() => { document.getElementById('announce-status').style.display = 'none'; document.getElementById('announcement-text').value = ''; }, 3000);
-        };
+            const { data, error } = await supabase.from(tableName).select('*').order('id', { ascending: false });
 
-        window.postNews = async () => {
-            const title = document.getElementById('news-title').value;
-            const content = document.getElementById('news-content').value;
-            if(!title || !content) return alert("Fill out title and content.");
-            await supabase.from('tnf_news').insert([{ title, content }]);
-            document.getElementById('news-title').value = ''; document.getElementById('news-content').value = '';
-            document.getElementById('news-status').style.display = 'block';
-            setTimeout(() => document.getElementById('news-status').style.display = 'none', 3000);
-            fetchNews(); // Reload table
-        };
-
-        window.deleteNews = async (id) => {
-            if(confirm("Are you sure you want to delete this article?")) {
-                await supabase.from('tnf_news').delete().eq('id', id);
-                fetchNews(); // Reload table
+            if (error) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-red-500">Error loading data: ${error.message}</td></tr>`;
+                return;
             }
-        };
 
-        window.postEvent = async () => {
-            const title = document.getElementById('event-title').value;
-            const date = document.getElementById('event-date').value;
-            const location = document.getElementById('event-location').value;
-            if(!title || !date || !location) return alert("Fill out all fields.");
-            await supabase.from('tnf_events').insert([{ title, event_date: date, location }]);
-            document.getElementById('event-title').value = ''; document.getElementById('event-date').value = ''; document.getElementById('event-location').value = '';
-            document.getElementById('event-status').style.display = 'block';
-            setTimeout(() => document.getElementById('event-status').style.display = 'none', 3000);
-            fetchEvents(); // Reload table
-        };
-
-        window.deleteEvent = async (id) => {
-            if(confirm("Are you sure you want to delete this event?")) {
-                await supabase.from('tnf_events').delete().eq('id', id);
-                fetchEvents(); // Reload table
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-gray-400">No records found.</td></tr>`;
+                return;
             }
-        };
+
+            let html = '';
+            data.forEach(row => {
+                if (currentTab === 'news') {
+                    html += `<tr>
+                        <td class="font-bold text-gray-500">#${row.id}</td>
+                        <td class="font-medium">${row.title}</td>
+                        <td class="truncate max-w-xs text-gray-500">${row.short_summary || ''}</td>
+                        <td>${new Date(row.published_at || row.created_at).toLocaleDateString()}</td>
+                        <td class="text-right whitespace-nowrap">
+                            <button onclick="openModal('${currentTab}', ${row.id})" class="text-blue-500 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg mr-2 transition-colors"><i class="fa-solid fa-pen text-xs"></i> Edit</button>
+                            <button onclick="deleteRecord('${tableName}', ${row.id})" class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors"><i class="fa-solid fa-trash text-xs"></i></button>
+                        </td>
+                    </tr>`;
+                } else if (currentTab === 'volunteers') {
+                    const statusColor = row.status === 'New' ? 'text-orange-600 bg-orange-100' : 'text-green-600 bg-green-100';
+                    html += `<tr>
+                        <td class="font-medium">${row.full_name}</td>
+                        <td class="text-gray-500">${row.email}</td>
+                        <td><span class="bg-gray-100 px-2 py-1 rounded text-xs font-medium text-gray-600 border border-gray-200">${row.interest_area}</span></td>
+                        <td><span class="px-2 py-1 rounded text-xs font-bold uppercase tracking-widest ${statusColor}">${row.status || 'New'}</span></td>
+                        <td>${new Date(row.created_at).toLocaleDateString()}</td>
+                        <td class="text-right whitespace-nowrap">
+                            <button onclick="openModal('${currentTab}', ${row.id})" class="text-blue-500 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg mr-2"><i class="fa-solid fa-pen text-xs"></i> Edit</button>
+                            <button onclick="deleteRecord('${tableName}', ${row.id})" class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg"><i class="fa-solid fa-trash text-xs"></i></button>
+                        </td>
+                    </tr>`;
+                } else if (currentTab === 'contacts') {
+                    const statusColor = row.status === 'New' ? 'text-orange-600 bg-orange-100' : 'text-gray-600 bg-gray-100';
+                    html += `<tr>
+                        <td class="font-medium">${row.full_name}</td>
+                        <td class="text-gray-500">${row.email}</td>
+                        <td class="truncate max-w-[150px]">${row.subject}</td>
+                        <td><span class="px-2 py-1 rounded text-xs font-bold uppercase tracking-widest ${statusColor}">${row.status || 'New'}</span></td>
+                        <td>${new Date(row.created_at).toLocaleDateString()}</td>
+                        <td class="text-right whitespace-nowrap">
+                            <button onclick="openModal('${currentTab}', ${row.id})" class="text-blue-500 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg mr-2"><i class="fa-solid fa-pen text-xs"></i> View/Edit</button>
+                            <button onclick="deleteRecord('${tableName}', ${row.id})" class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg"><i class="fa-solid fa-trash text-xs"></i></button>
+                        </td>
+                    </tr>`;
+                } else if (currentTab === 'metrics') {
+                    html += `<tr>
+                        <td class="font-medium">${row.metric_label}</td>
+                        <td class="font-bold text-eco-green">${row.metric_value}</td>
+                        <td class="text-gray-400 font-mono text-xs">${row.icon_class || 'N/A'}</td>
+                        <td>${new Date(row.created_at).toLocaleDateString()}</td>
+                        <td class="text-right whitespace-nowrap">
+                            <button onclick="openModal('${currentTab}', ${row.id})" class="text-blue-500 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg mr-2"><i class="fa-solid fa-pen text-xs"></i> Edit</button>
+                            <button onclick="deleteRecord('${tableName}', ${row.id})" class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg"><i class="fa-solid fa-trash text-xs"></i></button>
+                        </td>
+                    </tr>`;
+                }
+            });
+            tbody.innerHTML = html;
+        }
+
+        async function deleteRecord(tableName, id) {
+            if(!confirm(`Are you absolutely sure you want to permanently delete record #${id} from ${tableName}? This cannot be undone.`)) return;
+            
+            try {
+                const { error } = await supabase.from(tableName).delete().eq('id', id);
+                if (error) throw error;
+                showToast(`Record ${id} deleted successfully.`, 'success');
+                fetchCurrentTabData();
+            } catch (error) {
+                showToast(`Error deleting: ${error.message}`, 'error');
+            }
+        }
+
+        // --- MODAL LOGIC (Dynamic Form Generation) ---
+        async function openModal(type, id = null) {
+            const modal = document.getElementById('edit-modal');
+            const content = document.getElementById('edit-modal-content');
+            const formFields = document.getElementById('dynamic-form-fields');
+            
+            document.getElementById('modal-title').innerText = id ? `Edit ${type.toUpperCase()} Record` : `Add New ${type.toUpperCase()}`;
+            document.getElementById('edit-id').value = id || '';
+            document.getElementById('edit-table').value = type;
+
+            let tableName = `tnf_${type}`;
+            if(type === 'metrics') tableName = 'tnf_impact_metrics';
+
+            formFields.innerHTML = '<div class="text-center py-4 text-gray-400"><i class="fa-solid fa-circle-notch fa-spin"></i> Loading schema...</div>';
+            
+            // Show modal
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                content.classList.remove('scale-95');
+            }, 10);
+
+            let rowData = {};
+            if (id) {
+                const { data, error } = await supabase.from(tableName).select('*').eq('id', id).single();
+                if (!error) rowData = data;
+            }
+
+            // Generate form fields dynamically based on the current tab
+            let html = '';
+            
+            if (type === 'news') {
+                html += createField('Title', 'title', 'text', rowData.title, true);
+                html += createField('Short Summary', 'short_summary', 'textarea', rowData.short_summary, true);
+                html += createField('Full Content HTML', 'content', 'textarea', rowData.content, false, 8);
+                html += createField('Published Date', 'published_at', 'datetime-local', formatForInput(rowData.published_at || new Date().toISOString()), true);
+            } else if (type === 'volunteers') {
+                html += createField('Status', 'status', 'select', rowData.status, true, 1, ['New', 'Reviewed', 'Accepted', 'Rejected']);
+                html += createField('Full Name', 'full_name', 'text', rowData.full_name, true);
+                html += createField('Email', 'email', 'email', rowData.email, true);
+                html += createField('Phone', 'phone', 'text', rowData.phone, false);
+                html += createField('Interest Area', 'interest_area', 'text', rowData.interest_area, true);
+                html += createField('Application Message', 'message', 'textarea', rowData.message, true, 5);
+                html += createField('Created At (Read Only)', 'created_at', 'text', rowData.created_at, false, 1, [], true);
+            } else if (type === 'contacts') {
+                html += createField('Status', 'status', 'select', rowData.status, true, 1, ['New', 'In Progress', 'Resolved']);
+                html += createField('Full Name', 'full_name', 'text', rowData.full_name, true);
+                html += createField('Email', 'email', 'email', rowData.email, true);
+                html += createField('Subject', 'subject', 'text', rowData.subject, true);
+                html += createField('Message', 'message', 'textarea', rowData.message, true, 5);
+            } else if (type === 'metrics') {
+                html += createField('Metric Label (e.g. Volunteers)', 'metric_label', 'text', rowData.metric_label, true);
+                html += createField('Numeric Value (e.g. 500)', 'metric_value', 'number', rowData.metric_value, true);
+                html += createField('FontAwesome Icon Class (e.g. fa-users)', 'icon_class', 'text', rowData.icon_class, true);
+            }
+
+            formFields.innerHTML = html;
+        }
+
+        function createField(label, id, type, value, required, rows = 3, options = [], readonly = false) {
+            let inputHtml = '';
+            let valStr = value !== undefined && value !== null ? value : '';
+            let reqStr = required ? 'required' : '';
+            let roStr = readonly ? 'readonly class="admin-input bg-gray-100 text-gray-500 cursor-not-allowed"' : 'class="admin-input"';
+
+            if (type === 'textarea') {
+                inputHtml = `<textarea id="form-${id}" rows="${rows}" ${reqStr} ${roStr}>${valStr}</textarea>`;
+            } else if (type === 'select') {
+                inputHtml = `<select id="form-${id}" ${reqStr} ${roStr}>`;
+                options.forEach(opt => {
+                    let sel = valStr === opt ? 'selected' : '';
+                    inputHtml += `<option value="${opt}" ${sel}>${opt}</option>`;
+                });
+                inputHtml += `</select>`;
+            } else {
+                inputHtml = `<input type="${type}" id="form-${id}" value="${valStr}" ${reqStr} ${roStr}>`;
+            }
+
+            return `
+                <div>
+                    <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">${label}</label>
+                    ${inputHtml}
+                </div>
+            `;
+        }
+
+        function formatForInput(dateString) {
+            if(!dateString) return '';
+            const d = new Date(dateString);
+            return d.toISOString().slice(0, 16); // format to yyyy-MM-ddThh:mm
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('edit-modal');
+            const content = document.getElementById('edit-modal-content');
+            
+            modal.classList.add('opacity-0');
+            content.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        async function saveRecord(e) {
+            e.preventDefault();
+            const id = document.getElementById('edit-id').value;
+            const type = document.getElementById('edit-table').value;
+            
+            let tableName = `tnf_${type}`;
+            if(type === 'metrics') tableName = 'tnf_impact_metrics';
+
+            // Gather dynamic payload based on type
+            let payload = {};
+            if (type === 'news') {
+                payload = {
+                    title: document.getElementById('form-title').value,
+                    short_summary: document.getElementById('form-short_summary').value,
+                    content: document.getElementById('form-content').value,
+                    published_at: document.getElementById('form-published_at').value
+                };
+            } else if (type === 'volunteers' || type === 'contacts') {
+                payload = {
+                    status: document.getElementById('form-status').value,
+                    full_name: document.getElementById('form-full_name').value,
+                    email: document.getElementById('form-email').value,
+                    message: document.getElementById('form-message').value
+                };
+                if(type === 'volunteers') {
+                    payload.phone = document.getElementById('form-phone').value;
+                    payload.interest_area = document.getElementById('form-interest_area').value;
+                } else {
+                    payload.subject = document.getElementById('form-subject').value;
+                }
+            } else if (type === 'metrics') {
+                payload = {
+                    metric_label: document.getElementById('form-metric_label').value,
+                    metric_value: document.getElementById('form-metric_value').value,
+                    icon_class: document.getElementById('form-icon_class').value
+                };
+            }
+
+            try {
+                let error;
+                if (id) {
+                    // Update
+                    const result = await supabase.from(tableName).update(payload).eq('id', id);
+                    error = result.error;
+                } else {
+                    // Insert
+                    const result = await supabase.from(tableName).insert(payload);
+                    error = result.error;
+                }
+
+                if (error) throw error;
+                
+                showToast(`Record ${id ? 'updated' : 'added'} successfully.`, 'success');
+                closeModal();
+                fetchCurrentTabData();
+            } catch (err) {
+                console.error(err);
+                showToast(err.message || "Failed to save record.", 'error');
+            }
+        }
+
+        // --- TOAST UI ---
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            const icon = type === 'success' ? '<i class="fa-solid fa-circle-check text-[#10B981] text-xl"></i>' : '<i class="fa-solid fa-circle-exclamation text-[#EF4444] text-xl"></i>';
+            toast.innerHTML = `${icon} <span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 400); }, 4000);
+        }
     </script>
 </body>
 </html>
