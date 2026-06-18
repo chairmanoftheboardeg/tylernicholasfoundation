@@ -3,210 +3,299 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Under Renovation | Tyler Nicholas Foundation</title>
-    
-    <link rel="icon" href="https://i.ibb.co/dJ3fHQG7/TNF-LOGO.jpg" type="image/jpeg" />
-    
+    <title>Tyler Nicholas Foundation | For the Youth. For the Islands. For Tomorrow.</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'], heading: ['Poppins', 'sans-serif'] },
-                    colors: { brand: { dark: '#2C2D31', darker: '#1E1E22' }, eco: { green: '#059669', hover: '#047857' } }
+                    colors: {
+                        tnfblue: '#003366',
+                        tnfgreen: '#2e8b57',
+                        tnfyellow: '#ffcc00'
+                    }
                 }
             }
         }
     </script>
-
     <style>
-        /* Disable right-click and text selection globally */
-        body { 
-            background-color: #2C2D31; 
-            -webkit-font-smoothing: antialiased; 
-            user-select: none; /* Prevents text highlighting */
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-        }
-        
-        img { 
-            pointer-events: none; 
-        }
+        /* Custom scrollbar for the Ledger */
+        .ledger-scroll::-webkit-scrollbar { width: 6px; }
+        .ledger-scroll::-webkit-scrollbar-track { background: #f1f1f1; }
+        .ledger-scroll::-webkit-scrollbar-thumb { background: #003366; border-radius: 4px; }
+        /* Map Hover Effects */
+        .island-path { fill: #cbd5e1; transition: fill 0.3s; cursor: pointer; }
+        .island-path:hover { fill: #003366; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased">
 
-        /* Countdown Circle Styles */
-        .timer-circle {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background-color: rgba(0, 0, 0, 0.1);
-            transition: border-color 0.3s ease;
-        }
-        .timer-circle:hover {
-            border-color: #059669; /* Eco-green glow on hover */
-        }
-        
-        @media (min-width: 768px) {
-            .timer-circle {
-                width: 120px;
-                height: 120px;
+    <div id="announcement-banner" class="hidden w-full py-2 px-4 text-center text-sm font-semibold text-white z-50">
+        <span id="announcement-text"></span>
+        <a id="announcement-link" href="#" class="ml-2 underline hover:text-gray-200">Learn More</a>
+    </div>
+
+    <nav class="bg-white shadow-md sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-20">
+            <div class="flex-shrink-0 font-bold text-2xl text-tnfblue tracking-tight">
+                TNF<span class="text-tnfgreen">.</span>
+            </div>
+            <div class="hidden md:flex space-x-8 items-center">
+                <a href="#" class="text-gray-600 hover:text-tnfblue font-medium">About Us</a>
+                <a href="#" class="text-gray-600 hover:text-tnfblue font-medium">Programmes</a>
+                <a href="#" class="text-gray-600 hover:text-tnfblue font-medium">Opportunities</a>
+                <button onclick="toggleSearch()" class="text-gray-600 hover:text-tnfblue"><i class="fas fa-search"></i></button>
+                <a href="#" class="bg-tnfyellow text-tnfblue px-6 py-2 rounded font-bold hover:bg-yellow-400 transition">Donate</a>
+            </div>
+        </div>
+    </nav>
+
+    <div id="search-overlay" class="hidden fixed inset-0 bg-gray-900 bg-opacity-95 z-50 flex flex-col items-center pt-32 px-4">
+        <button onclick="toggleSearch()" class="absolute top-8 right-8 text-white text-3xl">&times;</button>
+        <h2 class="text-3xl text-white font-bold mb-8">Search the Foundation</h2>
+        <input type="text" id="search-input" placeholder="Search programmes, opportunities, or actions..." class="w-full max-w-3xl px-6 py-4 rounded shadow-lg text-lg focus:outline-none focus:ring-4 focus:ring-tnfblue">
+        <div id="search-results" class="w-full max-w-3xl mt-8 space-y-4"></div>
+    </div>
+
+    <section class="relative w-full bg-white">
+        <img src="https://i.ibb.co/8gNbbs8P/TNF-Header.png" alt="TNF Header" class="w-full h-auto object-cover max-h-[70vh]">
+        <div class="flex justify-center space-x-4 p-8 bg-white shadow-inner relative z-10 -mt-2">
+            <a href="#opportunities" class="bg-tnfblue text-white px-8 py-3 rounded font-bold hover:bg-blue-800 transition">View Opportunities</a>
+            <a href="#donate" class="bg-tnfgreen text-white px-8 py-3 rounded font-bold hover:bg-green-700 transition">Join the Vanguard</a>
+        </div>
+    </section>
+
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div>
+                <h2 class="text-sm font-bold text-tnfgreen uppercase tracking-wider mb-2">Our Blueprint</h2>
+                <h3 class="text-4xl font-extrabold text-tnfblue mb-6">Who We Are</h3>
+                <p class="text-lg text-gray-600 mb-4">
+                    The Tyler Nicholas Foundation is a dynamic, youth-driven community action group acting as a vital shadow-infrastructure for the Republic of Seychelles. We are a collective of young patriots, advocates, and environmental stewards who believe that true patriotism means rolling up our sleeves to build a better nation.
+                </p>
+                <p class="text-lg text-gray-600">
+                    Driven by a deep love for our islands, we refuse to sit on the sidelines. We serve as the primary voice for the youth, standing alongside government bodies and community leaders to ensure the next generation is always represented. <strong>For the Youth. For the Islands. For Tomorrow.</strong>
+                </p>
+            </div>
+            <div class="rounded-lg shadow-xl overflow-hidden">
+                <img src="https://i.ibb.co/NgcPV4Y6/Tyler-Nicholas-Foundation-Who-We-Are.png" alt="Who We Are" class="w-full h-auto">
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 bg-tnfblue text-white">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <i class="fas fa-quote-left text-4xl text-tnfyellow mb-6 opacity-50"></i>
+            <h2 class="text-3xl font-bold mb-8">A Message from the Founder</h2>
+            <p class="text-xl font-light leading-relaxed mb-8 text-gray-200">
+                "I founded this organization because I am a patriot. I love the Republic of Seychelles, and my belief in the future of this country is absolute—our economy, our environment, our politics, and the future generations to come. As a Youth Ambassador, UN Delegate, and advocate, I believe true education reform means understanding that values, integrity, and civic duty are just as critical as learning mathematics. We must raise citizens who care. I love serving this nation, and through this foundation, we will build the leaders of tomorrow."
+            </p>
+            <div class="mb-6">
+                <p class="font-bold text-2xl">Tyler Nicholas</p>
+                <p class="text-sm text-tnfyellow uppercase tracking-widest">Founder & Chairperson</p>
+            </div>
+            <div class="flex justify-center space-x-6">
+                <a href="https://nicholasoffice.online" target="_blank" class="hover:text-tnfyellow text-2xl"><i class="fas fa-globe"></i></a>
+                <a href="https://www.facebook.com/t.nicholas26/" target="_blank" class="hover:text-tnfyellow text-2xl"><i class="fab fa-facebook"></i></a>
+                <a href="https://www.linkedin.com/in/tyler-nicholas-62999534a/" target="_blank" class="hover:text-tnfyellow text-2xl"><i class="fab fa-linkedin"></i></a>
+                <a href="mailto:tylernicholas.civic@gmail.com" class="hover:text-tnfyellow text-2xl"><i class="fas fa-envelope"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 bg-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div class="bg-white p-8 rounded-lg shadow-lg">
+                <h3 class="text-2xl font-bold text-tnfblue mb-6">The Shadow Infrastructure</h3>
+                <p class="text-gray-500 mb-6">Hover over districts to view active deployments.</p>
+                <svg viewBox="0 0 500 500" class="w-full h-auto border rounded bg-blue-50">
+                    <circle cx="150" cy="350" r="40" class="island-path" onmouseover="showMapData('Mahé', 'Active Deployments: 34 Volunteers')" />
+                    <text x="150" y="350" text-anchor="middle" fill="#fff" font-size="12" pointer-events="none">Mahé</text>
+                    <circle cx="300" cy="150" r="25" class="island-path" onmouseover="showMapData('Praslin', 'Active Deployments: 12 Volunteers')" />
+                    <text x="300" y="150" text-anchor="middle" fill="#fff" font-size="10" pointer-events="none">Praslin</text>
+                    <circle cx="380" cy="180" r="15" class="island-path" onmouseover="showMapData('La Digue', 'Active Deployments: 8 Volunteers')" />
+                    <text x="380" y="180" text-anchor="middle" fill="#fff" font-size="8" pointer-events="none">La Digue</text>
+                </svg>
+                <div id="map-info" class="mt-4 p-4 bg-gray-50 border rounded text-sm text-gray-700 font-semibold h-16">
+                    Select a region.
+                </div>
+            </div>
+
+            <div class="bg-white p-8 rounded-lg shadow-lg">
+                <h3 class="text-2xl font-bold text-tnfblue mb-6"><i class="fas fa-bolt text-tnfyellow mr-2"></i>Live Action Ledger</h3>
+                <div id="ledger-container" class="h-96 overflow-y-auto ledger-scroll space-y-4 pr-4">
+                    <p class="text-gray-500 italic" id="ledger-loading">Loading live database stream...</p>
+                    </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="opportunities" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-extrabold text-tnfblue mb-10 text-center">Urgent Opportunities & Placements</h2>
+            <div id="opportunities-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <p class="text-gray-500 italic text-center col-span-3" id="opps-loading">Syncing with Vanguard Hub...</p>
+                </div>
+        </div>
+    </section>
+
+    <footer class="bg-gray-900 text-gray-300 pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-12 border-b border-gray-700 pb-12">
+            <div class="md:col-span-2">
+                <h3 class="text-white text-2xl font-bold mb-4">Join the Vanguard Mailer</h3>
+                <p class="text-sm mb-6">Subscribe for urgent community alerts and foundation updates directly to your inbox.</p>
+                <form id="newsletter-form" class="flex gap-2">
+                    <input type="email" id="newsletter-email" required placeholder="Your email address" class="w-full px-4 py-2 rounded text-gray-900 focus:outline-none">
+                    <button type="submit" class="bg-tnfgreen text-white px-6 py-2 rounded font-bold hover:bg-green-600 transition">Subscribe</button>
+                </form>
+                <p id="newsletter-msg" class="text-sm mt-2 hidden"></p>
+            </div>
+            
+            <div>
+                <h4 class="text-white font-bold mb-4 uppercase tracking-wider text-sm">Our Network</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="https://tylernicholasgroup.com" target="_blank" class="hover:text-white transition">Tyler Nicholas Group</a></li>
+                    <li><a href="https://nicholasoffice.online" target="_blank" class="hover:text-white transition">Office of Tyler Nicholas</a></li>
+                    <li><a href="https://foodshare-seychelles.online" target="_blank" class="hover:text-white transition">FoodShare Seychelles</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-white font-bold mb-4 uppercase tracking-wider text-sm">Contact & Connect</h4>
+                <p class="text-sm mb-4"><i class="fas fa-envelope mr-2"></i>nicholasfoundation.sc@gmail.com</p>
+                <div class="flex space-x-4">
+                    <a href="https://x.com/tnfseychelles" target="_blank" class="text-gray-400 hover:text-white text-xl"><i class="fab fa-x-twitter"></i></a>
+                    <a href="https://www.youtube.com/@TylerNicholasFoundation" target="_blank" class="text-gray-400 hover:text-white text-xl"><i class="fab fa-youtube"></i></a>
+                    <a href="https://www.facebook.com/people/Tyler-Nicholas-Foundation/61590384550660/" target="_blank" class="text-gray-400 hover:text-white text-xl"><i class="fab fa-facebook"></i></a>
+                    <a href="https://www.tiktok.com/@tylernicholasfoundation" target="_blank" class="text-gray-400 hover:text-white text-xl"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://www.linkedin.com/company/tylernicholas-foundation/" target="_blank" class="text-gray-400 hover:text-white text-xl"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
+            <p>&copy; 2026 Tyler Nicholas Foundation. A proud member of the Tyler Nicholas Group.</p>
+            <p class="mt-4 md:mt-0"><i class="far fa-clock mr-1"></i> Seychelles Local Time: <span id="local-time" class="text-white font-mono"></span></p>
+        </div>
+    </footer>
+
+    <script>
+        // 1. Initialize Supabase Client
+        const supabaseUrl = 'https://bvfvpvfylixyxvpyngnc.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ2ZnZwdmZ5bGl4eXh2cHluZ25jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3OTE1MDgsImV4cCI6MjA5NzM2NzUwOH0.UJiEBQLQlrAE3Slgw4_BGKg00DMQRBrEKgDpJg0SX8s';
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+        // 2. Fetch Announcement Banner
+        async function loadBanner() {
+            const { data, error } = await supabase.from('announcements').select('*').eq('is_active', true).limit(1);
+            if (data && data.length > 0) {
+                const banner = document.getElementById('announcement-banner');
+                document.getElementById('announcement-text').innerText = data[0].text;
+                document.getElementById('announcement-link').href = data[0].link_url || '#';
+                
+                // Styling based on type
+                if(data[0].banner_type === 'urgent') banner.classList.add('bg-red-600');
+                else if(data[0].banner_type === 'success') banner.classList.add('bg-tnfgreen');
+                else banner.classList.add('bg-tnfblue');
+                
+                banner.classList.remove('hidden');
             }
         }
 
-        /* Fade-in Animation */
-        .fade-in { animation: fadeIn 1.2s ease-out forwards; opacity: 0; }
-        @keyframes fadeIn { to { opacity: 1; } }
-    </style>
-</head>
-<body class="min-h-screen flex flex-col items-center justify-center text-white px-6 relative overflow-hidden">
+        // 3. Fetch Live Action Ledger
+        async function loadLedger() {
+            const { data, error } = await supabase.from('action_ledger').select('*').order('created_at', { ascending: false }).limit(10);
+            const container = document.getElementById('ledger-container');
+            document.getElementById('ledger-loading').style.display = 'none';
 
-    <div class="absolute inset-0 bg-gradient-to-b from-brand-darker to-brand-dark z-0"></div>
-
-    <div class="relative z-10 w-full max-w-4xl mx-auto text-center flex flex-col items-center fade-in">
-        
-        <img src="https://i.ibb.co/dJ3fHQG7/TNF-LOGO.jpg" alt="TNF Logo" class="w-24 h-24 md:w-32 md:h-32 rounded-full border-2 border-gray-600 shadow-2xl mb-8">
-
-        <h1 class="text-4xl md:text-5xl lg:text-6xl font-heading font-bold tracking-wide mb-4">
-            WEBSITE UNDER RENOVATION
-        </h1>
-        <p class="text-gray-300 text-lg md:text-xl font-light mb-12 tracking-wide">
-            We are upgrading our digital infrastructure. Please visit back soon!
-        </p>
-
-        <div class="flex flex-wrap justify-center gap-4 md:gap-6 mb-16">
-            <div class="timer-circle">
-                <span id="days" class="text-3xl md:text-4xl font-heading font-bold text-white leading-none mb-1">00</span>
-                <span class="text-[10px] md:text-xs text-eco-green uppercase tracking-widest font-bold">Days</span>
-            </div>
-            <div class="timer-circle">
-                <span id="hours" class="text-3xl md:text-4xl font-heading font-bold text-white leading-none mb-1">00</span>
-                <span class="text-[10px] md:text-xs text-eco-green uppercase tracking-widest font-bold">Hours</span>
-            </div>
-            <div class="timer-circle">
-                <span id="minutes" class="text-3xl md:text-4xl font-heading font-bold text-white leading-none mb-1">00</span>
-                <span class="text-[10px] md:text-xs text-eco-green uppercase tracking-widest font-bold">Minutes</span>
-            </div>
-            <div class="timer-circle">
-                <span id="seconds" class="text-3xl md:text-4xl font-heading font-bold text-white leading-none mb-1">00</span>
-                <span class="text-[10px] md:text-xs text-eco-green uppercase tracking-widest font-bold">Seconds</span>
-            </div>
-        </div>
-
-        <div class="w-full max-w-lg mx-auto mb-16">
-            <form id="notify-form" class="flex flex-col sm:flex-row gap-3 sm:gap-0 shadow-2xl">
-                <input type="email" id="email-input" placeholder="Enter Email Address" required 
-                    class="w-full px-6 py-4 rounded-full sm:rounded-r-none sm:rounded-l-full text-brand-dark focus:outline-none font-medium">
-                <button type="submit" id="btn-submit" 
-                    class="bg-[#8B5CF6] hover:bg-[#7C3AED] text-white font-heading font-bold uppercase tracking-widest text-sm px-8 py-4 rounded-full sm:rounded-l-none sm:rounded-r-full transition-colors whitespace-nowrap">
-                    Subscribe
-                </button>
-            </form>
-            <p id="form-msg" class="mt-4 text-sm hidden font-medium"></p>
-        </div>
-
-        <div class="border-t border-gray-700 w-full pt-8 flex flex-col md:flex-row justify-center items-center gap-6 md:gap-12 text-sm text-gray-400">
-            <a href="mailto:chairperson@tyler-nicholas-foundation.online" class="hover:text-eco-green transition-colors flex items-center">
-                <i class="fa-solid fa-envelope-open-text mr-2"></i> chairperson@tyler-nicholas-foundation.online
-            </a>
-            <span class="hidden md:block text-gray-700">|</span>
-            <a href="mailto:nicholasfoundation.sc@gmail.com" class="hover:text-eco-green transition-colors flex items-center">
-                <i class="fa-solid fa-envelope mr-2"></i> nicholasfoundation.sc@gmail.com
-            </a>
-        </div>
-        
-    </div>
-
-    <script>
-        // ----------------------------------------------------------------
-        // 1. SECURITY (Disable Right Click)
-        // ----------------------------------------------------------------
-        document.addEventListener("contextmenu", function(e) {
-            e.preventDefault();
-        });
-
-        // ----------------------------------------------------------------
-        // 2. COUNTDOWN TIMER (Target: June 20, 2026)
-        // ----------------------------------------------------------------
-        const targetDate = new Date("June 20, 2026 00:00:00").getTime();
-
-        const timerInterval = setInterval(function() {
-            const now = new Date().getTime();
-            const distance = targetDate - now;
-
-            if (distance < 0) {
-                clearInterval(timerInterval);
-                document.getElementById("days").innerText = "00";
-                document.getElementById("hours").innerText = "00";
-                document.getElementById("minutes").innerText = "00";
-                document.getElementById("seconds").innerText = "00";
+            if (error || !data || data.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 italic">No recent actions logged.</p>';
                 return;
             }
 
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            container.innerHTML = data.map(item => {
+                let color = item.pillar === 'Environment' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800';
+                return `
+                <div class="p-4 border-l-4 border-tnfblue bg-gray-50 rounded shadow-sm">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs font-bold uppercase ${color} px-2 py-1 rounded">${item.pillar}</span>
+                        <span class="text-xs text-gray-400">${new Date(item.created_at).toLocaleDateString()}</span>
+                    </div>
+                    <p class="text-sm font-bold text-gray-800">${item.district}</p>
+                    <p class="text-sm text-gray-600">${item.action_description}</p>
+                </div>`;
+            }).join('');
+        }
 
-            // Pad with zeros if less than 10
-            document.getElementById("days").innerText = days < 10 ? "0" + days : days;
-            document.getElementById("hours").innerText = hours < 10 ? "0" + hours : hours;
-            document.getElementById("minutes").innerText = minutes < 10 ? "0" + minutes : minutes;
-            document.getElementById("seconds").innerText = seconds < 10 ? "0" + seconds : seconds;
-        }, 1000);
+        // 4. Fetch Opportunities Board
+        async function loadOpportunities() {
+            const { data, error } = await supabase.from('opportunities').select('*').eq('is_open', true).order('is_urgent', { ascending: false }).limit(3);
+            const grid = document.getElementById('opportunities-grid');
+            document.getElementById('opps-loading').style.display = 'none';
 
-        // ----------------------------------------------------------------
-        // 3. SUPABASE SUBSCRIPTION LOGIC
-        // ----------------------------------------------------------------
-        const supabaseUrl = 'https://qcwldyvecokspamcjgbl.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFjd2xkeXZlY29rc3BhbWNqZ2JsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1MTYzNjksImV4cCI6MjA5NDA5MjM2OX0.4du52QpdsRaUATJ5qXeA1sd7zVEOPSlJ1KJJ9KQvjHk';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
-        document.getElementById('notify-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const emailInput = document.getElementById('email-input');
-            const msgObj = document.getElementById('form-msg');
-            const btn = document.getElementById('btn-submit');
-            const email = emailInput.value.trim();
-
-            msgObj.style.display = 'block';
-            msgObj.innerText = "Subscribing...";
-            msgObj.className = "mt-4 text-sm text-gray-400 font-medium";
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-
-            const { error } = await supabase.from('tnf_newsletter_subscribers').insert([{ email: email }]);
-
-            if (error) {
-                if (error.code === '23505') { 
-                    msgObj.innerText = "This email is already on the list.";
-                } else {
-                    msgObj.innerText = "An error occurred. Please try again.";
-                }
-                msgObj.classList.add("text-red-400");
-                msgObj.classList.remove("text-gray-400");
-            } else {
-                msgObj.innerText = "Successfully subscribed! We will notify you upon launch.";
-                msgObj.classList.add("text-eco-green");
-                msgObj.classList.remove("text-gray-400");
-                emailInput.value = ''; 
+            if (error || !data || data.length === 0) {
+                grid.innerHTML = '<p class="text-gray-500 italic col-span-3 text-center">No open opportunities at this time.</p>';
+                return;
             }
+
+            grid.innerHTML = data.map(item => `
+                <div class="bg-gray-50 rounded-lg p-6 border border-gray-200 shadow hover:shadow-lg transition relative">
+                    ${item.is_urgent ? '<span class="absolute top-0 right-0 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg">URGENT</span>' : ''}
+                    <h4 class="text-lg font-bold text-tnfblue mb-2">${item.title}</h4>
+                    <span class="text-xs font-semibold text-tnfgreen uppercase tracking-wider mb-3 block">${item.category}</span>
+                    <p class="text-sm text-gray-600 mb-4">${item.description.substring(0, 100)}...</p>
+                    <a href="#" class="text-tnfblue font-bold text-sm hover:underline">Apply Now &rarr;</a>
+                </div>
+            `).join('');
+        }
+
+        // 5. Handle Newsletter Submission
+        document.getElementById('newsletter-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('newsletter-email').value;
+            const msgEl = document.getElementById('newsletter-msg');
             
-            btn.disabled = false;
-            btn.innerText = 'SUBSCRIBE';
+            const { data, error } = await supabase.from('newsletter_subscribers').insert([{ email: email }]);
+            
+            msgEl.classList.remove('hidden');
+            if (error) {
+                msgEl.innerText = 'You are already subscribed or an error occurred.';
+                msgEl.className = 'text-sm mt-2 text-red-400';
+            } else {
+                msgEl.innerText = 'Welcome to the Vanguard! You are successfully subscribed.';
+                msgEl.className = 'text-sm mt-2 text-tnfgreen font-bold';
+                document.getElementById('newsletter-email').value = '';
+            }
         });
+
+        // Search Overlay Toggle
+        function toggleSearch() {
+            const overlay = document.getElementById('search-overlay');
+            overlay.classList.toggle('hidden');
+        }
+
+        // Map Hover Logic
+        function showMapData(district, text) {
+            document.getElementById('map-info').innerHTML = `<span class="font-bold text-tnfblue">${district}</span>: ${text}`;
+        }
+
+        // Real-Time Clock for Seychelles
+        function updateClock() {
+            const timeOptions = { timeZone: 'Indian/Mahe', hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            document.getElementById('local-time').innerText = new Intl.DateTimeFormat('en-US', timeOptions).format(new Date());
+        }
+
+        // Initialize Everything on Load
+        window.onload = () => {
+            loadBanner();
+            loadLedger();
+            loadOpportunities();
+            setInterval(updateClock, 1000);
+            updateClock();
+        };
     </script>
 </body>
 </html>
