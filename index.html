@@ -28,22 +28,24 @@
                         sans: ['Inter', 'sans-serif'],
                     },
                     colors: {
-                        tnfblue: '#0A2540', /* Sleeker, deeper corporate blue */
+                        tnfblue: '#0A2540',
                         tnfgreen: '#2e8b57',
-                        tnflight: '#F7F9FC' /* Clean off-white background */
+                        tnflight: '#F7F9FC'
                     }
                 }
             }
         }
     </script>
     <style>
-        /* Welcome Animation Overlay */
-        #welcome-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #ffffff; z-index: 9999; display: flex; flex-direction: column;
-            justify-content: center; items-center; transition: opacity 1s ease-in-out, visibility 1s;
+        /* Minimalist Loader Screen */
+        #loader-screen {
+            position: fixed; inset: 0; background: #ffffff; z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 0.6s ease-in-out, visibility 0.6s ease-in-out;
         }
-        .fade-out { opacity: 0; visibility: hidden; }
+        .loader-hidden {
+            opacity: 0; visibility: hidden; pointer-events: none;
+        }
         
         /* Sleek Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
@@ -58,9 +60,9 @@
 </head>
 <body class="bg-tnflight text-gray-900 font-sans antialiased overflow-x-hidden">
 
-    <div id="welcome-screen" class="items-center">
-        <img src="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" alt="TNF Logo" class="h-24 w-24 rounded-full shadow-lg mb-6 animate-pulse">
-        <h1 class="text-2xl font-light tracking-widest text-tnfblue">WELCOME</h1>
+    <div id="loader-screen">
+        <img src="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" alt="TNF Logo" class="h-20 w-20 rounded-full border border-gray-100 shadow-sm mb-6">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-t-2 border-tnfblue"></div>
     </div>
 
     <div id="announcement-banner" class="hidden w-full py-3 px-4 text-center text-sm font-medium text-white z-50 shadow-sm transition-all duration-300">
@@ -185,7 +187,7 @@
                         <div id="ledger-loading" class="flex justify-center items-center h-full">
                             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-tnfblue"></div>
                         </div>
-                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -198,7 +200,7 @@
                 <div id="opps-loading" class="col-span-3 flex justify-center py-10">
                     <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-tnfblue"></div>
                 </div>
-                </div>
+            </div>
             <div class="mt-12 text-center">
                 <a href="/opportunities/" class="inline-block border border-gray-300 text-gray-600 bg-white px-8 py-3 rounded-full text-sm font-medium hover:bg-gray-50 hover:text-tnfblue transition">View All Listings</a>
             </div>
@@ -263,11 +265,14 @@
         // Initialize Animations
         AOS.init({ once: true, offset: 50 });
 
-        // Welcome Screen Fade
-        window.addEventListener('load', () => {
+        // BULLETPROOF LOADER FADE OUT
+        document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
-                document.getElementById('welcome-screen').classList.add('fade-out');
-            }, 1200);
+                const loader = document.getElementById('loader-screen');
+                if (loader) {
+                    loader.classList.add('loader-hidden');
+                }
+            }, 800); // Guarantees the loader disappears after 0.8 seconds
         });
 
         // Initialize Supabase Client
@@ -298,7 +303,8 @@
             try {
                 const { data, error } = await supabase.from('action_ledger').select('*').order('created_at', { ascending: false }).limit(10);
                 const container = document.getElementById('ledger-container');
-                document.getElementById('ledger-loading').style.display = 'none';
+                const loadingIndicator = document.getElementById('ledger-loading');
+                if (loadingIndicator) loadingIndicator.style.display = 'none';
 
                 if (error || !data || data.length === 0) {
                     container.innerHTML = '<p class="text-gray-400 font-light text-center mt-10">No recent operations logged.</p>';
@@ -322,7 +328,8 @@
             try {
                 const { data, error } = await supabase.from('opportunities').select('*').eq('is_open', true).order('is_urgent', { ascending: false }).limit(3);
                 const grid = document.getElementById('opportunities-grid');
-                document.getElementById('opps-loading').style.display = 'none';
+                const oppsLoading = document.getElementById('opps-loading');
+                if (oppsLoading) oppsLoading.style.display = 'none';
 
                 if (error || !data || data.length === 0) {
                     grid.innerHTML = '<p class="text-gray-400 font-light col-span-3 text-center">No open listings at this time.</p>';
@@ -378,17 +385,17 @@
         // Seychelles Clock
         function updateClock() {
             const timeOptions = { timeZone: 'Indian/Mahe', hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' };
-            document.getElementById('local-time').innerText = new Intl.DateTimeFormat('en-US', timeOptions).format(new Date());
+            const localTimeEl = document.getElementById('local-time');
+            if(localTimeEl) localTimeEl.innerText = new Intl.DateTimeFormat('en-US', timeOptions).format(new Date());
         }
 
-        // Execute on Load
-        window.onload = () => {
-            loadBanner();
-            loadLedger();
-            loadOpportunities();
-            setInterval(updateClock, 1000);
-            updateClock();
-        };
+        // Execute Data Fetching Functions
+        loadBanner();
+        loadLedger();
+        loadOpportunities();
+        setInterval(updateClock, 1000);
+        updateClock();
+        
     </script>
 </body>
 </html>
