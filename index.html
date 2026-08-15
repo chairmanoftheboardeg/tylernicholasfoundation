@@ -1,606 +1,369 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Tyler Nicholas Foundation — For the Youth. For the Islands. For Tomorrow.</title>
-<meta name="description" content="The Tyler Nicholas Foundation empowers young people across Seychelles — connecting them with scholarships, exchanges, training and opportunities, and the skills to lead." />
-<link rel="icon" href="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-<link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-<style>
-  :root{
-    --green:#2E9E44; --green-deep:#26863A; --leaf:#EEF7EF;
-    --ink:#152219; --charcoal:#0E1A13; --paper:#F8FBF7; --tint:#EFF7F0;
-    --surface:#FFFFFF; --muted:#5F6F64; --line:#E5EFE7;
-    --shadow:0 24px 60px -30px rgba(14,26,19,.28);
-    --wrap:1140px;
-    --font:"Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
-  body{font-family:var(--font);color:var(--ink);background:var(--paper);line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden}
-  img{display:block;max-width:100%}a{color:inherit;text-decoration:none}
-  button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit}
-  h1,h2,h3,h4{line-height:1.1;font-weight:800;letter-spacing:-.025em;color:var(--ink)}
-  ::selection{background:var(--green);color:#fff}
-  :focus-visible{outline:3px solid var(--green);outline-offset:3px;border-radius:6px}
-  .wrap{max-width:var(--wrap);margin-inline:auto;padding-inline:24px;width:100%}
-  .section{padding:100px 0}
-  .skip{position:absolute;left:-999px;top:0;background:var(--ink);color:#fff;padding:10px 16px;z-index:600}.skip:focus{left:0}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Tyler Nicholas Foundation | For the Youth. For the Islands. For Tomorrow.</title>
+  <meta name="description" content="The Tyler Nicholas Foundation empowers young people across Seychelles — connecting them with scholarships, exchanges, training and opportunities, and the skills to lead." />
+  <link rel="icon" href="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" />
 
-  .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font-weight:700;font-size:.97rem;padding:15px 30px;border-radius:100px;border:2px solid transparent;transition:transform .16s ease,background .2s,border-color .2s,color .2s}
-  .btn:active{transform:translateY(1px)}
-  .btn-green{background:var(--green);color:#fff}.btn-green:hover{background:var(--green-deep)}
-  .btn-dark{background:var(--ink);color:#fff}.btn-dark:hover{background:#000}
-  .btn-outline{background:transparent;color:var(--ink);border-color:var(--line)}.btn-outline:hover{border-color:var(--green);color:var(--green-deep)}
-  .btn-white{background:#fff;color:var(--ink)}.btn-white:hover{background:var(--leaf)}
-  .btn-outline-white{background:transparent;color:#fff;border-color:rgba(255,255,255,.5)}.btn-outline-white:hover{background:rgba(255,255,255,.12);border-color:#fff}
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 
-  .eyebrow{display:inline-flex;align-items:center;gap:13px;font-weight:700;font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
-  .eyebrow .rule{width:28px;height:2px;background:var(--green);border-radius:2px;flex:none}
-  .eyebrow.light{color:rgba(255,255,255,.82)}
-  .eyebrow.center{justify-content:center}
-  .lead{color:var(--muted);font-size:1.12rem;line-height:1.7}
-  .arrow-link{display:inline-flex;align-items:center;gap:9px;font-weight:700;color:var(--green-deep);font-size:.96rem}
-  .arrow-link::after{content:"→";transition:transform .2s}
-  .arrow-link:hover::after{transform:translateX(5px)}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
-  /* preloader */
-  #pre{position:fixed;inset:0;background:var(--paper);display:grid;place-items:center;z-index:1000;transition:opacity .5s,visibility .5s}
-  #pre.done{opacity:0;visibility:hidden}
-  #pre img{width:84px;height:84px;object-fit:contain;border-radius:20px;animation:beat 1.6s ease-in-out infinite}
-  @keyframes beat{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
-
-  .announce{background:var(--green);color:#fff;text-align:center;font-size:.9rem;font-weight:500;padding:9px 16px;display:none}
-  .announce a{text-decoration:underline;font-weight:700}
-
-  /* nav */
-  header{position:sticky;top:0;z-index:100;background:rgba(248,251,247,.88);backdrop-filter:blur(16px);border-bottom:1px solid transparent;transition:border-color .3s,background .3s}
-  header.scrolled{border-color:var(--line);background:rgba(255,255,255,.92)}
-  .nav{display:flex;align-items:center;justify-content:space-between;height:76px;gap:16px}
-  .brand{display:flex;align-items:center;gap:11px;flex:none}
-  .brand img{height:44px;width:auto;object-fit:contain}
-  .brand b{font-weight:800;font-size:1.02rem;color:var(--ink);letter-spacing:-.02em;line-height:1.08}
-  .nav-links{display:flex;align-items:center;gap:32px}
-  .nav-links a{font-weight:600;font-size:.93rem;color:var(--ink);padding:8px 0;position:relative;transition:color .2s}
-  .nav-links a::after{content:"";position:absolute;left:0;right:100%;bottom:2px;height:2px;background:var(--green);transition:right .24s}
-  .nav-links a:hover,.nav-links a[aria-current]{color:var(--green-deep)}
-  .nav-links a:hover::after,.nav-links a[aria-current]::after{right:0}
-  .nav-actions{display:flex;align-items:center;gap:10px;flex:none}
-  .icon-btn{width:44px;height:44px;border-radius:50%;background:transparent;display:grid;place-items:center;color:var(--ink);font-size:1rem;transition:background .2s,color .2s}
-  .icon-btn:hover{background:var(--leaf);color:var(--green-deep)}
-  .nav-cta{padding:11px 22px;font-size:.9rem}
-  .menu-toggle{display:none}
-
-  /* hero */
-  .hero{position:relative;min-height:min(90vh,780px);display:flex;align-items:center;color:#fff;isolation:isolate}
-  .hero::before{content:"";position:absolute;inset:0;z-index:-2;background:url('https://blog.pentravel.co.za/wp-content/uploads/2023/08/mauritius-2-1.png') center/cover no-repeat}
-  .hero::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(96deg, rgba(9,20,13,.90) 0%, rgba(14,42,24,.74) 44%, rgba(20,55,32,.36) 74%, rgba(20,55,32,.12) 100%)}
-  .hero .wrap{padding-block:80px}
-  .hero-inner{max-width:640px}
-  .hero .eyebrow{margin-bottom:24px}
-  .hero h1{color:#fff;font-size:clamp(2.4rem,6.4vw,4.2rem);line-height:1.02;letter-spacing:-.035em}
-  .hero .slogan{margin-top:24px;font-size:clamp(1.05rem,2.4vw,1.35rem);font-weight:600;color:#fff}
-  .hero .slogan em{color:#9be0a8;font-style:normal}
-  .hero p.sub{margin-top:20px;font-size:clamp(1.02rem,2vw,1.18rem);color:rgba(255,255,255,.88);max-width:540px}
-  .hero-cta{display:flex;gap:14px;margin-top:36px;flex-wrap:wrap}
-
-  /* opportunity hub */
-  .hub{background:var(--surface);border-bottom:1px solid var(--line)}
-  .hub .head{text-align:center;max-width:620px;margin:0 auto 40px}
-  .hub h2{font-size:clamp(2rem,4.6vw,3rem);margin-top:16px}
-  .hub .live{display:inline-flex;align-items:center;gap:9px;font-weight:600;color:var(--green-deep);font-size:.92rem;margin-top:16px}
-  .hub .live .dot{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(46,158,68,.55);animation:pulse 2s infinite}
-  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(46,158,68,.5)}70%{box-shadow:0 0 0 12px rgba(46,158,68,0)}100%{box-shadow:0 0 0 0 rgba(46,158,68,0)}}
-  .hub-search{display:flex;gap:12px;max-width:660px;margin:0 auto 30px}
-  .hub-search .field{flex:1;display:flex;align-items:center;gap:13px;background:var(--paper);border:1.5px solid var(--line);border-radius:100px;padding:6px 8px 6px 24px;transition:border-color .2s,box-shadow .2s}
-  .hub-search .field:focus-within{border-color:var(--green);box-shadow:0 0 0 4px rgba(46,158,68,.13)}
-  .hub-search .field i{color:var(--green);font-size:1.02rem}
-  .hub-search input{flex:1;border:0;background:none;outline:none;font-size:1.04rem;padding:13px 0;color:var(--ink)}
-  .cat-pills{display:flex;flex-wrap:wrap;justify-content:center;gap:11px;max-width:820px;margin:0 auto}
-  .pill{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border:1.5px solid var(--line);border-radius:100px;font-weight:600;font-size:.92rem;color:var(--ink);background:#fff;transition:border-color .18s,background .18s,color .18s,transform .18s}
-  .pill:hover{border-color:var(--green);background:var(--green);color:#fff;transform:translateY(-2px)}
-  .pill .n{font-size:.78rem;font-weight:700;color:var(--green-deep);background:var(--leaf);border-radius:100px;padding:1px 8px}
-  .pill:hover .n{background:rgba(255,255,255,.24);color:#fff}
-
-  /* section header (editorial) */
-  .shead{max-width:640px;margin-bottom:8px}
-  .shead h2{font-size:clamp(2rem,4.4vw,2.9rem);margin-top:16px}
-  .shead p{margin-top:16px}
-  .shead.center{margin-inline:auto;text-align:center}
-
-  /* pillars — two column editorial */
-  .pillars{display:grid;grid-template-columns:0.85fr 1.15fr;gap:60px;align-items:start}
-  .pillars .intro{position:sticky;top:110px}
-  .pillars .intro h2{font-size:clamp(2rem,4.4vw,3rem);margin-top:16px}
-  .pillars .intro p{margin-top:18px}
-  .pillars .intro .btn{margin-top:26px}
-  .p-list{display:flex;flex-direction:column}
-  .p-row{display:grid;grid-template-columns:auto 1fr;gap:26px;padding:30px 0;border-top:1px solid var(--line);align-items:baseline}
-  .p-row:last-child{border-bottom:1px solid var(--line)}
-  .p-num{font-size:1.5rem;font-weight:800;color:var(--green);font-variant-numeric:tabular-nums;line-height:1}
-  .p-row h3{font-size:1.35rem;margin-bottom:8px}
-  .p-row p{color:var(--muted);font-size:1rem}
-
-  /* opportunities — list */
-  .op-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:26px}
-  .op-list{border-top:1px solid var(--line)}
-  .op-row{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;padding:26px 8px;border-bottom:1px solid var(--line);transition:background .2s,padding .2s}
-  .op-row:hover{background:var(--leaf);padding-inline:20px}
-  .op-cat{font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--green-deep)}
-  .op-row h3{font-size:1.28rem;margin:7px 0 9px}
-  .op-meta{color:var(--muted);font-size:.94rem;display:flex;flex-wrap:wrap;gap:6px 18px}
-  .op-meta .fund{color:var(--green-deep);font-weight:600}
-  .op-go{font-size:1.5rem;color:var(--green);transition:transform .2s}
-  .op-row:hover .op-go{transform:translateX(6px)}
-
-  /* flagship — editorial two column */
-  .flag-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 60px}
-  .flag-item{padding:34px 0;border-top:1px solid var(--line);display:block}
-  .flag-label{font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--green-deep)}
-  .flag-item h3{font-size:1.5rem;margin:10px 0 10px}
-  .flag-item p{color:var(--muted);font-size:1rem;margin-bottom:16px}
-
-  /* impact — full bleed image */
-  .impact{position:relative;color:#fff;isolation:isolate;padding:110px 0}
-  .impact::before{content:"";position:absolute;inset:0;z-index:-2;background:url('https://images.daytrip.com/victoria.jpg?w=2048&q=50') center/cover no-repeat;background-attachment:fixed}
-  .impact::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg, rgba(9,20,13,.82), rgba(38,134,58,.82))}
-  .impact .shead{margin:0 auto 54px;text-align:center}
-  .impact-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:30px;text-align:center}
-  .impact .num{font-size:clamp(2.6rem,6vw,4rem);font-weight:800;line-height:1;color:#fff}
-  .impact .sep{width:40px;height:3px;background:#fff;opacity:.5;border-radius:3px;margin:16px auto}
-  .impact .lab{color:rgba(255,255,255,.9);font-weight:600;font-size:1.02rem}
-
-  /* news + events */
-  .ne-grid{display:grid;grid-template-columns:1.55fr 1fr;gap:56px;align-items:start}
-  .n-list{border-top:1px solid var(--line)}
-  .n-row{display:grid;grid-template-columns:96px 1fr;gap:20px;padding:24px 0;border-bottom:1px solid var(--line);align-items:start}
-  .n-row.no-img{grid-template-columns:1fr}
-  .n-row .thumb{width:96px;height:96px;border-radius:14px;object-fit:cover;background:var(--tint)}
-  .n-date{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--green-deep);margin-bottom:6px}
-  .n-row h3{font-size:1.16rem;margin-bottom:6px}
-  .n-row p{color:var(--muted);font-size:.92rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-  .e-list{border-top:1px solid var(--line)}
-  .e-row{display:grid;grid-template-columns:auto 1fr;gap:20px;padding:20px 0;border-bottom:1px solid var(--line);align-items:center}
-  .e-date{text-align:center;min-width:48px}
-  .e-date .d{font-size:1.7rem;font-weight:800;color:var(--green);line-height:1}
-  .e-date .m{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
-  .e-row b{font-size:1.04rem;color:var(--ink);display:block;margin-bottom:3px}
-  .e-row span{font-size:.9rem;color:var(--muted)}
-  .empty{padding:30px 0;color:var(--muted);font-size:1rem;border-top:1px solid var(--line)}
-  .empty b{color:var(--ink)}
-
-  /* get involved */
-  .involve{background:var(--tint)}
-  .inv-list{border-top:1px solid var(--line);margin-top:8px}
-  .inv-row{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;padding:28px 8px;border-bottom:1px solid var(--line);transition:padding .2s}
-  .inv-row:hover{padding-inline:18px}
-  .inv-row .t{font-size:1.4rem;font-weight:800;color:var(--ink);letter-spacing:-.02em}
-  .inv-row .d{color:var(--muted);font-size:.96rem;margin-top:3px}
-  .inv-row .go{font-size:1.5rem;color:var(--green);transition:transform .2s}
-  .inv-row:hover .go{transform:translateX(6px)}
-
-  /* partners */
-  .partner-row{display:flex;flex-wrap:wrap;gap:34px;justify-content:center;align-items:center}
-  .partner img{max-height:52px;max-width:150px;object-fit:contain;filter:grayscale(1);opacity:.6;transition:filter .2s,opacity .2s}
-  .partner:hover img{filter:none;opacity:1}
-  .partner .pn{font-weight:700;color:var(--ink);font-size:1.05rem}
-
-  /* alerts band */
-  .alerts{background:var(--green);color:#fff;text-align:center;padding:88px 0}
-  .alerts h2{color:#fff;font-size:clamp(1.8rem,4vw,2.7rem)}
-  .alerts p{color:rgba(255,255,255,.9);margin:16px auto 30px;max-width:520px}
-  .alerts form{display:flex;gap:12px;max-width:520px;margin-inline:auto}
-  .alerts input{flex:1;border:0;border-radius:100px;padding:16px 24px;font-size:1rem;outline:none;font-family:var(--font)}
-  .alerts .msg{margin-top:16px;font-weight:600;min-height:1.2em}
-
-  /* footer */
-  footer{background:var(--charcoal);color:#a6c2b3;padding-top:72px}
-  .foot-top{display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr;gap:40px;padding-bottom:46px;border-bottom:1px solid rgba(255,255,255,.09)}
-  .foot-brand{max-width:340px}
-  .foot-brand .fbrow{display:flex;align-items:center;gap:12px;margin-bottom:16px}
-  .foot-brand .fbrow img{height:44px;background:#fff;border-radius:11px;padding:5px}
-  .foot-brand .fbrow b{color:#fff;font-size:1.1rem;font-weight:800;line-height:1.08}
-  .foot-brand p{font-size:.9rem;line-height:1.75}
-  .foot-brand .slo{color:#7fd693;font-weight:600;font-size:.9rem;margin-top:14px}
-  .foot-social{display:flex;gap:10px;margin-top:16px}
-  .foot-social a{width:40px;height:40px;border-radius:11px;background:rgba(255,255,255,.08);display:grid;place-items:center;color:#fff;transition:background .2s,transform .2s}
-  .foot-social a:hover{transform:translateY(-3px);background:var(--green)}
-  .foot-col h4{color:#fff;font-size:.94rem;font-weight:700;margin-bottom:16px}
-  .foot-col a{display:block;font-size:.9rem;padding:6px 0;color:#a6c2b3;transition:color .2s,padding-left .2s}
-  .foot-col a:hover{color:#7fd693;padding-left:5px}
-  .foot-bottom{text-align:center;padding:26px 0 32px}
-  .foot-bottom .fslo{color:#fff;font-weight:700;font-size:1rem;margin-bottom:8px;letter-spacing:-.01em}
-  .foot-bottom .cpy{font-size:.85rem;color:#82a291}
-  .foot-bottom .cpy a{color:#7fd693}
-
-  /* search overlay */
-  .overlay{position:fixed;inset:0;background:rgba(9,20,13,.6);backdrop-filter:blur(6px);z-index:300;display:none;padding-top:11vh}.overlay.show{display:block}
-  .search-panel{max-width:660px;margin-inline:auto;background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 40px 90px -30px rgba(0,0,0,.6);width:calc(100% - 32px)}
-  .search-panel form{display:flex;align-items:center;border-bottom:1px solid var(--line)}
-  .search-panel input{flex:1;border:0;padding:20px 22px;font-size:1.08rem;outline:none}
-  .search-panel .cx{padding:0 20px;color:var(--muted);font-size:1.3rem}
-  .results{max-height:54vh;overflow:auto;padding:8px 0}
-  .results .grp{padding:12px 22px 4px;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--green-deep);font-weight:700}
-  .results a{display:block;padding:12px 22px;border-left:3px solid transparent}
-  .results a:hover{background:var(--leaf);border-color:var(--green)}
-  .results a b{color:var(--ink);font-weight:600}.results a span{display:block;font-size:.86rem;color:var(--muted)}
-  .results .none{padding:28px;text-align:center;color:var(--muted)}
-
-  #totop{position:fixed;right:20px;bottom:20px;width:50px;height:50px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-size:1.05rem;box-shadow:var(--shadow);opacity:0;visibility:hidden;transform:translateY(12px);transition:all .3s;z-index:90}
-  #totop.show{opacity:1;visibility:visible;transform:none}#totop:hover{background:var(--green-deep)}
-
-  .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
-  .reveal.in{opacity:1;transform:none}
-
-  /* ---------------- responsive ---------------- */
-  @media (max-width:980px){
-    .pillars{grid-template-columns:1fr;gap:34px}.pillars .intro{position:static}
-    .ne-grid{grid-template-columns:1fr;gap:44px}
-    .flag-grid{grid-template-columns:1fr;gap:0}
-    .impact-grid{grid-template-columns:repeat(2,1fr);gap:40px}
-    .impact::before{background-attachment:scroll}
-    .foot-top{grid-template-columns:1fr 1fr;gap:32px}
-  }
-  @media (max-width:860px){
-    .nav-links{display:none}.menu-toggle{display:grid}
-    .nav-links.open{display:flex;position:absolute;top:76px;left:0;right:0;flex-direction:column;background:#fff;border-bottom:1px solid var(--line);padding:12px 24px;gap:0;box-shadow:var(--shadow)}
-    .nav-links.open a{padding:15px 0;border-bottom:1px solid var(--line);font-size:1rem}
-    .nav-links.open a::after{display:none}
-    .nav-cta{display:none}
-    .section{padding:66px 0}.impact{padding:74px 0}.alerts{padding:60px 0}
-    .hero{min-height:auto}.hero .wrap{padding-block:110px 92px}
-  }
-  @media (max-width:600px){
-    .op-row{grid-template-columns:1fr}.op-go{display:none}
-    .inv-row .go{font-size:1.3rem}
-    .n-row{grid-template-columns:72px 1fr;gap:16px}.n-row .thumb{width:72px;height:72px}
-    .hub-search{flex-direction:column}.hub-search .field{border-radius:16px}.hub-search .btn{width:100%}
-    .alerts form{flex-direction:column}.alerts input{border-radius:16px}
-    .foot-top{grid-template-columns:1fr;text-align:center;gap:26px}
-    .foot-brand{max-width:none}.foot-brand .fbrow{justify-content:center}.foot-social{justify-content:center}
-    .hero-cta{width:100%}.hero-cta .btn{flex:1;min-width:44%}
-    .cat-pills{gap:9px}.pill{padding:9px 16px;font-size:.88rem}
-  }
-  @media (max-width:380px){ .brand b{font-size:.9rem} }
-  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}.impact::before{background-attachment:scroll}}
-</style>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        fontFamily: { sans: ['Plus Jakarta Sans','sans-serif'] },
+        colors: { tnf: { green:'#2E9E44', greenDark:'#26863A', greenLight:'#EEF7EF', ink:'#152219', charcoal:'#0E1A13' } }
+      }}
+    }
+  </script>
+  <style>
+    body{background-color:#F8FBF7}
+    body.loading{overflow:hidden;height:100vh}
+    #loading-screen{transition:opacity .6s ease-out,visibility .6s}
+    .loader-spinner{border:4px solid rgba(46,158,68,.15);border-left-color:#2E9E44;border-radius:50%;width:52px;height:52px;animation:spin 1s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .hero-bg{background:linear-gradient(rgba(9,20,13,.55),rgba(14,42,24,.72)),url('https://i.ibb.co/fV14bzMq/TNF-Header.png') no-repeat center center;background-size:cover}
+    ::-webkit-scrollbar{width:9px}::-webkit-scrollbar-track{background:#eef2ee}::-webkit-scrollbar-thumb{background:#c4d6c7;border-radius:5px}::-webkit-scrollbar-thumb:hover{background:#2E9E44}
+    .logo-white{filter:brightness(0) invert(1) opacity(.85);transition:opacity .3s}.logo-white:hover{opacity:1}
+    .live-dot{width:9px;height:9px;border-radius:50%;background:#2E9E44;box-shadow:0 0 0 0 rgba(46,158,68,.5);animation:pulse 2s infinite}
+    @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(46,158,68,.5)}70%{box-shadow:0 0 0 12px rgba(46,158,68,0)}100%{box-shadow:0 0 0 0 rgba(46,158,68,0)}}
+    [x-cloak]{display:none}
+  </style>
 </head>
-<body>
-  <div id="pre"><img src="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" alt="Tyler Nicholas Foundation" /></div>
-  <a class="skip" href="#main">Skip to content</a>
+<body class="font-sans text-gray-900 flex flex-col min-h-screen loading">
 
-  <div class="announce" id="announce"></div>
+  <!-- LOADING -->
+  <div id="loading-screen" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white">
+    <img src="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" alt="TNF" class="h-20 w-20 object-contain rounded-2xl mb-6" />
+    <div class="loader-spinner mb-5"></div>
+    <h2 class="text-sm font-bold tracking-[.2em] uppercase text-tnf-ink">Tyler Nicholas Foundation</h2>
+  </div>
 
-  <header id="hd">
-    <div class="wrap nav">
-      <a class="brand" href="/" aria-label="Tyler Nicholas Foundation — home">
-        <img src="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" alt="" />
-        <b>Tyler Nicholas<br>Foundation</b>
-      </a>
-      <nav class="nav-links" id="navlinks" aria-label="Primary">
-        <a href="/" aria-current="page">Home</a>
-        <a href="/about">About</a>
-        <a href="/programs">Programs</a>
-        <a href="/opportunities">Opportunities</a>
-        <a href="/get-involved">Get Involved</a>
-        <a href="/news">News</a>
-        <a href="/contact">Contact</a>
-      </nav>
-      <div class="nav-actions">
-        <button class="icon-btn" id="open-search" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
-        <a class="btn btn-green nav-cta" href="/opportunities">Find an Opportunity</a>
-        <button class="icon-btn menu-toggle" id="menu-toggle" aria-label="Menu" aria-expanded="false" aria-controls="navlinks"><i class="fa-solid fa-bars"></i></button>
-      </div>
-    </div>
-  </header>
+  <!-- ANNOUNCEMENT -->
+  <div id="announcement-bar" class="hidden bg-tnf-green text-white text-center py-2.5 text-sm font-semibold z-50 relative"></div>
 
-  <main id="main">
-    <!-- HERO -->
-    <section class="hero">
-      <div class="wrap">
-        <div class="hero-inner">
-          <span class="eyebrow light"><span class="rule"></span> Tyler Nicholas Foundation</span>
-          <h1 id="hero-h1">Empowering young people across Seychelles</h1>
-          <div class="slogan">For the Youth. For the Islands. <em>For Tomorrow.</em></div>
-          <p class="sub" id="hero-sub">We connect young Seychellois with the opportunities, skills and support to learn, lead, serve, and shape a better future.</p>
-          <div class="hero-cta">
-            <a class="btn btn-white" href="/opportunities">Find an Opportunity</a>
-            <a class="btn btn-outline-white" href="/get-involved">Get Involved</a>
-          </div>
+  <!-- NAV -->
+  <nav class="bg-white/90 backdrop-blur-md text-tnf-ink py-3.5 px-6 md:px-12 flex justify-between items-center shadow-sm sticky top-0 z-40 border-b border-gray-100">
+    <a href="/" class="flex items-center space-x-3">
+      <img src="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" alt="TNF Logo" class="h-11 w-11 object-contain rounded-lg" />
+      <div class="font-extrabold text-base leading-tight tracking-tight hidden sm:block">Tyler Nicholas<br><span class="text-tnf-green">Foundation</span></div>
+    </a>
+
+    <button id="mobile-menu-btn" class="md:hidden text-tnf-ink hover:text-tnf-green transition-colors text-2xl" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
+
+    <div class="hidden md:flex space-x-7 text-sm items-center font-semibold">
+      <a href="/" class="text-tnf-ink border-b-2 border-tnf-green pb-1">Home</a>
+      <div class="relative group">
+        <button class="text-gray-500 hover:text-tnf-ink transition-colors flex items-center py-2">About <i class="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i></button>
+        <div class="absolute left-0 mt-1 w-52 bg-white rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 border border-gray-100 overflow-hidden">
+          <a href="/about" class="block px-5 py-3 hover:bg-tnf-greenLight border-b border-gray-100 transition-colors">About the Foundation</a>
+          <a href="/about#board" class="block px-5 py-3 hover:bg-tnf-greenLight border-b border-gray-100 transition-colors">Our Board &amp; Team</a>
+          <a href="/safeguarding" class="block px-5 py-3 hover:bg-tnf-greenLight transition-colors">Safeguarding</a>
         </div>
+      </div>
+      <a href="/programs" class="text-gray-500 hover:text-tnf-ink transition-colors">Programs</a>
+      <a href="/opportunities" class="text-gray-500 hover:text-tnf-ink transition-colors">Opportunities</a>
+      <a href="/get-involved" class="text-gray-500 hover:text-tnf-ink transition-colors">Get Involved</a>
+      <a href="/news" class="text-gray-500 hover:text-tnf-ink transition-colors">News</a>
+      <a href="/opportunities" class="bg-tnf-green text-white px-5 py-2.5 rounded-lg hover:bg-tnf-greenDark transition-all shadow-sm transform hover:-translate-y-0.5">Find an Opportunity</a>
+    </div>
+  </nav>
+
+  <div id="mobile-menu" class="hidden bg-white border-t border-gray-100 px-6 py-5 flex-col space-y-3 text-tnf-ink text-base font-medium md:hidden sticky top-[68px] z-30 shadow-xl">
+    <a href="/" class="text-tnf-green font-semibold">Home</a>
+    <a href="/about" class="hover:text-tnf-green">About the Foundation</a>
+    <a href="/about#board" class="hover:text-tnf-green pl-4 border-l-2 border-gray-100 text-sm">Our Board &amp; Team</a>
+    <a href="/programs" class="hover:text-tnf-green">Programs</a>
+    <a href="/opportunities" class="hover:text-tnf-green">Opportunities</a>
+    <a href="/get-involved" class="hover:text-tnf-green">Get Involved</a>
+    <a href="/news" class="hover:text-tnf-green">News</a>
+    <a href="/contact" class="hover:text-tnf-green">Contact</a>
+  </div>
+
+  <main class="flex-grow w-full flex flex-col items-center">
+
+    <!-- HERO -->
+    <header class="hero-bg w-full min-h-[82vh] flex items-center justify-center px-4 py-28">
+      <div class="max-w-4xl text-center z-10" data-aos="fade-up" data-aos-duration="1000">
+        <div class="inline-flex items-center gap-2.5 text-white/90 text-xs font-bold tracking-[.18em] uppercase mb-6"><span class="w-7 h-0.5 bg-tnf-green"></span> Tyler Nicholas Foundation</div>
+        <h1 id="hero-headline" class="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-6 tracking-tight text-white leading-[1.05] drop-shadow">Empowering young people across Seychelles</h1>
+        <p class="text-lg md:text-2xl text-white font-semibold mb-3">For the Youth. For the Islands. <span class="text-tnf-green" style="color:#9be0a8">For Tomorrow.</span></p>
+        <p id="hero-sub" class="text-base md:text-lg text-white/85 leading-relaxed mb-9 max-w-2xl mx-auto font-light">We connect young Seychellois with the opportunities, skills and support to learn, lead, serve, and shape a better future.</p>
+        <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+          <a href="/opportunities" class="bg-tnf-green hover:bg-tnf-greenDark text-white font-bold py-3.5 px-8 rounded-lg shadow-[0_4px_14px_0_rgba(46,158,68,.4)] transition-transform transform hover:-translate-y-1 w-full sm:w-auto">Find an Opportunity</a>
+          <a href="/get-involved" class="bg-white/10 backdrop-blur-md border border-white/40 hover:bg-white hover:text-tnf-ink text-white font-bold py-3.5 px-8 rounded-lg transition-all w-full sm:w-auto">Get Involved</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- MISSION INTRO -->
+    <section class="w-full max-w-5xl px-4 py-24 text-center">
+      <div data-aos="fade-up">
+        <div class="inline-flex items-center gap-2.5 text-gray-400 text-xs font-bold tracking-[.18em] uppercase mb-5 justify-center"><span class="w-7 h-0.5 bg-tnf-green"></span> Our mission</div>
+        <h2 id="mission-heading" class="text-3xl md:text-4xl font-bold text-tnf-ink mb-6 leading-tight">Empowering Young People. Creating Opportunities. Building Seychelles.</h2>
+        <p id="mission-text" class="text-lg text-gray-600 leading-relaxed max-w-3xl mx-auto">The Tyler Nicholas Foundation is a national youth platform. We find and share real opportunities, run our own programs, and give young Seychellois across every island the skills, confidence and doors they need — so the next generation can lead.</p>
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <section id="stats-section" class="w-full bg-white border-y border-gray-100 py-20 hidden">
+      <div class="max-w-6xl mx-auto px-4">
+        <div id="stats-grid" class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center"></div>
       </div>
     </section>
 
     <!-- OPPORTUNITY HUB -->
-    <section class="section hub" id="hub">
-      <div class="wrap">
-        <div class="head">
-          <span class="eyebrow center"><span class="rule"></span> The Opportunity Hub</span>
-          <h2>What are you looking for?</h2>
-          <div class="live"><span class="dot"></span> <span id="opp-live-txt">Opportunities for young Seychellois</span></div>
-        </div>
-        <form class="hub-search" id="hub-search">
-          <div class="field"><i class="fa-solid fa-magnifying-glass"></i>
-            <input type="search" id="hub-q" placeholder="Search scholarships, internships, exchanges…" aria-label="Search opportunities" />
+    <section class="w-full bg-tnf-greenLight py-24 border-b border-gray-100">
+      <div class="max-w-3xl mx-auto px-4 text-center">
+        <div class="inline-flex items-center gap-2.5 text-gray-500 text-xs font-bold tracking-[.18em] uppercase mb-5 justify-center" data-aos="fade-up"><span class="w-7 h-0.5 bg-tnf-green"></span> The Opportunity Hub</div>
+        <h2 class="text-3xl md:text-5xl font-bold text-tnf-ink mb-4" data-aos="fade-up">What are you looking for?</h2>
+        <div class="inline-flex items-center gap-2 text-tnf-greenDark font-semibold text-sm mb-8" data-aos="fade-up"><span class="live-dot"></span> <span id="opp-live">Opportunities for young Seychellois</span></div>
+        <form id="hub-search" class="flex flex-col sm:flex-row gap-3 max-w-2xl mx-auto mb-8" data-aos="fade-up">
+          <div class="flex-1 flex items-center gap-3 bg-white border border-gray-200 rounded-xl px-5 focus-within:border-tnf-green focus-within:ring-4 focus-within:ring-tnf-green/10 transition-all">
+            <i class="fa-solid fa-magnifying-glass text-tnf-green"></i>
+            <input id="hub-q" type="search" placeholder="Search scholarships, internships, exchanges…" class="flex-1 py-4 bg-transparent outline-none text-base" aria-label="Search opportunities" />
           </div>
-          <button class="btn btn-green" type="submit">Search</button>
+          <button type="submit" class="bg-tnf-green hover:bg-tnf-greenDark text-white font-bold py-4 px-8 rounded-xl transition-colors shadow-sm">Search</button>
         </form>
-        <div class="cat-pills" id="cat-pills"></div>
+        <div id="cat-pills" class="flex flex-wrap justify-center gap-2.5" data-aos="fade-up"></div>
       </div>
     </section>
 
-    <!-- WHAT WE DO -->
-    <section class="section" id="what">
-      <div class="wrap pillars">
-        <div class="intro">
-          <span class="eyebrow"><span class="rule"></span> What we do</span>
-          <h2>Five pillars, one mission</h2>
-          <p class="lead">Everything we do sits under five areas of work, led by our Directors General — built to help every young person learn, lead, connect, create and serve.</p>
-          <a class="btn btn-outline" href="/programs">Explore our programs</a>
-        </div>
-        <div class="p-list" id="p-list"></div>
+    <!-- WHAT WE DO / PILLARS -->
+    <section id="pillars-section" class="w-full max-w-6xl px-4 py-24 hidden">
+      <div class="text-center mb-16" data-aos="fade-up">
+        <div class="inline-flex items-center gap-2.5 text-gray-400 text-xs font-bold tracking-[.18em] uppercase mb-5 justify-center"><span class="w-7 h-0.5 bg-tnf-green"></span> What we do</div>
+        <h2 class="text-3xl md:text-4xl font-bold text-tnf-ink mb-4">Five pillars, one mission</h2>
+        <p class="text-lg text-gray-500 max-w-2xl mx-auto">Everything we do sits under five areas of work, each led by our Directors General.</p>
       </div>
+      <div id="pillars-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-2"></div>
     </section>
 
     <!-- LATEST OPPORTUNITIES -->
-    <section class="section" id="latest-opps" style="background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
-      <div class="wrap">
-        <div class="op-head">
-          <div class="shead" style="margin-bottom:0"><span class="eyebrow"><span class="rule"></span> Open now</span><h2>Latest opportunities</h2></div>
-          <a class="arrow-link" href="/opportunities">View all opportunities</a>
+    <section class="w-full bg-white border-y border-gray-100 py-24">
+      <div class="max-w-6xl mx-auto px-4">
+        <div class="flex flex-col md:flex-row justify-between items-end mb-12 border-b-2 border-gray-100 pb-4" data-aos="fade-right">
+          <div>
+            <div class="inline-flex items-center gap-2.5 text-gray-400 text-xs font-bold tracking-[.18em] uppercase mb-3"><span class="w-7 h-0.5 bg-tnf-green"></span> Open now</div>
+            <h2 class="text-3xl font-bold text-tnf-ink">Latest opportunities</h2>
+          </div>
+          <a href="/opportunities" class="mt-4 md:mt-0 text-sm font-bold text-tnf-green hover:text-tnf-greenDark transition-colors flex items-center group">View all opportunities <i class="fa-solid fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform"></i></a>
         </div>
-        <div id="opps-wrap"><div class="op-list" id="op-list"></div></div>
+        <div id="opps-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <p class="text-gray-400 italic col-span-full text-center py-10" id="opps-status">Loading opportunities…</p>
+        </div>
       </div>
     </section>
 
-    <!-- FLAGSHIP -->
-    <section class="section" id="flagship">
-      <div class="wrap">
-        <div class="shead center"><span class="eyebrow center"><span class="rule"></span> Flagship programs</span><h2>Experiences we create ourselves</h2><p class="lead">We don't only share opportunities made by others — we build our own, so young Seychellois can do things that were out of reach before.</p></div>
-        <div class="flag-grid" id="flag-grid" style="margin-top:20px"></div>
+    <!-- FLAGSHIP PROGRAMS -->
+    <section id="programs-section" class="w-full max-w-6xl px-4 py-24 hidden">
+      <div class="text-center mb-16" data-aos="fade-up">
+        <div class="inline-flex items-center gap-2.5 text-gray-400 text-xs font-bold tracking-[.18em] uppercase mb-5 justify-center"><span class="w-7 h-0.5 bg-tnf-green"></span> Flagship programs</div>
+        <h2 class="text-3xl md:text-4xl font-bold text-tnf-ink mb-4">Experiences we create ourselves</h2>
+        <p class="text-lg text-gray-500 max-w-2xl mx-auto">We don't only share opportunities made by others — we build our own.</p>
       </div>
+      <div id="programs-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
     </section>
 
-    <!-- IMPACT -->
-    <section class="impact" id="impact">
-      <div class="wrap">
-        <div class="shead center"><span class="eyebrow light center"><span class="rule"></span> Our reach</span><h2 style="color:#fff">Building something national</h2></div>
-        <div class="impact-grid" id="impact-grid"></div>
+    <!-- IMPACT BAND -->
+    <section class="w-full py-24 relative overflow-hidden" style="background:linear-gradient(rgba(9,20,13,.85),rgba(38,134,58,.85)),url('https://images.daytrip.com/victoria.jpg?w=2048&q=50') no-repeat center center;background-size:cover">
+      <div class="max-w-4xl mx-auto px-4 text-center text-white relative z-10" data-aos="fade-up">
+        <div class="inline-flex items-center gap-2.5 text-white/80 text-xs font-bold tracking-[.18em] uppercase mb-5 justify-center"><span class="w-7 h-0.5 bg-white"></span> For Seychelles</div>
+        <h2 class="text-3xl md:text-5xl font-bold mb-6 leading-tight">Building a stronger future, one young person at a time</h2>
+        <p class="text-white/85 text-lg max-w-2xl mx-auto mb-9 font-light">From the smallest island to the capital, every young Seychellois deserves the chance to learn, lead and belong. That's the future we're building together.</p>
+        <a href="/get-involved" class="inline-block bg-white text-tnf-ink font-bold py-3.5 px-9 rounded-lg hover:bg-tnf-greenLight transition-colors shadow-lg">Be part of it</a>
       </div>
     </section>
 
     <!-- NEWS + EVENTS -->
-    <section class="section" id="news" style="background:var(--surface);border-bottom:1px solid var(--line)">
-      <div class="wrap ne-grid">
-        <div>
-          <div class="shead" style="margin-bottom:24px"><span class="eyebrow"><span class="rule"></span> Newsroom</span><h2>Latest from the Foundation</h2></div>
-          <div class="n-list" id="news-list"></div>
+    <section class="w-full bg-white py-24 border-b border-gray-100">
+      <div class="max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-12">
+        <div class="lg:col-span-2">
+          <div class="flex justify-between items-end mb-10 border-b-2 border-gray-100 pb-4" data-aos="fade-right">
+            <div><div class="inline-flex items-center gap-2.5 text-gray-400 text-xs font-bold tracking-[.18em] uppercase mb-3"><span class="w-7 h-0.5 bg-tnf-green"></span> Newsroom</div><h2 class="text-3xl font-bold text-tnf-ink">Latest news</h2></div>
+            <a href="/news" class="text-sm font-bold text-tnf-green hover:text-tnf-greenDark flex items-center group">All news <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i></a>
+          </div>
+          <div id="news-container" class="grid grid-cols-1 sm:grid-cols-2 gap-6"><p class="text-gray-400 italic col-span-full py-8 text-center" id="news-status">Loading…</p></div>
         </div>
         <div>
-          <div class="shead" style="margin-bottom:24px"><span class="eyebrow"><span class="rule"></span> What's on</span><h2>Upcoming events</h2></div>
-          <div class="e-list" id="events-list"></div>
+          <div class="mb-10 border-b-2 border-gray-100 pb-4" data-aos="fade-left"><div class="inline-flex items-center gap-2.5 text-gray-400 text-xs font-bold tracking-[.18em] uppercase mb-3"><span class="w-7 h-0.5 bg-tnf-green"></span> What's on</div><h2 class="text-3xl font-bold text-tnf-ink">Events</h2></div>
+          <div id="events-container"><p class="text-gray-400 italic py-8 text-center" id="events-status">Loading…</p></div>
         </div>
       </div>
     </section>
 
     <!-- GET INVOLVED -->
-    <section class="section involve" id="get-involved">
-      <div class="wrap">
-        <div class="shead"><span class="eyebrow"><span class="rule"></span> Get involved</span><h2>There's a place for you</h2><p class="lead">Whether you want to learn, serve, guide or support — here's how to be part of the Foundation.</p></div>
-        <div class="inv-list">
-          <a class="inv-row" href="/volunteer"><div><div class="t">Volunteer</div><div class="d">Join a team and give your time to communities across Seychelles.</div></div><span class="go">→</span></a>
-          <a class="inv-row" href="/get-involved"><div><div class="t">Mentor</div><div class="d">Guide a young person in your field — from aviation to business to law.</div></div><span class="go">→</span></a>
-          <a class="inv-row" href="/partners"><div><div class="t">Partner</div><div class="d">Work with us — schools, businesses, NGOs and international organizations.</div></div><span class="go">→</span></a>
-          <a class="inv-row" href="/opportunities"><div><div class="t">Submit an Opportunity</div><div class="d">Share a scholarship, internship or programme for us to verify.</div></div><span class="go">→</span></a>
-          <a class="inv-row" href="/get-involved"><div><div class="t">Support TNF</div><div class="d">Help us reach more young people and grow what we can offer.</div></div><span class="go">→</span></a>
+    <section class="w-full bg-tnf-greenLight py-24">
+      <div class="max-w-6xl mx-auto px-4">
+        <div class="text-center mb-16" data-aos="fade-up">
+          <div class="inline-flex items-center gap-2.5 text-gray-400 text-xs font-bold tracking-[.18em] uppercase mb-5 justify-center"><span class="w-7 h-0.5 bg-tnf-green"></span> Get involved</div>
+          <h2 class="text-3xl md:text-4xl font-bold text-tnf-ink mb-4">There's a place for you</h2>
+          <p class="text-lg text-gray-500 max-w-2xl mx-auto">Whether you want to learn, serve, guide or support — here's how to be part of the Foundation.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <a href="/volunteer" class="bg-white rounded-2xl p-8 shadow-sm hover:shadow-lg transition-all transform hover:-translate-y-1 group" data-aos="fade-up" data-aos-delay="0"><div class="w-12 h-12 rounded-xl bg-tnf-greenLight text-tnf-green grid place-items-center text-lg mb-5 group-hover:bg-tnf-green group-hover:text-white transition-colors"><i class="fa-solid fa-hands-helping"></i></div><h3 class="text-lg font-bold text-tnf-ink mb-2">Volunteer</h3><p class="text-gray-500 text-sm leading-relaxed">Join a team and give your time to communities across Seychelles.</p></a>
+          <a href="/get-involved" class="bg-white rounded-2xl p-8 shadow-sm hover:shadow-lg transition-all transform hover:-translate-y-1 group" data-aos="fade-up" data-aos-delay="100"><div class="w-12 h-12 rounded-xl bg-tnf-greenLight text-tnf-green grid place-items-center text-lg mb-5 group-hover:bg-tnf-green group-hover:text-white transition-colors"><i class="fa-solid fa-user-graduate"></i></div><h3 class="text-lg font-bold text-tnf-ink mb-2">Mentor</h3><p class="text-gray-500 text-sm leading-relaxed">Guide a young person in your field — from aviation to business to law.</p></a>
+          <a href="/partners" class="bg-white rounded-2xl p-8 shadow-sm hover:shadow-lg transition-all transform hover:-translate-y-1 group" data-aos="fade-up" data-aos-delay="200"><div class="w-12 h-12 rounded-xl bg-tnf-greenLight text-tnf-green grid place-items-center text-lg mb-5 group-hover:bg-tnf-green group-hover:text-white transition-colors"><i class="fa-solid fa-handshake"></i></div><h3 class="text-lg font-bold text-tnf-ink mb-2">Partner</h3><p class="text-gray-500 text-sm leading-relaxed">Work with us — schools, businesses, NGOs and international organisations.</p></a>
+          <a href="/opportunities" class="bg-white rounded-2xl p-8 shadow-sm hover:shadow-lg transition-all transform hover:-translate-y-1 group" data-aos="fade-up" data-aos-delay="300"><div class="w-12 h-12 rounded-xl bg-tnf-greenLight text-tnf-green grid place-items-center text-lg mb-5 group-hover:bg-tnf-green group-hover:text-white transition-colors"><i class="fa-solid fa-bullhorn"></i></div><h3 class="text-lg font-bold text-tnf-ink mb-2">Submit an Opportunity</h3><p class="text-gray-500 text-sm leading-relaxed">Share a scholarship, internship or programme for us to verify.</p></a>
         </div>
       </div>
     </section>
 
     <!-- PARTNERS -->
-    <section class="section" id="partners" style="display:none;background:var(--surface)">
-      <div class="wrap">
-        <div class="shead center"><span class="eyebrow center"><span class="rule"></span> Our partners</span><h2>Working together for youth</h2></div>
-        <div class="partner-row" id="partner-row" style="margin-top:8px"></div>
+    <section id="partners-section" class="w-full bg-white py-20 border-t border-gray-100 hidden">
+      <div class="max-w-6xl mx-auto px-4 text-center">
+        <div class="inline-flex items-center gap-2.5 text-gray-400 text-xs font-bold tracking-[.18em] uppercase mb-10 justify-center" data-aos="fade-up"><span class="w-7 h-0.5 bg-tnf-green"></span> Our partners</div>
+        <div id="partners-grid" class="flex flex-wrap justify-center items-center gap-x-12 gap-y-8"></div>
       </div>
     </section>
 
     <!-- ALERTS -->
-    <section class="alerts" id="alerts-sec">
-      <div class="wrap">
-        <h2>Never miss an opportunity</h2>
-        <p>Get new scholarships, internships and exchanges delivered to your inbox as soon as we verify them.</p>
-        <form id="alert-form">
-          <input type="email" id="alert-email" placeholder="Your email address" aria-label="Your email address" required />
-          <button class="btn btn-dark" type="submit">Get alerts</button>
+    <section class="w-full bg-tnf-green py-20">
+      <div class="max-w-2xl mx-auto px-4 text-center text-white" data-aos="fade-up">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">Never miss an opportunity</h2>
+        <p class="text-white/90 mb-8 max-w-lg mx-auto">Get new scholarships, internships and exchanges in your inbox as soon as we verify them.</p>
+        <form id="alert-form" class="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
+          <input id="alert-email" type="email" required placeholder="Your email address" class="flex-1 rounded-xl px-5 py-4 text-gray-900 outline-none" aria-label="Your email" />
+          <button type="submit" class="bg-tnf-ink hover:bg-tnf-charcoal text-white font-bold py-4 px-8 rounded-xl transition-colors">Get alerts</button>
         </form>
-        <div class="msg" id="alert-msg" role="status" aria-live="polite"></div>
+        <p id="alert-msg" class="mt-4 font-semibold text-white min-h-[1.2em]"></p>
       </div>
     </section>
+
   </main>
 
-  <footer>
-    <div class="wrap">
-      <div class="foot-top">
-        <div class="foot-brand">
-          <div class="fbrow"><img src="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" alt="" /><b>Tyler Nicholas<br>Foundation</b></div>
-          <p>Empowering young people across Seychelles through education, opportunity, leadership, community service and innovation.</p>
-          <div class="slo">For the Youth. For the Islands. For Tomorrow.</div>
-          <div class="foot-social" id="foot-social"></div>
-        </div>
-        <div class="foot-col"><h4>Explore</h4><a href="/about">About</a><a href="/programs">Programs</a><a href="/opportunities">Opportunities</a><a href="/news">News &amp; Events</a><a href="/partners">Partners</a></div>
-        <div class="foot-col"><h4>Get Involved</h4><a href="/volunteer">Volunteer</a><a href="/get-involved">Mentor</a><a href="/partners">Partner</a><a href="/opportunities">Submit an Opportunity</a><a href="/get-involved">Support TNF</a></div>
-        <div class="foot-col"><h4>Organization</h4><a href="/about">Our Board</a><a href="/safeguarding">Safeguarding</a><a href="/contact">Contact</a><a href="/login">Staff &amp; Volunteer Login</a></div>
+  <!-- FOOTER -->
+  <footer class="bg-tnf-charcoal text-white pt-20 pb-10 px-6 md:px-12 mt-auto border-t-[6px] border-tnf-green">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-14">
+      <div>
+        <div class="flex items-center gap-3 mb-5"><img src="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" alt="TNF" class="h-12 w-12 object-contain rounded-lg bg-white p-1" /><div class="font-extrabold leading-tight">Tyler Nicholas<br>Foundation</div></div>
+        <p class="text-sm text-gray-400 mb-4 max-w-sm leading-relaxed">Empowering young people across Seychelles through education, opportunity, leadership, community service and innovation.</p>
+        <p class="text-tnf-green font-semibold text-sm">For the Youth. For the Islands. For Tomorrow.</p>
+        <div id="footer-social" class="flex space-x-3 mt-5"></div>
       </div>
-      <div class="foot-bottom">
-        <div class="fslo">Tyler Nicholas Foundation</div>
-        <div class="cpy">© <span id="yr"></span> Tyler Nicholas Foundation · Republic of Seychelles · <a href="/admin">Admin</a></div>
+      <div class="flex flex-col space-y-3 text-sm"><h4 class="font-bold text-base mb-2">Explore</h4>
+        <a href="/about" class="text-gray-400 hover:text-tnf-green transition-colors">About</a>
+        <a href="/programs" class="text-gray-400 hover:text-tnf-green transition-colors">Programs</a>
+        <a href="/opportunities" class="text-gray-400 hover:text-tnf-green transition-colors">Opportunities</a>
+        <a href="/news" class="text-gray-400 hover:text-tnf-green transition-colors">News &amp; Events</a>
+        <a href="/partners" class="text-gray-400 hover:text-tnf-green transition-colors">Partners</a>
       </div>
+      <div class="flex flex-col space-y-3 text-sm"><h4 class="font-bold text-base mb-2">Get Involved</h4>
+        <a href="/volunteer" class="text-gray-400 hover:text-tnf-green transition-colors">Volunteer</a>
+        <a href="/get-involved" class="text-gray-400 hover:text-tnf-green transition-colors">Mentor</a>
+        <a href="/partners" class="text-gray-400 hover:text-tnf-green transition-colors">Partner</a>
+        <a href="/opportunities" class="text-gray-400 hover:text-tnf-green transition-colors">Submit an Opportunity</a>
+      </div>
+      <div class="flex flex-col space-y-3 text-sm"><h4 class="font-bold text-base mb-2">Organisation</h4>
+        <a href="/about#board" class="text-gray-400 hover:text-tnf-green transition-colors">Our Board</a>
+        <a href="/safeguarding" class="text-gray-400 hover:text-tnf-green transition-colors">Safeguarding</a>
+        <a href="/contact" class="text-gray-400 hover:text-tnf-green transition-colors">Contact</a>
+        <a href="/login" class="text-gray-400 hover:text-tnf-green transition-colors">Staff &amp; Volunteer Login</a>
+      </div>
+    </div>
+    <div class="max-w-7xl mx-auto border-t border-white/10 pt-8 text-center text-xs text-gray-500">
+      <p class="font-bold text-white text-sm mb-2">Tyler Nicholas Foundation</p>
+      <p>&copy; <span id="current-year"></span> Tyler Nicholas Foundation · Republic of Seychelles · <a href="/admin" class="text-tnf-green hover:underline">Admin</a></p>
     </div>
   </footer>
 
-  <button id="totop" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
-
-  <div class="overlay" id="search-overlay" role="dialog" aria-modal="true" aria-label="Search">
-    <div class="search-panel">
-      <form id="ov-form" role="search"><input type="search" id="ov-input" placeholder="Search opportunities, programs, news…" autocomplete="off" aria-label="Search" /><button type="button" class="cx" id="ov-close" aria-label="Close"><i class="fa-solid fa-xmark"></i></button></form>
-      <div class="results" id="ov-results"></div>
-    </div>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script>
-  const SUPABASE_URL="https://atxhlpecvpmvfsjburxw.supabase.co";
-  const SUPABASE_ANON="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0eGhscGVjdnBtdmZzamJ1cnh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4NjQxNTgsImV4cCI6MjEwMTQ0MDE1OH0.FuCWx9W_R8PpbH3ErAoAsCEWuurZ3H5vbIBNcacUJcw";
-  const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON);
-  const $=(s,r=document)=>r.querySelector(s);
-  const el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e;};
-  const esc=s=>(s==null?"":String(s)).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
-  const CATS=[["scholarship","Scholarships"],["exchange","Exchanges"],["international","International"],["internship","Internships"],["university","University"],["conference","Conferences"],["competition","Competitions"],["fellowship","Fellowships"],["training","Training"],["volunteering","Volunteering"],["entrepreneurship","Entrepreneurship"],["mentorship","Mentorship"]];
-  const CATLABEL=Object.fromEntries(CATS.map(c=>[c[0],c[1]]));
-  const FUND={fully_funded:"Fully funded",partially_funded:"Partially funded",self_funded:"Self-funded",not_applicable:""};
-  const fmtDate=v=>v?new Intl.DateTimeFormat("en-GB",{day:"numeric",month:"short",year:"numeric"}).format(new Date(v)):"";
+    // Loader + basics
+    window.addEventListener('load',()=>{const l=document.getElementById('loading-screen');setTimeout(()=>{l.style.opacity='0';l.style.visibility='hidden';document.body.classList.remove('loading');AOS.init({duration:800,once:true,offset:60});},700);});
+    document.getElementById('mobile-menu-btn').addEventListener('click',()=>document.getElementById('mobile-menu').classList.toggle('hidden'));
+    document.getElementById('current-year').innerText=new Date().getFullYear();
 
-  const PILLARS=[
-    {slug:"youth-development-education",name:"Youth Development & Education",desc:"Workshops and skills — public speaking, leadership, financial and digital literacy, and the TNF Youth Academy."},
-    {slug:"opportunities-partnerships",name:"Opportunities & Partnerships",desc:"Finding, verifying and sharing scholarships, internships and exchanges — and building partnerships that open doors."},
-    {slug:"community-civic-engagement",name:"Community & Civic Engagement",desc:"District outreach, volunteering and civic education so young people understand and shape the society they live in."},
-    {slug:"innovation-entrepreneurship",name:"Innovation & Entrepreneurship",desc:"Technology, digital access and enterprise — helping young people and local businesses build and grow."},
-    {slug:"national-programs-exchanges",name:"National Programs & Exchanges",desc:"Flagship national programs connecting young Seychellois across islands, schools and the wider world."}
-  ];
-  const FLAGSHIP=[
-    {title:"TNF Model United Nations",summary:"Debate, diplomacy and public speaking in a simulated UN, open to young people nationwide.",slug:""},
-    {title:"National Youth Island Exchange",summary:"Live with a host family on another island, attend a different school, and strengthen national unity.",slug:""},
-    {title:"School Exchange Program",summary:"Spend a week at another school and share ideas on how to make school life better for everyone.",slug:""},
-    {title:"TNF Youth Academy",summary:"Practical workshops in leadership, communication, finance, technology and career readiness.",slug:""},
-    {title:"TNF Volunteer Network",summary:"A growing network of youth volunteers serving communities across Seychelles.",slug:""}
-  ];
+    const esc=s=>(s==null?'':String(s)).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+    const fmtDate=v=>v?new Intl.DateTimeFormat('en-GB',{day:'numeric',month:'short',year:'numeric'}).format(new Date(v)):'';
+    const CATS=[['scholarship','Scholarships'],['exchange','Exchanges'],['international','International'],['internship','Internships'],['university','University'],['conference','Conferences'],['competition','Competitions'],['fellowship','Fellowships'],['training','Training'],['volunteering','Volunteering'],['entrepreneurship','Entrepreneurship'],['mentorship','Mentorship']];
+    const CATLABEL=Object.fromEntries(CATS);
+    const FUND={fully_funded:'Fully funded',partially_funded:'Partially funded',self_funded:'Self-funded'};
 
-  window.addEventListener("load",()=>setTimeout(()=>$("#pre").classList.add("done"),400));
-  $("#yr").textContent=new Date().getFullYear();
-  const hd=$("#hd");
-  addEventListener("scroll",()=>{hd.classList.toggle("scrolled",scrollY>8);$("#totop").classList.toggle("show",scrollY>500);},{passive:true});
-  const mt=$("#menu-toggle");mt.addEventListener("click",()=>{const o=$("#navlinks").classList.toggle("open");mt.setAttribute("aria-expanded",o);});
-  $("#totop").addEventListener("click",()=>scrollTo({top:0,behavior:"smooth"}));
-  const io=new IntersectionObserver((es)=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target);}}),{threshold:.12});
-  const obsReveal=()=>document.querySelectorAll(".reveal:not(.in)").forEach(n=>io.observe(n));obsReveal();
+    function countUp(node,val){const m=String(val).match(/^(\d[\d,]*)(.*)$/);if(!m){node.innerText=val;return;}const end=parseInt(m[1].replace(/,/g,''),10),suf=m[2]||'';let c=0;const inc=Math.max(1,Math.round(end/40));const up=()=>{c+=inc;if(c>=end){node.innerText=end.toLocaleString()+suf;}else{node.innerText=c.toLocaleString()+suf;requestAnimationFrame(()=>setTimeout(up,26));}};up();}
 
-  /* category pills */
-  (function(){const g=$("#cat-pills");CATS.forEach(([slug,label])=>{const a=el("a","pill");a.href=`/opportunities?category=${slug}`;a.innerHTML=`${label}<span class="n" data-cat="${slug}" style="display:none"></span>`;g.appendChild(a);});})();
-  $("#hub-search").addEventListener("submit",e=>{e.preventDefault();const q=$("#hub-q").value.trim();location.href="/opportunities"+(q?`?q=${encodeURIComponent(q)}`:"");});
+    // Hub search + category pills (always available)
+    (function(){const g=document.getElementById('cat-pills');CATS.forEach(([slug,label])=>{const a=document.createElement('a');a.href=`/opportunities?category=${slug}`;a.className='inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-200 rounded-full font-semibold text-sm text-tnf-ink hover:bg-tnf-green hover:text-white hover:border-tnf-green transition-all';a.innerHTML=`${label}<span class="hidden text-xs font-bold rounded-full px-2 py-0.5 bg-tnf-greenLight text-tnf-greenDark" data-cat="${slug}"></span>`;g.appendChild(a);});})();
+    document.getElementById('hub-search').addEventListener('submit',e=>{e.preventDefault();const q=document.getElementById('hub-q').value.trim();location.href='/opportunities'+(q?`?q=${encodeURIComponent(q)}`:'');});
 
-  /* pillars (editable via departments) */
-  function renderPillars(list){
-    const g=$("#p-list");g.innerHTML="";
-    list.forEach((p,i)=>{const r=el("div","p-row");r.innerHTML=`<span class="p-num">0${i+1}</span><div><h3>${esc(p.name)}</h3><p>${esc(p.desc)}</p></div>`;g.appendChild(r);});
-  }
-  async function loadPillars(){
-    try{
-      const {data}=await db.from("departments").select("name,slug,description").order("sort_order");
-      if(data&&data.length){const merged=data.map(d=>{const f=PILLARS.find(p=>p.slug===d.slug);return{name:d.name,desc:d.description||(f?f.desc:"")};});renderPillars(merged);return;}
-    }catch(e){}
-    renderPillars(PILLARS);
-  }
+    document.addEventListener('DOMContentLoaded',()=>{
+      const wait=setInterval(()=>{
+        if(!window.supabase)return; clearInterval(wait);
+        const db=window.supabase.createClient('https://atxhlpecvpmvfsjburxw.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0eGhscGVjdnBtdmZzamJ1cnh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4NjQxNTgsImV4cCI6MjEwMTQ0MDE1OH0.FuCWx9W_R8PpbH3ErAoAsCEWuurZ3H5vbIBNcacUJcw');
 
-  /* flagship (editable via programs.is_flagship) */
-  function renderFlagship(list){
-    const g=$("#flag-grid");g.innerHTML="";
-    list.forEach(p=>{const a=el("a","flag-item");a.href=p.slug?`/programs/program?slug=${encodeURIComponent(p.slug)}`:"/programs";a.innerHTML=`<span class="flag-label">Flagship program</span><h3>${esc(p.title)}</h3><p>${esc(p.summary||"")}</p><span class="arrow-link">Learn more</span>`;g.appendChild(a);});
-    obsReveal();
-  }
-  async function loadFlagship(){
-    try{
-      const {data}=await db.from("programs").select("title,slug,summary").eq("is_flagship",true).eq("is_published",true).order("sort_order");
-      if(data&&data.length){renderFlagship(data);return;}
-    }catch(e){}
-    renderFlagship(FLAGSHIP);
-  }
+        // SITE SETTINGS (hero, mission, announcement, socials)
+        (async()=>{try{const{data:s}=await db.from('site_settings').select('*').maybeSingle();if(!s)return;
+          if(s.hero_headline)document.getElementById('hero-headline').innerText=s.hero_headline;
+          if(s.hero_subheadline)document.getElementById('hero-sub').innerText=s.hero_subheadline;
+          if(s.mission_heading)document.getElementById('mission-heading').innerText=s.mission_heading;
+          if(s.mission_text)document.getElementById('mission-text').innerText=s.mission_text;
+          if(s.announcement_active&&s.announcement_text){const b=document.getElementById('announcement-bar');b.classList.remove('hidden');b.innerHTML=s.announcement_url?`<a href="${esc(s.announcement_url)}" class="hover:underline block w-full">${esc(s.announcement_text)}</a>`:esc(s.announcement_text);}
+          const links=s.social_links||{},fs=document.getElementById('footer-social');
+          [['facebook','fa-facebook-f','#1877F2'],['instagram','fa-instagram','#E1306C'],['x','fa-x-twitter','#000'],['linkedin','fa-linkedin-in','#0A66C2'],['youtube','fa-youtube','#FF0000'],['tiktok','fa-tiktok','#000'],['threads','fa-threads','#000']].forEach(([k,ic])=>{if(links[k]){const a=document.createElement('a');a.href=links[k];a.target='_blank';a.rel='noopener';a.className='w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-tnf-green hover:scale-110 transition-all';a.setAttribute('aria-label',k);a.innerHTML=`<i class="fa-brands ${ic}"></i>`;fs.appendChild(a);}});
+        }catch(e){}})();
 
-  async function loadSettings(){
-    try{
-      const {data}=await db.from("site_settings").select("*").maybeSingle();if(!data)return;
-      if(data.hero_headline)$("#hero-h1").textContent=data.hero_headline;
-      if(data.hero_subheadline)$("#hero-sub").textContent=data.hero_subheadline;
-      if(data.announcement_active&&data.announcement_text){const a=$("#announce");a.style.display="block";a.innerHTML=esc(data.announcement_text)+(data.announcement_url?` <a href="${esc(data.announcement_url)}">Learn more</a>`:"");}
-      const links=data.social_links||{},fs=$("#foot-social");
-      [["facebook","fa-facebook-f"],["instagram","fa-instagram"],["x","fa-x-twitter"],["linkedin","fa-linkedin-in"],["youtube","fa-youtube"],["tiktok","fa-tiktok"],["threads","fa-threads"]].forEach(([k,ic])=>{if(links[k]){const a=el("a");a.href=links[k];a.target="_blank";a.rel="noopener";a.setAttribute("aria-label",k);a.innerHTML=`<i class="fa-brands ${ic}"></i>`;fs.appendChild(a);}});
-    }catch(e){}
-  }
+        // STATS (impact_stats)
+        (async()=>{try{const{data}=await db.from('impact_stats').select('label,value,is_published,sort_order').eq('is_published',true).order('sort_order').limit(4);
+          if(!data||!data.length)return;document.getElementById('stats-section').classList.remove('hidden');const g=document.getElementById('stats-grid');
+          data.forEach((s,i)=>{const d=document.createElement('div');d.setAttribute('data-aos','fade-up');d.setAttribute('data-aos-delay',i*100);d.innerHTML=`<p class="text-4xl md:text-5xl font-extrabold text-tnf-green mb-3 num">${esc(s.value)}</p><p class="text-xs text-gray-500 uppercase tracking-widest font-bold">${esc(s.label)}</p>`;g.appendChild(d);const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){countUp(en.target.querySelector('.num'),s.value);io.unobserve(en.target);}}),{threshold:.5});io.observe(d);});
+        }catch(e){}})();
 
-  async function loadOpps(){
-    const wrap=$("#opps-wrap"),list=$("#op-list");
-    try{
-      const {data,error}=await db.from("opportunities").select("title,slug,category,organization,location,deadline,funding,is_featured").eq("is_published",true).order("is_featured",{ascending:false}).order("created_at",{ascending:false}).limit(6);
-      if(error)throw error;
-      if(!data||!data.length){wrap.innerHTML=`<div class="empty"><b>New opportunities are on the way.</b><br>We're verifying the first listings now — check back soon, or <a class="arrow-link" href="/opportunities" style="display:inline-flex">submit one</a>.</div>`;return;}
-      list.innerHTML="";
-      data.forEach(o=>{const a=el("a","op-row");a.href=`/opportunities/opportunity?slug=${encodeURIComponent(o.slug)}`;const fund=FUND[o.funding]||"";const meta=[o.organization,o.location,o.deadline?"Deadline "+fmtDate(o.deadline):""].filter(Boolean).map(esc);a.innerHTML=`<div><span class="op-cat">${CATLABEL[o.category]||esc(o.category)}</span><h3>${esc(o.title)}</h3><div class="op-meta">${meta.map(m=>`<span>${m}</span>`).join("")}${fund?`<span class="fund">${fund}</span>`:""}</div></div><span class="op-go">→</span>`;list.appendChild(a);});
-    }catch(e){wrap.innerHTML=`<div class="empty">Opportunities will appear here shortly.</div>`;}
-  }
-  async function loadCounts(){
-    try{const {data}=await db.from("opportunities").select("category").eq("is_published",true).eq("status","open");if(!data)return;const t={};data.forEach(r=>t[r.category]=(t[r.category]||0)+1);let total=0;Object.entries(t).forEach(([c,n])=>{total+=n;const b=document.querySelector(`.n[data-cat="${c}"]`);if(b&&n>0){b.textContent=n;b.style.display="inline-block";}});if(total>0)$("#opp-live-txt").textContent=`${total} open right now`;}catch(e){}
-  }
-  async function loadImpact(){
-    const g=$("#impact-grid");let stats=[];
-    try{const {data}=await db.from("impact_stats").select("label,value").eq("is_published",true).order("sort_order");if(data&&data.length)stats=data;}catch(e){}
-    if(!stats.length)stats=[{value:"100+",label:"Youth Volunteers"},{value:"13–30",label:"Age Group"},{value:"12",label:"Opportunity Types"},{value:"5",label:"Flagship Programs"}];
-    g.innerHTML="";stats.slice(0,4).forEach(s=>{const d=el("div","impact-item");d.innerHTML=`<div class="num" data-v="${esc(s.value)}">${esc(s.value)}</div><div class="sep"></div><div class="lab">${esc(s.label)}</div>`;g.appendChild(d);});
-    const io2=new IntersectionObserver((es)=>es.forEach(e=>{if(e.isIntersecting){countUp(e.target.querySelector(".num"));io2.unobserve(e.target);}}),{threshold:.4});g.querySelectorAll(".impact-item").forEach(n=>io2.observe(n));
-  }
-  function countUp(node){const raw=node.dataset.v||"",m=raw.match(/^(\d+)(\D*)$/);if(!m)return;const end=+m[1],suf=m[2]||"";let cur=0;const step=Math.max(1,Math.round(end/40));const t=setInterval(()=>{cur+=step;if(cur>=end){cur=end;clearInterval(t);}node.textContent=cur+suf;},26);}
-  async function loadNews(){
-    const list=$("#news-list");
-    try{
-      const {data,error}=await db.from("news_posts").select("title,slug,excerpt,cover_url,category,published_at").eq("status","published").order("published_at",{ascending:false,nullsFirst:false}).limit(4);
-      if(error)throw error;
-      if(!data||!data.length){list.innerHTML=`<div class="empty">Foundation news and stories will appear here soon.</div>`;return;}
-      list.innerHTML="";
-      data.forEach(n=>{const a=el("a",n.cover_url?"n-row":"n-row no-img");a.href=`/news/article?slug=${encodeURIComponent(n.slug)}`;const dateline=[n.published_at?fmtDate(n.published_at):"",n.category].filter(Boolean).map(esc).join(" · ");a.innerHTML=`${n.cover_url?`<img class="thumb" src="${esc(n.cover_url)}" alt="" loading="lazy">`:""}<div><div class="n-date">${dateline||"News"}</div><h3>${esc(n.title)}</h3>${n.excerpt?`<p>${esc(n.excerpt)}</p>`:""}</div>`;list.appendChild(a);});
-    }catch(e){list.innerHTML=`<div class="empty">News will appear here soon.</div>`;}
-  }
-  async function loadEvents(){
-    const list=$("#events-list");
-    try{
-      const {data,error}=await db.from("events").select("title,slug,starts_at,location").eq("is_published",true).gte("starts_at",new Date().toISOString()).order("starts_at").limit(5);
-      if(error)throw error;
-      if(!data||!data.length){list.innerHTML=`<div class="empty">No upcoming events yet — new ones will be posted here.</div>`;return;}
-      list.innerHTML="";
-      data.forEach(ev=>{const dt=new Date(ev.starts_at);const a=el("a","e-row");a.href=`/events/event?slug=${encodeURIComponent(ev.slug)}`;a.innerHTML=`<div class="e-date"><div class="d">${dt.getDate()}</div><div class="m">${dt.toLocaleString("en-GB",{month:"short"})}</div></div><div><b>${esc(ev.title)}</b>${ev.location?`<span>${esc(ev.location)}</span>`:""}</div>`;list.appendChild(a);});
-    }catch(e){list.innerHTML=`<div class="empty">Events will appear here soon.</div>`;}
-  }
-  async function loadPartners(){
-    try{const {data}=await db.from("partners").select("name,logo_url,url").eq("is_published",true).order("sort_order").limit(12);if(!data||!data.length)return;$("#partners").style.display="block";const row=$("#partner-row");row.innerHTML="";data.forEach(p=>{const w=p.url?el("a","partner"):el("div","partner");if(p.url){w.href=p.url;w.target="_blank";w.rel="noopener";}w.innerHTML=p.logo_url?`<img src="${esc(p.logo_url)}" alt="${esc(p.name)}" loading="lazy">`:`<span class="pn">${esc(p.name)}</span>`;row.appendChild(w);});}catch(e){}
-  }
-  $("#alert-form").addEventListener("submit",async e=>{e.preventDefault();const email=$("#alert-email").value.trim(),msg=$("#alert-msg");if(!email)return;msg.textContent="Signing you up…";try{const {error}=await db.from("opportunity_alerts").insert({email});if(error)throw error;$("#alert-form").reset();msg.textContent="You're on the list — we'll be in touch when new opportunities open.";}catch(err){msg.textContent="Something went wrong. Please try again.";}});
+        // OPPORTUNITY COUNTS
+        (async()=>{try{const{data}=await db.from('opportunities').select('category').eq('is_published',true).eq('status','open');if(!data)return;const t={};data.forEach(r=>t[r.category]=(t[r.category]||0)+1);let total=0;Object.entries(t).forEach(([c,n])=>{total+=n;const b=document.querySelector(`[data-cat="${c}"]`);if(b&&n>0){b.innerText=n;b.classList.remove('hidden');}});if(total>0)document.getElementById('opp-live').innerText=`${total} open right now`;}catch(e){}})();
 
-  const ov=$("#search-overlay");let lastF=null;
-  const openOv=()=>{lastF=document.activeElement;ov.classList.add("show");setTimeout(()=>$("#ov-input").focus(),40);};
-  const closeOv=()=>{ov.classList.remove("show");$("#ov-results").innerHTML="";$("#ov-input").value="";if(lastF)lastF.focus();};
-  $("#open-search").addEventListener("click",openOv);$("#ov-close").addEventListener("click",closeOv);
-  ov.addEventListener("click",e=>{if(e.target===ov)closeOv();});
-  addEventListener("keydown",e=>{if(e.key==="Escape"&&ov.classList.contains("show"))closeOv();});
-  let gt;$("#ov-input").addEventListener("input",e=>{clearTimeout(gt);const q=e.target.value.trim();gt=setTimeout(()=>runSearch(q),250);});
-  $("#ov-form").addEventListener("submit",e=>{e.preventDefault();runSearch($("#ov-input").value.trim());});
-  async function runSearch(q){
-    const box=$("#ov-results");if(!q){box.innerHTML="";return;}box.innerHTML=`<div class="none">Searching…</div>`;const opt={type:"websearch",config:"english"};
-    const [o,n,ev,pr]=await Promise.allSettled([
-      db.from("opportunities").select("title,slug,organization").eq("is_published",true).textSearch("search_vector",q,opt).limit(5),
-      db.from("news_posts").select("title,slug,excerpt").eq("status","published").textSearch("search_vector",q,opt).limit(4),
-      db.from("events").select("title,slug,location").eq("is_published",true).textSearch("search_vector",q,opt).limit(3),
-      db.from("programs").select("title,slug,summary").eq("is_published",true).textSearch("search_vector",q,opt).limit(3)]);
-    const opps=o.value?.data||[],news=n.value?.data||[],events=ev.value?.data||[],progs=pr.value?.data||[];box.innerHTML="";
-    const grp=(label,rows,mk)=>{if(!rows.length)return;box.appendChild(el("div","grp",label));rows.forEach(r=>box.appendChild(mk(r)));};
-    grp("Opportunities",opps,r=>{const a=el("a");a.href=`/opportunities/opportunity?slug=${encodeURIComponent(r.slug)}`;a.innerHTML=`<b>${esc(r.title)}</b>${r.organization?`<span>${esc(r.organization)}</span>`:""}`;return a;});
-    grp("Programs",progs,r=>{const a=el("a");a.href=`/programs/program?slug=${encodeURIComponent(r.slug)}`;a.innerHTML=`<b>${esc(r.title)}</b>${r.summary?`<span>${esc(r.summary)}</span>`:""}`;return a;});
-    grp("Newsroom",news,r=>{const a=el("a");a.href=`/news/article?slug=${encodeURIComponent(r.slug)}`;a.innerHTML=`<b>${esc(r.title)}</b>${r.excerpt?`<span>${esc(r.excerpt)}</span>`:""}`;return a;});
-    grp("Events",events,r=>{const a=el("a");a.href=`/events/event?slug=${encodeURIComponent(r.slug)}`;a.innerHTML=`<b>${esc(r.title)}</b>${r.location?`<span>${esc(r.location)}</span>`:""}`;return a;});
-    if(!opps.length&&!news.length&&!events.length&&!progs.length)box.innerHTML=`<div class="none">No results for “${esc(q)}”. Try the Opportunity Hub.</div>`;
-  }
+        // PILLARS (departments)
+        (async()=>{try{const{data}=await db.from('departments').select('name,slug,description,sort_order').order('sort_order');
+          if(!data||!data.length)return;document.getElementById('pillars-section').classList.remove('hidden');const g=document.getElementById('pillars-grid');
+          data.forEach((p,i)=>{const d=document.createElement('div');d.className='py-8 border-t border-gray-100';d.setAttribute('data-aos','fade-up');d.setAttribute('data-aos-delay',(i%3)*100);d.innerHTML=`<div class="text-2xl font-extrabold text-tnf-green mb-3">0${i+1}</div><h3 class="text-xl font-bold text-tnf-ink mb-2">${esc(p.name)}</h3>${p.description?`<p class="text-gray-500 text-sm leading-relaxed">${esc(p.description)}</p>`:''}`;g.appendChild(d);});
+        }catch(e){}})();
 
-  loadSettings();loadPillars();loadFlagship();loadOpps();loadCounts();loadImpact();loadNews();loadEvents();loadPartners();
+        // LATEST OPPORTUNITIES
+        (async()=>{const box=document.getElementById('opps-container'),st=document.getElementById('opps-status');
+          try{const{data,error}=await db.from('opportunities').select('title,slug,category,organization,location,deadline,funding,is_featured').eq('is_published',true).order('is_featured',{ascending:false}).order('created_at',{ascending:false}).limit(6);
+            if(error)throw error;
+            if(!data||!data.length){st.innerText='New opportunities are being verified — check back soon.';return;}
+            box.innerHTML=data.map((o,i)=>{const fund=FUND[o.funding]||'';const meta=[o.organization,o.location].filter(Boolean).map(esc).join(' · ');return `<a href="/opportunities/opportunity?slug=${encodeURIComponent(o.slug)}" class="block bg-white rounded-2xl border border-gray-100 p-7 shadow-sm hover:shadow-lg transition-all transform hover:-translate-y-1 border-t-4 border-t-tnf-green group" data-aos="fade-up" data-aos-delay="${(i%3)*100}"><p class="text-xs text-tnf-greenDark font-bold uppercase tracking-wider mb-3">${CATLABEL[o.category]||esc(o.category)}</p><h3 class="text-lg font-bold text-tnf-ink mb-2 group-hover:text-tnf-green transition-colors leading-snug">${esc(o.title)}</h3><p class="text-gray-500 text-sm mb-4">${meta}</p><div class="flex items-center justify-between text-sm pt-3 border-t border-gray-100">${o.deadline?`<span class="text-gray-400"><i class="fa-regular fa-clock mr-1"></i>${fmtDate(o.deadline)}</span>`:'<span></span>'}${fund?`<span class="font-semibold text-tnf-green">${fund}</span>`:''}</div></a>`;}).join('');
+          }catch(e){st.innerText='Opportunities will appear here soon.';}})();
+
+        // FLAGSHIP PROGRAMS
+        (async()=>{try{const{data}=await db.from('programs').select('title,slug,summary,is_flagship').eq('is_flagship',true).eq('is_published',true).order('sort_order').limit(6);
+          if(!data||!data.length)return;document.getElementById('programs-section').classList.remove('hidden');const g=document.getElementById('programs-grid');
+          g.innerHTML=data.map((p,i)=>`<a href="/programs/program?slug=${encodeURIComponent(p.slug)}" class="block bg-white rounded-2xl border border-gray-100 p-8 shadow-sm hover:shadow-lg transition-all transform hover:-translate-y-1 group" data-aos="fade-up" data-aos-delay="${(i%3)*100}"><h3 class="text-xl font-bold text-tnf-ink mb-3 group-hover:text-tnf-green transition-colors">${esc(p.title)}</h3><p class="text-gray-500 text-sm leading-relaxed mb-4">${esc(p.summary||'')}</p><span class="text-tnf-green font-bold text-sm flex items-center">Learn more <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i></span></a>`).join('');
+        }catch(e){}})();
+
+        // NEWS
+        (async()=>{const box=document.getElementById('news-container'),st=document.getElementById('news-status');
+          try{const{data,error}=await db.from('news_posts').select('title,slug,excerpt,cover_url,category,published_at').eq('status','published').order('published_at',{ascending:false,nullsFirst:false}).limit(4);
+            if(error)throw error;if(!data||!data.length){st.innerText='Foundation news will appear here soon.';return;}
+            box.innerHTML=data.map((n,i)=>`<a href="/news/article?slug=${encodeURIComponent(n.slug)}" class="block bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-lg transition-all transform hover:-translate-y-1 group" data-aos="fade-up" data-aos-delay="${(i%2)*100}">${n.cover_url?`<div class="h-40 overflow-hidden"><img src="${esc(n.cover_url)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt=""></div>`:''}<div class="p-6"><p class="text-xs text-tnf-greenDark font-bold uppercase tracking-wider mb-2">${esc(n.category||'News')} · ${fmtDate(n.published_at)}</p><h3 class="text-base font-bold text-tnf-ink mb-2 group-hover:text-tnf-green transition-colors leading-snug">${esc(n.title)}</h3>${n.excerpt?`<p class="text-gray-500 text-sm leading-relaxed line-clamp-2">${esc(n.excerpt)}</p>`:''}</div></a>`).join('');
+          }catch(e){st.innerText='News will appear here soon.';}})();
+
+        // EVENTS
+        (async()=>{const box=document.getElementById('events-container'),st=document.getElementById('events-status');
+          try{const{data,error}=await db.from('events').select('title,slug,starts_at,location').eq('is_published',true).gte('starts_at',new Date().toISOString()).order('starts_at').limit(5);
+            if(error)throw error;if(!data||!data.length){st.innerText='No upcoming events yet.';return;}
+            box.innerHTML=data.map(ev=>{const dt=new Date(ev.starts_at);return `<a href="/events/event?slug=${encodeURIComponent(ev.slug)}" class="flex gap-4 items-center py-4 border-b border-gray-100 hover:bg-gray-50 -mx-2 px-2 rounded-lg transition-colors group"><div class="text-center flex-none w-12"><div class="text-2xl font-extrabold text-tnf-green leading-none">${dt.getDate()}</div><div class="text-xs font-bold text-gray-400 uppercase">${dt.toLocaleString('en-GB',{month:'short'})}</div></div><div><div class="font-bold text-tnf-ink text-sm group-hover:text-tnf-green transition-colors">${esc(ev.title)}</div>${ev.location?`<div class="text-gray-400 text-xs mt-0.5">${esc(ev.location)}</div>`:''}</div></a>`;}).join('');
+          }catch(e){st.innerText='Events will appear here soon.';}})();
+
+        // PARTNERS
+        (async()=>{try{const{data}=await db.from('partners').select('name,logo_url,url').eq('is_published',true).order('sort_order').limit(12);
+          if(!data||!data.length)return;document.getElementById('partners-section').classList.remove('hidden');const g=document.getElementById('partners-grid');
+          g.innerHTML=data.map(p=>{const inner=p.logo_url?`<img src="${esc(p.logo_url)}" alt="${esc(p.name)}" class="max-h-12 max-w-[140px] object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all">`:`<span class="font-bold text-tnf-ink">${esc(p.name)}</span>`;return p.url?`<a href="${esc(p.url)}" target="_blank" rel="noopener">${inner}</a>`:`<div>${inner}</div>`;}).join('');
+        }catch(e){}})();
+
+        // ALERTS
+        document.getElementById('alert-form').addEventListener('submit',async e=>{e.preventDefault();const email=document.getElementById('alert-email').value.trim(),msg=document.getElementById('alert-msg');if(!email)return;msg.innerText='Signing you up…';try{const{error}=await db.from('opportunity_alerts').insert({email});if(error)throw error;document.getElementById('alert-form').reset();msg.innerText="You're on the list — we'll be in touch.";}catch(err){msg.innerText='Something went wrong. Please try again.';}});
+
+      },80);
+    });
   </script>
 </body>
 </html>
