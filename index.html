@@ -328,7 +328,7 @@
     document.addEventListener('DOMContentLoaded',()=>{
       const wait=setInterval(()=>{
         if(!window.supabase)return; clearInterval(wait);
-        const db=window.supabase.createClient('https://atxhlpecvpmvfsjburxw.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0eGhscGVjdnBtdmZzamJ1cnh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4NjQxNTgsImV4cCI6MjEwMTQ0MDE1OH0.FuCWx9W_R8PpbH3ErAoAsCEWuurZ3H5vbIBNcacUJcw');
+        const db=window.supabase.createClient('https://mcnemlwalcgdlmclijxc.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jbmVtbHdhbGNnZGxtY2xpanhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5NDMzNTAsImV4cCI6MjEwMjUxOTM1MH0.jVPTsfz7Htho4EZKvHzlgr1vSkj41EuVpMBgaHzLm-Q');
 
         // SITE SETTINGS
         (async()=>{try{const{data:s}=await db.from('site_settings').select('*').maybeSingle();if(!s)return;
