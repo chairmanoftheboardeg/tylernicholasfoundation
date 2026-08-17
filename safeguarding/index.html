@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Safeguarding | Tyler Nicholas Foundation</title>
-  <meta name="description" content="Keeping young people safe is our first responsibility. Read the Tyler Nicholas Foundation's safeguarding commitment, our principles, and how to report a concern — confidentially, and anonymously if you wish." />
+  <meta name="description" content="Keeping young people safe is our first responsibility. Read the Tyler Nicholas Foundation's safeguarding commitment and report a concern — confidentially, and anonymously if you wish." />
   <link rel="icon" href="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" />
 
   <script src="https://cdn.tailwindcss.com"></script>
@@ -30,6 +30,9 @@
     @keyframes spin{to{transform:rotate(360deg)}}
     .page-hero{background:linear-gradient(120deg,#0E1A13 0%,#152219 45%,#26863A 130%)}
     ::-webkit-scrollbar{width:9px}::-webkit-scrollbar-track{background:#eef2ee}::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:5px}::-webkit-scrollbar-thumb:hover{background:#2E9E44}
+    .urg input{position:absolute;opacity:0}
+    .urg label{cursor:pointer}
+    .urg input:checked + label{background:#152219;color:#fff;border-color:#152219}
   </style>
 </head>
 <body class="font-sans text-gray-900 flex flex-col min-h-screen loading">
@@ -81,160 +84,157 @@
   <main class="flex-grow w-full">
 
     <!-- HERO -->
-    <header class="page-hero w-full py-24 md:py-28 px-4">
-      <div class="max-w-4xl mx-auto text-center text-white" data-aos="fade-up">
-        <div class="inline-flex items-center gap-2.5 text-white/80 text-xs font-bold tracking-[.18em] uppercase mb-5 justify-center"><span class="w-7 h-0.5 bg-tnf-green"></span> Keeping young people safe</div>
+    <header class="page-hero w-full py-28 md:py-32 px-4">
+      <div class="max-w-3xl mx-auto text-center text-white" data-aos="fade-up">
         <h1 class="text-4xl md:text-6xl font-extrabold mb-6 leading-tight">Safeguarding</h1>
-        <p class="text-lg md:text-xl text-white/85 max-w-2xl mx-auto font-light">Because we work with young people, keeping them safe is our first responsibility — before any programme, event or opportunity.</p>
-        <div class="mt-8"><a href="#report" class="inline-flex items-center gap-2 bg-white text-tnf-ink font-bold py-3 px-7 rounded-lg hover:bg-gray-100 transition-colors shadow-lg"><i class="fa-solid fa-flag"></i> Report a concern</a></div>
-        <nav class="mt-8 text-sm text-white/60 font-medium"><a href="/" class="hover:text-white">Home</a> <span class="mx-2">/</span> <span class="text-white">Safeguarding</span></nav>
+        <p class="text-lg md:text-xl text-white/85 max-w-2xl mx-auto font-light leading-relaxed">Because we work with young people, keeping them safe is our first responsibility — before any programme, event or opportunity.</p>
+        <div class="mt-10"><a href="#report" class="inline-flex items-center gap-2 bg-tnf-green hover:bg-tnf-greenDark text-white font-bold py-3.5 px-8 rounded-lg transition-colors shadow-lg">Report a concern</a></div>
       </div>
     </header>
 
-    <!-- EMERGENCY BANNER -->
-    <section class="w-full px-4 -mt-10 relative z-10">
-      <div class="max-w-5xl mx-auto" data-aos="fade-up">
-        <div class="bg-white border border-rose-200 border-l-[6px] border-l-rose-500 rounded-2xl shadow-lg p-6 md:p-7 flex flex-col md:flex-row items-start md:items-center gap-5">
-          <div class="w-14 h-14 rounded-2xl bg-rose-500 text-white grid place-items-center text-2xl flex-none"><i class="fa-solid fa-triangle-exclamation"></i></div>
+    <!-- EMERGENCY -->
+    <section class="w-full px-4 -mt-12 relative z-10">
+      <div class="max-w-4xl mx-auto" data-aos="fade-up">
+        <div class="bg-red-600 text-white rounded-2xl shadow-xl p-7 md:p-8 flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
+          <i class="fa-solid fa-triangle-exclamation text-3xl md:text-4xl flex-none"></i>
           <div class="flex-1">
-            <h2 class="text-lg font-extrabold text-rose-700 mb-1">If a child is in immediate danger, act now</h2>
-            <p class="text-gray-600 leading-relaxed">Do not wait to use this page. Contact the <strong class="text-tnf-ink">Police on 999</strong> (or your nearest police station) immediately, and make sure the young person is safe. This page is not monitored around the clock and should not be used to report an emergency.</p>
+            <h2 class="text-lg md:text-xl font-extrabold mb-1">If a child is in immediate danger, act now</h2>
+            <p class="text-white/90 leading-relaxed">Contact the Police on <strong>999</strong> immediately and make sure the young person is safe. This page is not monitored around the clock and must not be used to report an emergency.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- OUR COMMITMENT -->
-    <section class="w-full bg-white border-b border-gray-100 py-24 mt-14">
-      <div class="max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-5 gap-12 items-start">
-        <div class="lg:col-span-2" data-aos="fade-right">
-          <div class="inline-flex items-center gap-2.5 text-gray-400 text-xs font-bold tracking-[.18em] uppercase mb-5"><span class="w-7 h-0.5 bg-tnf-green"></span> Our commitment</div>
-          <h2 class="text-3xl md:text-4xl font-bold text-tnf-ink leading-tight">The welfare of every young person comes first</h2>
-        </div>
-        <div id="commitment-body" class="lg:col-span-3 text-gray-600 leading-relaxed space-y-4 text-lg" data-aos="fade-left">
-          <p>The Tyler Nicholas Foundation is committed to protecting the young people who take part in our programmes, events and opportunities. We believe every young person — whatever their age, background, ability, gender, religion or circumstances — has the right to be safe and to be treated with dignity and respect.</p>
+    <!-- COMMITMENT -->
+    <section class="w-full py-28">
+      <div class="max-w-3xl mx-auto px-4 text-center">
+        <h2 class="text-3xl md:text-5xl font-bold text-tnf-ink mb-8 leading-tight" data-aos="fade-up">The welfare of every young person comes first</h2>
+        <div id="commitment-body" class="text-lg text-gray-600 leading-relaxed space-y-6" data-aos="fade-up">
+          <p>The Tyler Nicholas Foundation is committed to protecting the young people who take part in our programmes, events and opportunities. Every young person — whatever their age, background, ability, gender, religion or circumstances — has the right to be safe and to be treated with dignity and respect.</p>
           <p>Safeguarding is not a single policy or a box to tick. It is a responsibility shared by everyone connected to the Foundation — our Board, staff, volunteers, partners and members. We take every concern seriously, we listen to young people, and we act.</p>
-          <p>This page explains the principles we work by, what we do in practice, and how anyone can raise a concern — confidentially, and anonymously if they wish.</p>
         </div>
       </div>
     </section>
 
     <!-- PRINCIPLES -->
-    <section class="w-full py-24">
+    <section class="w-full bg-white border-y border-gray-100 py-28">
       <div class="max-w-6xl mx-auto px-4">
-        <div class="text-center mb-16" data-aos="fade-up">
-          <div class="inline-flex items-center gap-2.5 text-gray-400 text-xs font-bold tracking-[.18em] uppercase mb-5 justify-center"><span class="w-7 h-0.5 bg-tnf-green"></span> What we believe</div>
+        <div class="max-w-2xl mb-16" data-aos="fade-up">
           <h2 class="text-3xl md:text-4xl font-bold text-tnf-ink mb-4">Our safeguarding principles</h2>
-          <p class="text-lg text-gray-500 max-w-2xl mx-auto">The beliefs that guide how we protect young people in everything we do.</p>
+          <p class="text-lg text-gray-500 leading-relaxed">The commitments that guide how we protect young people in everything we do.</p>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8" data-aos="fade-up"><div class="w-11 h-11 rounded-xl bg-tnf-greenLight text-tnf-green grid place-items-center text-lg mb-4"><i class="fa-solid fa-child-reaching"></i></div><h3 class="text-lg font-bold text-tnf-ink mb-2">The child comes first</h3><p class="text-gray-500 text-sm leading-relaxed">The welfare and safety of the young person is always our first and overriding concern.</p></div>
-          <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8" data-aos="fade-up" data-aos-delay="100"><div class="w-11 h-11 rounded-xl bg-tnf-greenLight text-tnf-green grid place-items-center text-lg mb-4"><i class="fa-solid fa-scale-balanced"></i></div><h3 class="text-lg font-bold text-tnf-ink mb-2">Protection for all</h3><p class="text-gray-500 text-sm leading-relaxed">Every young person has an equal right to protection from harm, abuse and neglect.</p></div>
-          <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8" data-aos="fade-up" data-aos-delay="200"><div class="w-11 h-11 rounded-xl bg-tnf-greenLight text-tnf-green grid place-items-center text-lg mb-4"><i class="fa-solid fa-users"></i></div><h3 class="text-lg font-bold text-tnf-ink mb-2">Everyone's responsibility</h3><p class="text-gray-500 text-sm leading-relaxed">Keeping young people safe is the shared duty of our Board, staff, volunteers and partners.</p></div>
-          <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8" data-aos="fade-up"><div class="w-11 h-11 rounded-xl bg-tnf-greenLight text-tnf-green grid place-items-center text-lg mb-4"><i class="fa-solid fa-ear-listen"></i></div><h3 class="text-lg font-bold text-tnf-ink mb-2">We listen</h3><p class="text-gray-500 text-sm leading-relaxed">Young people are heard. We take what they tell us seriously and never dismiss a concern.</p></div>
-          <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8" data-aos="fade-up" data-aos-delay="100"><div class="w-11 h-11 rounded-xl bg-tnf-greenLight text-tnf-green grid place-items-center text-lg mb-4"><i class="fa-solid fa-bolt"></i></div><h3 class="text-lg font-bold text-tnf-ink mb-2">We act promptly</h3><p class="text-gray-500 text-sm leading-relaxed">Concerns are responded to quickly and appropriately, including involving the authorities when needed.</p></div>
-          <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8" data-aos="fade-up" data-aos-delay="200"><div class="w-11 h-11 rounded-xl bg-tnf-greenLight text-tnf-green grid place-items-center text-lg mb-4"><i class="fa-solid fa-lock"></i></div><h3 class="text-lg font-bold text-tnf-ink mb-2">Handled with care</h3><p class="text-gray-500 text-sm leading-relaxed">Information is kept confidential and shared only with those who need it to keep a child safe.</p></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-12">
+          <div class="flex gap-5" data-aos="fade-up"><div class="text-tnf-green text-2xl mt-1 flex-none w-8"><i class="fa-solid fa-child-reaching"></i></div><div><h3 class="text-lg font-bold text-tnf-ink mb-2">The child comes first</h3><p class="text-gray-500 leading-relaxed">The welfare and safety of the young person is always our first and overriding concern.</p></div></div>
+          <div class="flex gap-5" data-aos="fade-up" data-aos-delay="60"><div class="text-tnf-green text-2xl mt-1 flex-none w-8"><i class="fa-solid fa-scale-balanced"></i></div><div><h3 class="text-lg font-bold text-tnf-ink mb-2">Protection for all</h3><p class="text-gray-500 leading-relaxed">Every young person has an equal right to protection from harm, abuse and neglect.</p></div></div>
+          <div class="flex gap-5" data-aos="fade-up"><div class="text-tnf-green text-2xl mt-1 flex-none w-8"><i class="fa-solid fa-people-group"></i></div><div><h3 class="text-lg font-bold text-tnf-ink mb-2">Everyone's responsibility</h3><p class="text-gray-500 leading-relaxed">Keeping young people safe is the shared duty of our Board, staff, volunteers and partners.</p></div></div>
+          <div class="flex gap-5" data-aos="fade-up" data-aos-delay="60"><div class="text-tnf-green text-2xl mt-1 flex-none w-8"><i class="fa-solid fa-ear-listen"></i></div><div><h3 class="text-lg font-bold text-tnf-ink mb-2">We listen</h3><p class="text-gray-500 leading-relaxed">Young people are heard. We take what they tell us seriously and never dismiss a concern.</p></div></div>
+          <div class="flex gap-5" data-aos="fade-up"><div class="text-tnf-green text-2xl mt-1 flex-none w-8"><i class="fa-solid fa-bolt"></i></div><div><h3 class="text-lg font-bold text-tnf-ink mb-2">We act promptly</h3><p class="text-gray-500 leading-relaxed">Concerns are responded to quickly and appropriately, including involving the authorities when needed.</p></div></div>
+          <div class="flex gap-5" data-aos="fade-up" data-aos-delay="60"><div class="text-tnf-green text-2xl mt-1 flex-none w-8"><i class="fa-solid fa-lock"></i></div><div><h3 class="text-lg font-bold text-tnf-ink mb-2">Handled with care</h3><p class="text-gray-500 leading-relaxed">Information is kept confidential and shared only with those who need it to keep a child safe.</p></div></div>
         </div>
       </div>
     </section>
 
     <!-- IN PRACTICE -->
-    <section class="w-full bg-white border-y border-gray-100 py-24">
+    <section class="w-full py-28">
       <div class="max-w-5xl mx-auto px-4">
-        <div class="text-center mb-14" data-aos="fade-up">
-          <div class="inline-flex items-center gap-2.5 text-gray-400 text-xs font-bold tracking-[.18em] uppercase mb-5 justify-center"><span class="w-7 h-0.5 bg-tnf-green"></span> In practice</div>
+        <div class="max-w-2xl mb-14" data-aos="fade-up">
           <h2 class="text-3xl md:text-4xl font-bold text-tnf-ink mb-4">What we do to keep young people safe</h2>
+          <p class="text-lg text-gray-500 leading-relaxed">Safeguarding runs through how we recruit, train and operate.</p>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-5" data-aos="fade-up">
-          <div class="flex gap-4"><i class="fa-solid fa-circle-check text-tnf-green text-lg mt-1"></i><p class="text-gray-600"><strong class="text-tnf-ink">Safe recruitment.</strong> Anyone working with young people is carefully selected, with references and checks appropriate to their role.</p></div>
-          <div class="flex gap-4"><i class="fa-solid fa-circle-check text-tnf-green text-lg mt-1"></i><p class="text-gray-600"><strong class="text-tnf-ink">A clear code of conduct.</strong> Everyone connected to the Foundation agrees to standards of behaviour that protect young people.</p></div>
-          <div class="flex gap-4"><i class="fa-solid fa-circle-check text-tnf-green text-lg mt-1"></i><p class="text-gray-600"><strong class="text-tnf-ink">A Designated Safeguarding Lead.</strong> A named person is responsible for safeguarding, whom concerns can be reported to.</p></div>
-          <div class="flex gap-4"><i class="fa-solid fa-circle-check text-tnf-green text-lg mt-1"></i><p class="text-gray-600"><strong class="text-tnf-ink">Training &amp; awareness.</strong> Our people understand how to recognise, respond to and report a safeguarding concern.</p></div>
-          <div class="flex gap-4"><i class="fa-solid fa-circle-check text-tnf-green text-lg mt-1"></i><p class="text-gray-600"><strong class="text-tnf-ink">Appropriate supervision.</strong> Activities involving young people are planned and supervised with their safety in mind.</p></div>
-          <div class="flex gap-4"><i class="fa-solid fa-circle-check text-tnf-green text-lg mt-1"></i><p class="text-gray-600"><strong class="text-tnf-ink">Clear reporting routes.</strong> Simple, well-known ways for anyone to raise a concern — including this page.</p></div>
-          <div class="flex gap-4"><i class="fa-solid fa-circle-check text-tnf-green text-lg mt-1"></i><p class="text-gray-600"><strong class="text-tnf-ink">Confidential records.</strong> Safeguarding information is stored securely and shared only on a need-to-know basis.</p></div>
-          <div class="flex gap-4"><i class="fa-solid fa-circle-check text-tnf-green text-lg mt-1"></i><p class="text-gray-600"><strong class="text-tnf-ink">Working with authorities.</strong> We cooperate fully with the police, social services and child-protection agencies.</p></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-6" data-aos="fade-up">
+          <div class="flex gap-4 py-2"><i class="fa-solid fa-check text-tnf-green mt-1.5"></i><p class="text-gray-600 leading-relaxed"><strong class="text-tnf-ink">Safe recruitment</strong> — anyone working with young people is carefully selected, with references and checks appropriate to their role.</p></div>
+          <div class="flex gap-4 py-2"><i class="fa-solid fa-check text-tnf-green mt-1.5"></i><p class="text-gray-600 leading-relaxed"><strong class="text-tnf-ink">A clear code of conduct</strong> — everyone agrees to standards of behaviour that protect young people.</p></div>
+          <div class="flex gap-4 py-2"><i class="fa-solid fa-check text-tnf-green mt-1.5"></i><p class="text-gray-600 leading-relaxed"><strong class="text-tnf-ink">A Designated Safeguarding Lead</strong> — a named person is responsible for safeguarding and receives concerns.</p></div>
+          <div class="flex gap-4 py-2"><i class="fa-solid fa-check text-tnf-green mt-1.5"></i><p class="text-gray-600 leading-relaxed"><strong class="text-tnf-ink">Training &amp; awareness</strong> — our people know how to recognise, respond to and report a concern.</p></div>
+          <div class="flex gap-4 py-2"><i class="fa-solid fa-check text-tnf-green mt-1.5"></i><p class="text-gray-600 leading-relaxed"><strong class="text-tnf-ink">Appropriate supervision</strong> — activities involving young people are planned with their safety in mind.</p></div>
+          <div class="flex gap-4 py-2"><i class="fa-solid fa-check text-tnf-green mt-1.5"></i><p class="text-gray-600 leading-relaxed"><strong class="text-tnf-ink">Confidential records</strong> — safeguarding information is stored securely and shared only on a need-to-know basis.</p></div>
+          <div class="flex gap-4 py-2"><i class="fa-solid fa-check text-tnf-green mt-1.5"></i><p class="text-gray-600 leading-relaxed"><strong class="text-tnf-ink">Clear reporting routes</strong> — simple, well-known ways for anyone to raise a concern, including this page.</p></div>
+          <div class="flex gap-4 py-2"><i class="fa-solid fa-check text-tnf-green mt-1.5"></i><p class="text-gray-600 leading-relaxed"><strong class="text-tnf-ink">Working with authorities</strong> — we cooperate fully with the police and child-protection agencies.</p></div>
         </div>
       </div>
     </section>
 
-    <!-- REPORT A CONCERN + FORM -->
-    <section id="report" class="w-full py-24 scroll-mt-24">
-      <div class="max-w-5xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-5 gap-12 items-start">
-        <div class="lg:col-span-2" data-aos="fade-right">
-          <div class="inline-flex items-center gap-2.5 text-gray-400 text-xs font-bold tracking-[.18em] uppercase mb-5"><span class="w-7 h-0.5 bg-tnf-green"></span> Report a concern</div>
-          <h2 class="text-3xl md:text-4xl font-bold text-tnf-ink mb-5 leading-tight">Something not right? Tell us.</h2>
-          <div class="text-gray-600 leading-relaxed space-y-4">
-            <p>If you're worried about the safety or wellbeing of a young person connected to the Foundation — or about the behaviour of anyone involved with us — please let us know. You can be a young person, a parent, a volunteer, or a member of the public.</p>
-            <p class="flex gap-3"><i class="fa-solid fa-user-secret text-tnf-green mt-1"></i> <span>You can report <strong class="text-tnf-ink">anonymously</strong> — just leave your name and email blank.</span></p>
-            <p class="flex gap-3"><i class="fa-solid fa-shield-halved text-tnf-green mt-1"></i> <span>Reports are treated <strong class="text-tnf-ink">confidentially</strong> and seen only by our safeguarding team.</span></p>
-            <p class="flex gap-3"><i class="fa-solid fa-clipboard-check text-tnf-green mt-1"></i> <span><strong class="text-tnf-ink">What happens next:</strong> our Designated Safeguarding Lead reviews every report, assesses it, and takes appropriate action — which may include contacting the authorities.</span></p>
-          </div>
-          <div class="mt-6 bg-rose-50 border border-rose-100 rounded-xl p-4 text-sm text-rose-700"><i class="fa-solid fa-triangle-exclamation mr-1"></i> In an emergency, always call the Police on <strong>999</strong> first — do not rely on this form.</div>
-        </div>
+    <!-- REPORT -->
+    <section id="report" class="w-full bg-white border-t border-gray-100 py-28 scroll-mt-20">
+      <div class="max-w-2xl mx-auto px-4 text-center mb-12" data-aos="fade-up">
+        <h2 class="text-3xl md:text-5xl font-bold text-tnf-ink mb-5 leading-tight">Report a concern</h2>
+        <p class="text-lg text-gray-500 leading-relaxed">If you're worried about the safety or wellbeing of a young person connected to the Foundation, tell us. You can be a young person, a parent, a volunteer, or a member of the public.</p>
+      </div>
 
-        <div class="lg:col-span-3" data-aos="fade-left">
-          <form id="safeguard-form" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 space-y-5">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <div>
-                <label for="sg-name" class="block text-sm font-bold text-tnf-ink mb-2">Your name <span class="text-gray-400 font-normal">(optional)</span></label>
-                <input id="sg-name" type="text" class="w-full border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-tnf-green transition-colors" placeholder="Leave blank to stay anonymous" />
-              </div>
-              <div>
-                <label for="sg-email" class="block text-sm font-bold text-tnf-ink mb-2">Your email <span class="text-gray-400 font-normal">(optional)</span></label>
-                <input id="sg-email" type="email" class="w-full border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-tnf-green transition-colors" placeholder="If you'd like us to follow up" />
-              </div>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <div>
-                <label for="sg-subject" class="block text-sm font-bold text-tnf-ink mb-2">Subject</label>
-                <input id="sg-subject" type="text" class="w-full border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-tnf-green transition-colors" placeholder="Brief summary of your concern" />
-              </div>
-              <div>
-                <label for="sg-severity" class="block text-sm font-bold text-tnf-ink mb-2">How urgent is it?</label>
-                <select id="sg-severity" class="w-full border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-tnf-green transition-colors bg-white">
-                  <option value="normal">Standard concern</option>
-                  <option value="high">Serious — needs attention soon</option>
-                  <option value="urgent">Urgent — a young person may be at risk</option>
-                  <option value="low">Minor / for your awareness</option>
-                </select>
-              </div>
+      <div class="max-w-4xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12" data-aos="fade-up">
+        <div class="text-center px-4"><div class="text-tnf-green text-xl mb-3"><i class="fa-solid fa-user-secret"></i></div><h3 class="font-bold text-tnf-ink text-sm mb-1">Anonymous if you wish</h3><p class="text-gray-500 text-sm leading-relaxed">Leave your name and email blank.</p></div>
+        <div class="text-center px-4 sm:border-x border-gray-100"><div class="text-tnf-green text-xl mb-3"><i class="fa-solid fa-shield-halved"></i></div><h3 class="font-bold text-tnf-ink text-sm mb-1">Kept confidential</h3><p class="text-gray-500 text-sm leading-relaxed">Seen only by our safeguarding team.</p></div>
+        <div class="text-center px-4"><div class="text-tnf-green text-xl mb-3"><i class="fa-solid fa-clipboard-check"></i></div><h3 class="font-bold text-tnf-ink text-sm mb-1">Reviewed &amp; acted on</h3><p class="text-gray-500 text-sm leading-relaxed">Assessed by our Safeguarding Lead.</p></div>
+      </div>
+
+      <div class="max-w-2xl mx-auto px-4" data-aos="fade-up">
+        <form id="safeguard-form" class="bg-white rounded-3xl border border-gray-200 shadow-[0_20px_60px_-30px_rgba(21,34,25,.25)] p-8 md:p-11 space-y-7">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-7">
+            <div>
+              <label for="sg-name" class="block text-sm font-semibold text-tnf-ink mb-2.5">Your name <span class="text-gray-400 font-normal">· optional</span></label>
+              <input id="sg-name" type="text" class="w-full border border-gray-200 rounded-xl px-4 py-3.5 outline-none focus:border-tnf-green focus:ring-4 focus:ring-tnf-green/10 transition-all" placeholder="Leave blank to stay anonymous" />
             </div>
             <div>
-              <label for="sg-details" class="block text-sm font-bold text-tnf-ink mb-2">What's your concern? <span class="text-tnf-green">*</span></label>
-              <textarea id="sg-details" required rows="6" class="w-full border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-tnf-green transition-colors resize-y" placeholder="Tell us what happened, who is involved, and anything else that would help us understand and respond. Share only what you feel comfortable sharing."></textarea>
+              <label for="sg-email" class="block text-sm font-semibold text-tnf-ink mb-2.5">Your email <span class="text-gray-400 font-normal">· optional</span></label>
+              <input id="sg-email" type="email" class="w-full border border-gray-200 rounded-xl px-4 py-3.5 outline-none focus:border-tnf-green focus:ring-4 focus:ring-tnf-green/10 transition-all" placeholder="If you'd like us to follow up" />
             </div>
-            <div class="flex flex-col sm:flex-row items-center gap-4">
-              <button type="submit" id="sg-submit" class="bg-tnf-green hover:bg-tnf-greenDark text-white font-bold py-3.5 px-8 rounded-xl transition-colors shadow-sm w-full sm:w-auto"><i class="fa-solid fa-paper-plane mr-2"></i> Submit report</button>
-              <p id="sg-msg" class="font-semibold text-sm min-h-[1.2em]"></p>
+          </div>
+
+          <div>
+            <label for="sg-subject" class="block text-sm font-semibold text-tnf-ink mb-2.5">Subject</label>
+            <input id="sg-subject" type="text" class="w-full border border-gray-200 rounded-xl px-4 py-3.5 outline-none focus:border-tnf-green focus:ring-4 focus:ring-tnf-green/10 transition-all" placeholder="A brief summary of your concern" />
+          </div>
+
+          <div>
+            <span class="block text-sm font-semibold text-tnf-ink mb-3">How urgent is it?</span>
+            <div class="urg grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+              <input type="radio" name="urgency" id="u-low" value="low"><label for="u-low" class="block text-center text-sm font-semibold border border-gray-200 rounded-xl py-3 transition-all hover:border-tnf-green">Minor</label>
+              <input type="radio" name="urgency" id="u-normal" value="normal" checked><label for="u-normal" class="block text-center text-sm font-semibold border border-gray-200 rounded-xl py-3 transition-all hover:border-tnf-green">Standard</label>
+              <input type="radio" name="urgency" id="u-high" value="high"><label for="u-high" class="block text-center text-sm font-semibold border border-gray-200 rounded-xl py-3 transition-all hover:border-tnf-green">Serious</label>
+              <input type="radio" name="urgency" id="u-urgent" value="urgent"><label for="u-urgent" class="block text-center text-sm font-semibold border border-gray-200 rounded-xl py-3 transition-all hover:border-tnf-green">Urgent</label>
             </div>
-            <p class="text-xs text-gray-400 leading-relaxed">Your report is sent securely to the Foundation's safeguarding team. Please do not include more personal detail about a child than is necessary for us to act.</p>
-          </form>
-        </div>
+          </div>
+
+          <div>
+            <label for="sg-details" class="block text-sm font-semibold text-tnf-ink mb-2.5">What's your concern? <span class="text-tnf-green">*</span></label>
+            <textarea id="sg-details" required rows="6" class="w-full border border-gray-200 rounded-xl px-4 py-3.5 outline-none focus:border-tnf-green focus:ring-4 focus:ring-tnf-green/10 transition-all resize-y" placeholder="Tell us what happened, who is involved, and anything else that would help us understand and respond. Share only what you feel comfortable sharing."></textarea>
+          </div>
+
+          <div class="rounded-xl bg-red-50 border border-red-100 px-4 py-3 text-sm text-red-700 flex items-start gap-2.5">
+            <i class="fa-solid fa-triangle-exclamation mt-0.5"></i>
+            <span>In an emergency, always call the Police on <strong>999</strong> first — do not rely on this form.</span>
+          </div>
+
+          <div class="pt-1">
+            <button type="submit" id="sg-submit" class="w-full bg-tnf-green hover:bg-tnf-greenDark text-white font-bold py-4 rounded-xl transition-colors shadow-sm">Submit report</button>
+            <p id="sg-msg" class="mt-4 text-center font-semibold text-sm min-h-[1.2em]"></p>
+            <p class="mt-2 text-center text-xs text-gray-400 leading-relaxed">Sent securely to the Foundation's safeguarding team. Please don't include more personal detail about a child than is necessary for us to act.</p>
+          </div>
+        </form>
       </div>
     </section>
 
     <!-- CONTACTS -->
-    <section class="w-full bg-white border-t border-gray-100 py-20">
+    <section class="w-full py-24">
       <div class="max-w-5xl mx-auto px-4">
-        <div class="text-center mb-12" data-aos="fade-up">
-          <div class="inline-flex items-center gap-2.5 text-gray-400 text-xs font-bold tracking-[.18em] uppercase mb-5 justify-center"><span class="w-7 h-0.5 bg-tnf-green"></span> Who to contact</div>
-          <h2 class="text-3xl md:text-4xl font-bold text-tnf-ink">Getting help</h2>
+        <div class="max-w-2xl mb-14 text-center mx-auto" data-aos="fade-up">
+          <h2 class="text-3xl md:text-4xl font-bold text-tnf-ink mb-3">Getting help</h2>
+          <p class="text-lg text-gray-500 leading-relaxed">Where to turn, depending on the situation.</p>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="bg-rose-50 border border-rose-100 rounded-2xl p-8 text-center" data-aos="fade-up"><div class="w-12 h-12 rounded-xl bg-rose-500 text-white grid place-items-center text-xl mb-5 mx-auto"><i class="fa-solid fa-phone"></i></div><h3 class="text-lg font-bold text-tnf-ink mb-2">Emergency</h3><p class="text-gray-600 text-sm leading-relaxed mb-3">If a child is in immediate danger.</p><p class="text-2xl font-extrabold text-rose-600">Police 999</p></div>
-          <div class="bg-tnf-greenLight rounded-2xl p-8 text-center" data-aos="fade-up" data-aos-delay="100"><div class="w-12 h-12 rounded-xl bg-tnf-green text-white grid place-items-center text-xl mb-5 mx-auto"><i class="fa-solid fa-user-shield"></i></div><h3 class="text-lg font-bold text-tnf-ink mb-2">Our Safeguarding Lead</h3><p class="text-gray-600 text-sm leading-relaxed mb-3">To raise a concern with the Foundation directly.</p><a id="sg-contact-link" href="/contact" class="text-tnf-greenDark font-bold hover:underline">Contact the Foundation</a></div>
-          <div class="bg-gray-50 border border-gray-100 rounded-2xl p-8 text-center" data-aos="fade-up" data-aos-delay="200"><div class="w-12 h-12 rounded-xl bg-tnf-ink text-white grid place-items-center text-xl mb-5 mx-auto"><i class="fa-solid fa-hands-holding-child"></i></div><h3 class="text-lg font-bold text-tnf-ink mb-2">National services</h3><p class="text-gray-600 text-sm leading-relaxed">You can also contact the national agency responsible for family affairs and child protection in Seychelles.</p></div>
+          <div class="bg-red-600 text-white rounded-2xl p-8" data-aos="fade-up"><div class="text-2xl mb-5"><i class="fa-solid fa-phone"></i></div><h3 class="text-lg font-bold mb-2">Emergency</h3><p class="text-white/85 text-sm leading-relaxed mb-4">If a child is in immediate danger.</p><p class="text-3xl font-extrabold">999</p><p class="text-white/70 text-xs mt-1">Police</p></div>
+          <div class="bg-white border border-gray-200 rounded-2xl p-8" data-aos="fade-up" data-aos-delay="80"><div class="text-tnf-green text-2xl mb-5"><i class="fa-solid fa-user-shield"></i></div><h3 class="text-lg font-bold text-tnf-ink mb-2">Our Safeguarding Lead</h3><p class="text-gray-500 text-sm leading-relaxed mb-4">To raise a concern with the Foundation directly.</p><a id="sg-contact-link" href="/contact" class="text-tnf-greenDark font-bold text-sm hover:underline">Contact the Foundation</a></div>
+          <div class="bg-white border border-gray-200 rounded-2xl p-8" data-aos="fade-up" data-aos-delay="160"><div class="text-tnf-ink text-2xl mb-5"><i class="fa-solid fa-hands-holding-child"></i></div><h3 class="text-lg font-bold text-tnf-ink mb-2">National services</h3><p class="text-gray-500 text-sm leading-relaxed">You can also contact the national agency responsible for family affairs and child protection in Seychelles.</p></div>
         </div>
       </div>
     </section>
 
     <!-- CTA -->
-    <section class="page-hero w-full py-20">
-      <div class="max-w-3xl mx-auto px-4 text-center text-white" data-aos="fade-up">
+    <section class="page-hero w-full py-24">
+      <div class="max-w-2xl mx-auto px-4 text-center text-white" data-aos="fade-up">
         <h2 class="text-3xl md:text-4xl font-bold mb-4">Safeguarding is everyone's responsibility</h2>
-        <p class="text-white/85 text-lg mb-8 max-w-xl mx-auto font-light">If something doesn't feel right, speak up. It's always better to share a concern than to stay silent.</p>
-        <a href="#report" class="inline-flex items-center gap-2 bg-tnf-green hover:bg-tnf-greenDark text-white font-bold py-3.5 px-8 rounded-lg transition-colors shadow-lg"><i class="fa-solid fa-flag"></i> Report a concern</a>
+        <p class="text-white/85 text-lg mb-9 max-w-xl mx-auto font-light leading-relaxed">If something doesn't feel right, speak up. It's always better to share a concern than to stay silent.</p>
+        <a href="#report" class="inline-flex items-center gap-2 bg-tnf-green hover:bg-tnf-greenDark text-white font-bold py-3.5 px-8 rounded-lg transition-colors shadow-lg">Report a concern</a>
       </div>
     </section>
 
@@ -287,7 +287,6 @@
         if(!window.supabase)return; clearInterval(wait);
         const db=window.supabase.createClient('https://mcnemlwalcgdlmclijxc.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jbmVtbHdhbGNnZGxtY2xpanhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5NDMzNTAsImV4cCI6MjEwMjUxOTM1MH0.jVPTsfz7Htho4EZKvHzlgr1vSkj41EuVpMBgaHzLm-Q');
 
-        // Site settings: announcement, socials, safeguarding intro + contact
         (async()=>{try{const{data:s}=await db.from('site_settings').select('*').maybeSingle();if(!s)return;
           if(s.safeguarding_intro){document.getElementById('commitment-body').innerHTML=s.safeguarding_intro.split(/\n+/).filter(Boolean).map(p=>`<p>${esc(p)}</p>`).join('');}
           const email=s.safeguarding_email||s.contact_email;
@@ -297,34 +296,32 @@
           [['facebook','fa-facebook-f'],['instagram','fa-instagram'],['x','fa-x-twitter'],['linkedin','fa-linkedin-in'],['youtube','fa-youtube'],['tiktok','fa-tiktok'],['threads','fa-threads']].forEach(([k,ic])=>{if(links[k]){const a=document.createElement('a');a.href=links[k];a.target='_blank';a.rel='noopener';a.className='w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-tnf-green hover:scale-110 transition-all';a.setAttribute('aria-label',k);a.innerHTML=`<i class="fa-brands ${ic}"></i>`;fs.appendChild(a);}});
         }catch(e){}})();
 
-        // Safeguarding report form → safeguarding_reports (anonymous allowed)
         document.getElementById('safeguard-form').addEventListener('submit',async e=>{
           e.preventDefault();
           const msg=document.getElementById('sg-msg'), btn=document.getElementById('sg-submit');
           const details=document.getElementById('sg-details').value.trim();
-          if(!details){msg.className='font-semibold text-sm text-rose-600';msg.textContent='Please describe your concern.';return;}
+          if(!details){msg.className='mt-4 text-center font-semibold text-sm text-red-600';msg.textContent='Please describe your concern.';return;}
+          const sev=(document.querySelector('input[name="urgency"]:checked')||{}).value||'normal';
           const payload={
             reporter_name:document.getElementById('sg-name').value.trim()||null,
             reporter_email:document.getElementById('sg-email').value.trim()||null,
             subject:document.getElementById('sg-subject').value.trim()||null,
-            severity:document.getElementById('sg-severity').value,
-            details:details
+            severity:sev, details:details
           };
           btn.disabled=true; btn.innerHTML='<span style="display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;vertical-align:-2px"></span> Sending…';
-          msg.className='font-semibold text-sm text-gray-500'; msg.textContent='';
+          msg.textContent='';
           try{
             const{error}=await db.from('safeguarding_reports').insert(payload);
             if(error)throw error;
             document.getElementById('safeguard-form').reset();
-            msg.className='font-semibold text-sm text-tnf-greenDark';
+            msg.className='mt-4 text-center font-semibold text-sm text-tnf-greenDark';
             msg.textContent='Thank you. Your report has been received by our safeguarding team.';
           }catch(err){
-            msg.className='font-semibold text-sm text-rose-600';
+            msg.className='mt-4 text-center font-semibold text-sm text-red-600';
             msg.textContent='Sorry, something went wrong. If this is urgent, please call the Police on 999.';
           }
-          btn.disabled=false; btn.innerHTML='<i class="fa-solid fa-paper-plane mr-2"></i> Submit report';
+          btn.disabled=false; btn.innerHTML='Submit report';
         });
-
       },80);
     });
   </script>
