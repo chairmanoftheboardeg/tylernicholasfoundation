@@ -238,6 +238,11 @@
     window.addEventListener('load',()=>{const l=document.getElementById('loading-screen');setTimeout(()=>{l.style.opacity='0';l.style.visibility='hidden';document.body.classList.remove('loading');AOS.init({duration:800,once:true,offset:60});},700);});
     document.getElementById('mobile-menu-btn').addEventListener('click',()=>document.getElementById('mobile-menu').classList.toggle('hidden'));
     document.getElementById('current-year').innerText=new Date().getFullYear();
+    // Async content (pillars/stats) changes page height after load, which throws off #anchor jumps.
+    // Re-align to the hash for a short window — but stop the moment the user scrolls themselves.
+    (function(){ if(!location.hash) return; let n=0, stop=false; const cancel=()=>{stop=true;};
+      ['wheel','touchstart','keydown'].forEach(ev=>window.addEventListener(ev,cancel,{passive:true,once:true}));
+      const iv=setInterval(()=>{ if(stop){clearInterval(iv);return;} const t=document.querySelector(location.hash); if(t) t.scrollIntoView({block:'start'}); if(++n>=14) clearInterval(iv); },140); })();
     const esc=s=>(s==null?'':String(s)).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
     function countUp(node,val){const m=String(val).match(/^(\d[\d,]*)(.*)$/);if(!m){node.innerText=val;return;}const end=parseInt(m[1].replace(/,/g,''),10),suf=m[2]||'';let c=0;const inc=Math.max(1,Math.round(end/40));const up=()=>{c+=inc;if(c>=end){node.innerText=end.toLocaleString()+suf;}else{node.innerText=c.toLocaleString()+suf;requestAnimationFrame(()=>setTimeout(up,26));}};up();}
 
@@ -279,7 +284,7 @@
               const photo=m.photo_url?`<img src="${esc(m.photo_url)}" alt="${esc(m.name)}" class="w-full h-full object-cover">`:`<div class="w-full h-full grid place-items-center bg-tnf-green text-white text-4xl font-extrabold">${initials}</div>`;
               const links=m.socials||{};
               const soc=Object.entries({linkedin:'fa-linkedin-in',x:'fa-x-twitter',instagram:'fa-instagram',email:'fa-envelope'}).filter(([k])=>links[k]).map(([k,ic])=>`<a href="${k==='email'?'mailto:':''}${esc(links[k])}" target="_blank" rel="noopener" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-tnf-green hover:text-white text-gray-500 grid place-items-center text-xs transition-colors"><i class="fa-${k==='email'?'solid':'brands'} ${ic}"></i></a>`).join('');
-              return `<div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-lg transition-all" data-aos="fade-up" data-aos-delay="${(i%3)*80}"><div class="aspect-square overflow-hidden">${photo}</div><div class="p-6"><h3 class="text-lg font-bold text-tnf-ink">${esc(m.name)}</h3><p class="text-tnf-green font-semibold text-sm mt-0.5">${esc(m.role||'')}</p>${m.portfolio?`<p class="text-gray-400 text-xs font-medium mt-1 uppercase tracking-wide">${esc(m.portfolio)}</p>`:''}${m.bio?`<p class="text-gray-500 text-sm leading-relaxed mt-3 line-clamp-3">${esc(m.bio)}</p>`:''}${soc?`<div class="flex gap-2 mt-4">${soc}</div>`:''}</div></div>`;
+              return `<div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-lg transition-all" data-aos="fade-up" data-aos-delay="${(i%3)*80}"><div class="aspect-square overflow-hidden">${photo}</div><div class="p-6"><h3 class="text-lg font-bold text-tnf-ink">${esc(m.name)}</h3><p class="text-tnf-green font-semibold text-sm mt-0.5">${esc(m.role||'')}</p>${m.portfolio?`<p class="text-gray-400 text-xs font-medium mt-1 uppercase tracking-wide">${esc(m.portfolio)}</p>`:''}${m.bio?`<p class="text-gray-500 text-sm leading-relaxed mt-3">${esc(m.bio)}</p>`:''}${soc?`<div class="flex gap-2 mt-4">${soc}</div>`:''}</div></div>`;
             }).join('');
           }catch(e){st.innerText='Our Board and team will be announced here soon.';}})();
 
