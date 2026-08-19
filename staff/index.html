@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Staff Portal | Tyler Nicholas Foundation</title>
+<meta name="robots" content="noindex" />
+<link rel="icon" href="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" />
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<script>
+tailwind.config={theme:{extend:{fontFamily:{sans:['Plus Jakarta Sans','sans-serif']},colors:{tnf:{green:'#2E9E44',greenDark:'#26863A',greenLight:'#EEF7EF',ink:'#152219',charcoal:'#0E1A13'}}}}}
+</script>
+<style>
+  body{background:#f1f5f4}
+  .loader-spinner{border:3px solid rgba(46,158,68,.2);border-left-color:#2E9E44;border-radius:50%;width:44px;height:44px;animation:spin .9s linear infinite}
+  .btn-spin{display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;vertical-align:-2px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .nav-item.active{background:rgba(46,158,68,.16);color:#fff}
+  .nav-item.active i{color:#2E9E44}
+  input:focus,textarea:focus,select:focus{outline:none}
+  .rt-toolbar button{width:32px;height:32px;border-radius:6px}
+  .rt-toolbar button:hover{background:#eef2ee}
+  .rt[contenteditable]:empty:before{content:attr(data-ph);color:#9ca3af}
+  .rt{min-height:180px}.rt h2{font-size:1.35rem;font-weight:700;margin:.6rem 0 .3rem}.rt h3{font-size:1.15rem;font-weight:700;margin:.5rem 0 .3rem}.rt ul{list-style:disc;padding-left:1.4rem}.rt ol{list-style:decimal;padding-left:1.4rem}.rt a{color:#2E9E44;text-decoration:underline}.rt p{margin-bottom:.6rem}
+  ::-webkit-scrollbar{width:9px;height:9px}::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:5px}
+  .toggle{width:44px;height:24px;border-radius:999px;background:#d1d5db;position:relative;transition:.2s;cursor:pointer;flex:none}
+  .toggle.on{background:#2E9E44}.toggle span{position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.2s}.toggle.on span{left:22px}
+</style>
+</head>
+<body class="font-sans text-gray-900">
+
+<div id="gate" class="fixed inset-0 z-50 flex items-center justify-center bg-white">
+  <div class="text-center">
+    <div class="loader-spinner mx-auto mb-4"></div>
+    <p id="gate-text" class="text-gray-500 font-semibold text-sm">Checking your access…</p>
+  </div>
+</div>
+
+<div id="app" class="hidden min-h-screen lg:flex">
+  <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 w-72 bg-tnf-charcoal text-white flex flex-col z-40 -translate-x-full lg:translate-x-0 transition-transform">
+    <div class="px-6 py-5 border-b border-white/10 flex items-center gap-3">
+      <img src="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" class="h-10 w-10 rounded-lg bg-white p-1 object-contain" alt="TNF" />
+      <div class="leading-tight"><div class="font-extrabold text-sm">Foundation</div><div class="text-tnf-green text-xs font-bold">Staff Portal</div></div>
+    </div>
+    <nav id="nav" class="flex-1 overflow-y-auto py-4 px-3 space-y-1 text-sm"></nav>
+    <div class="px-4 py-4 border-t border-white/10">
+      <div class="flex items-center gap-3 mb-3">
+        <div id="u-avatar" class="w-9 h-9 rounded-full bg-tnf-green grid place-items-center font-bold text-sm flex-none"></div>
+        <div class="min-w-0"><div id="u-name" class="font-semibold text-sm truncate"></div><div id="u-role" class="text-white/50 text-xs"></div></div>
+      </div>
+      <div class="flex gap-2">
+        <a href="/" class="flex-1 text-center text-xs font-semibold bg-white/10 hover:bg-white/20 rounded-lg py-2 transition-colors">View site</a>
+        <button id="signout" class="flex-1 text-center text-xs font-semibold bg-white/10 hover:bg-red-500/30 rounded-lg py-2 transition-colors">Sign out</button>
+      </div>
+    </div>
+  </aside>
+  <div id="backdrop" class="fixed inset-0 bg-black/40 z-30 hidden lg:hidden"></div>
+
+  <main class="flex-1 min-w-0 lg:h-screen lg:overflow-y-auto">
+    <header class="bg-white border-b border-gray-200 px-5 py-3.5 flex items-center gap-3 sticky top-0 z-20">
+      <button id="menu-btn" class="lg:hidden text-tnf-ink text-xl"><i class="fa-solid fa-bars"></i></button>
+      <h1 id="page-title" class="text-lg font-bold text-tnf-ink flex-1">Dashboard</h1>
+      <button id="new-btn" class="hidden bg-tnf-green hover:bg-tnf-greenDark text-white text-sm font-bold px-4 py-2 rounded-lg transition-colors"><i class="fa-solid fa-plus mr-1.5"></i>New</button>
+    </header>
+    <div id="content" class="p-5 md:p-8 max-w-6xl"></div>
+  </main>
+</div>
+
+<div id="toast" class="fixed bottom-6 right-6 z-[60] space-y-2"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>(s==null?'':String(s)).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+const slugify=s=>(s||'').toLowerCase().trim().replace(/[^a-z0-9\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').slice(0,80);
+const fmtDate=v=>v?new Intl.DateTimeFormat('en-GB',{day:'numeric',month:'short',year:'numeric'}).format(new Date(v)):'';
+const fmtDateTime=v=>v?new Intl.DateTimeFormat('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'numeric',minute:'2-digit'}).format(new Date(v)):'';
+function toast(msg,ok=true){const t=document.createElement('div');t.className=`px-4 py-3 rounded-xl shadow-lg text-sm font-semibold text-white ${ok?'bg-tnf-green':'bg-red-600'}`;t.textContent=msg;$('toast').appendChild(t);setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .3s';setTimeout(()=>t.remove(),300);},2600);}
+function toLocalInput(iso){if(!iso)return'';const d=new Date(iso);const l=new Date(d.getTime()-d.getTimezoneOffset()*60000);return l.toISOString().slice(0,16);}
+const fromLocalInput=v=>v?new Date(v).toISOString():null;
+
+const CATS=[['scholarship','Scholarships'],['exchange','Exchanges'],['international','International'],['internship','Internships'],['university','University'],['conference','Conferences'],['competition','Competitions'],['fellowship','Fellowships'],['training','Training'],['volunteering','Volunteering'],['entrepreneurship','Entrepreneurship'],['mentorship','Mentorship']];
+const FUND=[['fully_funded','Fully funded'],['partially_funded','Partially funded'],['self_funded','Self-funded'],['not_applicable','Not applicable']];
+const OSTATUS=[['open','Open'],['closing_soon','Closing soon'],['closed','Closed']];
+const CSTATUS=[['draft','Draft'],['published','Published'],['archived','Archived']];
+const AUDIENCE=[['all','Everyone'],['staff','Staff only'],['board','Board only']];
+const ROLES=[['member','Member'],['volunteer','Volunteer'],['staff','Staff'],['board','Board Member'],['admin','Administrator'],['superadmin','Super Administrator']];
+const PERM_TAGS=['opportunities','programs','news','events','partners','resources','content','volunteers','hr','finance','safeguarding','comms','governance'];
+const SOCIALS=['facebook','instagram','x','linkedin','youtube','tiktok','threads','website'];
+
+const RES={
+  opportunities:{label:'Opportunities',icon:'fa-compass',perm:['opportunities','content'],table:'opportunities',order:['created_at',false],list:['title','category','status','deadline'],pub:{f:'is_published'},fields:[
+    {k:'title',t:'text',req:1,label:'Title'},{k:'slug',t:'slug',label:'Slug (URL)'},
+    {k:'category',t:'select',opts:CATS},{k:'status',t:'select',opts:OSTATUS},
+    {k:'organization',t:'text',label:'Organisation'},{k:'location',t:'text'},
+    {k:'summary',t:'textarea',label:'Short summary'},
+    {k:'description',t:'rich',label:'About this opportunity'},
+    {k:'eligibility',t:'rich',label:'Who can apply'},
+    {k:'benefits',t:'rich',label:"What's on offer"},
+    {k:'application_url',t:'text',label:'Application link (URL)'},
+    {k:'deadline',t:'date'},{k:'funding',t:'select',opts:FUND},{k:'level',t:'text'},
+    {k:'cover_url',t:'image',label:'Cover image'},{k:'source',t:'text'},{k:'tags',t:'tags'},
+    {k:'is_featured',t:'bool',label:'Feature this'},{k:'is_published',t:'bool',label:'Published (live on site)'}
+  ]},
+  programs:{label:'Programmes',icon:'fa-diagram-project',perm:['programs','content'],table:'programs',order:['sort_order',true],list:['title','is_flagship'],pub:{f:'is_published'},fields:[
+    {k:'title',t:'text',req:1},{k:'slug',t:'slug',label:'Slug (URL)'},
+    {k:'department_id',t:'ref',ref:'departments',label:'Pillar / area'},
+    {k:'summary',t:'textarea',label:'Short summary'},{k:'description',t:'rich',label:'Full description'},
+    {k:'cover_url',t:'image',label:'Cover image'},{k:'tags',t:'tags'},
+    {k:'sort_order',t:'number',label:'Sort order'},
+    {k:'is_flagship',t:'bool',label:'Flagship programme'},{k:'is_published',t:'bool',label:'Published'}
+  ]},
+  news_posts:{label:'News',icon:'fa-newspaper',perm:['news','content'],table:'news_posts',order:['published_at',false],list:['title','category','status'],pub:{f:'status',on:'published',off:'draft'},fields:[
+    {k:'title',t:'text',req:1},{k:'slug',t:'slug',label:'Slug (URL)'},
+    {k:'category',t:'text',label:'Category'},{k:'status',t:'select',opts:CSTATUS},
+    {k:'excerpt',t:'textarea',label:'Excerpt / summary'},{k:'body',t:'rich',label:'Article body'},
+    {k:'cover_url',t:'image',label:'Cover image'},{k:'tags',t:'tags'},
+    {k:'published_at',t:'datetime',label:'Publish date'}
+  ]},
+  events:{label:'Events',icon:'fa-calendar-day',perm:['events','content'],table:'events',order:['starts_at',false],list:['title','starts_at','location'],pub:{f:'is_published'},fields:[
+    {k:'title',t:'text',req:1},{k:'slug',t:'slug',label:'Slug (URL)'},
+    {k:'starts_at',t:'datetime',label:'Starts'},{k:'ends_at',t:'datetime',label:'Ends'},
+    {k:'location',t:'text'},{k:'description',t:'rich',label:'About this event'},
+    {k:'cover_url',t:'image',label:'Cover image'},{k:'registration_url',t:'text',label:'External registration link (leave blank for built-in RSVP)'},
+    {k:'is_featured',t:'bool',label:'Feature this'},{k:'is_published',t:'bool',label:'Published'}
+  ]},
+  partners:{label:'Partners',icon:'fa-handshake',perm:['partners','content'],table:'partners',order:['sort_order',true],list:['name','tier'],pub:{f:'is_published'},fields:[
+    {k:'name',t:'text',req:1},{k:'logo_url',t:'image',label:'Logo'},{k:'url',t:'text',label:'Website'},
+    {k:'description',t:'textarea'},{k:'tier',t:'text',label:'Tier (e.g. Gold, Strategic)'},
+    {k:'sort_order',t:'number'},{k:'is_published',t:'bool',label:'Published'}
+  ]},
+  resources:{label:'Resources',icon:'fa-folder-open',perm:['resources','content'],table:'resources',order:['sort_order',true],list:['title','category'],pub:{f:'is_published'},fields:[
+    {k:'title',t:'text',req:1},{k:'category',t:'text'},{k:'description',t:'textarea'},
+    {k:'file_url',t:'file',label:'File (upload)'},{k:'link_url',t:'text',label:'Or external link'},
+    {k:'sort_order',t:'number'},{k:'is_published',t:'bool',label:'Published'}
+  ]},
+  faqs:{label:'FAQs',icon:'fa-circle-question',perm:['content'],table:'faqs',order:['sort_order',true],list:['question','category'],pub:{f:'is_published'},fields:[
+    {k:'question',t:'text',req:1},{k:'answer',t:'textarea',req:1},{k:'category',t:'text'},
+    {k:'sort_order',t:'number'},{k:'is_published',t:'bool',label:'Published'}
+  ]},
+  impact_stats:{label:'Impact stats',icon:'fa-chart-simple',perm:['content'],table:'impact_stats',order:['sort_order',true],list:['label','value'],pub:{f:'is_published'},fields:[
+    {k:'value',t:'text',req:1,label:'Value (e.g. 500+)'},{k:'label',t:'text',req:1,label:'Label (e.g. Young people reached)'},
+    {k:'icon',t:'text',label:'Icon (Font Awesome name, optional)'},{k:'sort_order',t:'number'},{k:'is_published',t:'bool',label:'Published'}
+  ]},
+  about_team:{label:'Board & Team',icon:'fa-users',perm:['content','governance'],table:'about_team',order:['sort_order',true],list:['name','role'],pub:{f:'is_published'},fields:[
+    {k:'name',t:'text',req:1},{k:'role',t:'text',req:1,label:'Role / title'},{k:'portfolio',t:'text',label:'Portfolio / department'},
+    {k:'bio',t:'textarea'},{k:'photo_url',t:'image',label:'Photo'},{k:'email',t:'text'},
+    {k:'socials',t:'social',label:'Social links'},{k:'sort_order',t:'number'},{k:'is_published',t:'bool',label:'Published'}
+  ]},
+  departments:{label:'Pillars / Departments',icon:'fa-sitemap',perm:['content','governance'],table:'departments',order:['sort_order',true],list:['name'],pub:{f:'is_published'},fields:[
+    {k:'name',t:'text',req:1},{k:'slug',t:'slug',label:'Slug'},{k:'description',t:'textarea'},
+    {k:'icon',t:'text',label:'Icon (optional)'},{k:'sort_order',t:'number'},{k:'is_published',t:'bool',label:'Published'}
+  ]},
+  announcements:{label:'Announcements',icon:'fa-bullhorn',perm:['comms'],table:'announcements',order:['created_at',false],list:['title','audience'],pub:null,stampAuthor:1,fields:[
+    {k:'title',t:'text',req:1},{k:'body',t:'textarea'},{k:'audience',t:'select',opts:AUDIENCE},{k:'is_pinned',t:'bool',label:'Pin to top'}
+  ]}
+};
+const INBOX={
+  volunteer_applications:{label:'Volunteer applications',icon:'fa-hand-holding-heart',perm:['volunteers'],table:'volunteer_applications'},
+  contact_submissions:{label:'Contact messages',icon:'fa-envelope',perm:['comms','content'],table:'contact_submissions'},
+  opportunity_submissions:{label:'Submitted opportunities',icon:'fa-inbox',perm:['opportunities','content'],table:'opportunity_submissions'},
+  event_rsvps:{label:'Event RSVPs',icon:'fa-clipboard-check',perm:['events','content'],table:'event_rsvps'},
+  newsletter_subscribers:{label:'Newsletter',icon:'fa-at',perm:['comms','content'],table:'newsletter_subscribers'},
+  opportunity_alerts:{label:'Opportunity alerts',icon:'fa-bell',perm:['opportunities','content'],table:'opportunity_alerts'},
+  safeguarding_reports:{label:'Safeguarding reports',icon:'fa-shield-halved',perm:['safeguarding'],table:'safeguarding_reports',sensitive:1}
+};
+
+let db, ME={}, isAdmin=false, PERMS=[], REFCACHE={};
+function canSee(perm,adminOnly){ if(adminOnly) return isAdmin; if(isAdmin) return true; return (perm||[]).some(t=>PERMS.includes(t)); }
+
+document.addEventListener('DOMContentLoaded',()=>{
+  const wait=setInterval(async()=>{
+    if(!window.supabase)return; clearInterval(wait);
+    db=window.supabase.createClient('https://mcnemlwalcgdlmclijxc.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jbmVtbHdhbGNnZGxtY2xpanhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5NDMzNTAsImV4cCI6MjEwMjUxOTM1MH0.jVPTsfz7Htho4EZKvHzlgr1vSkj41EuVpMBgaHzLm-Q');
+    const {data:{session}}=await db.auth.getSession();
+    if(!session){ location.replace('/login'); return; }
+    let prof=null;
+    try{ const{data}=await db.from('profiles').select('*').eq('id',session.user.id).maybeSingle(); prof=data; }catch(e){}
+    if(!prof){ $('gate-text').textContent='Could not load your profile.'; return; }
+    ME=prof; PERMS=prof.permissions||[]; isAdmin=['admin','superadmin'].includes(prof.role);
+    const staff=['staff','board','admin','superadmin'].includes(prof.role);
+    if(!staff){ location.replace('/portal'); return; }
+    if(prof.is_active===false){ await db.auth.signOut(); location.replace('/login'); return; }
+    const nm=prof.full_name||prof.email||'You';
+    $('u-name').textContent=nm; $('u-role').textContent=(ROLES.find(r=>r[0]===prof.role)||[])[1]||prof.role;
+    $('u-avatar').textContent=(nm.trim()[0]||'?').toUpperCase();
+    buildNav(); route('dashboard');
+    $('gate').classList.add('hidden'); $('app').classList.remove('hidden');
+    $('signout').addEventListener('click',async()=>{ await db.auth.signOut(); location.replace('/login'); });
+    $('menu-btn').addEventListener('click',()=>{ $('sidebar').classList.remove('-translate-x-full'); $('backdrop').classList.remove('hidden'); });
+    $('backdrop').addEventListener('click',closeNav);
+  },80);
+});
+function closeNav(){ $('sidebar').classList.add('-translate-x-full'); $('backdrop').classList.add('hidden'); }
+
+const NAVGROUPS=[
+  {group:null,items:[{key:'dashboard',label:'Dashboard',icon:'fa-gauge',always:1}]},
+  {group:'Content',keys:['opportunities','programs','news_posts','events','partners','resources','faqs','impact_stats']},
+  {group:'Organisation',keys:['about_team','departments','announcements']},
+  {group:'People',items:[{key:'inbox:volunteer_applications'},{key:'users',label:'Users & roles',icon:'fa-user-shield',admin:1}]},
+  {group:'Inbox',keys:['inbox:contact_submissions','inbox:opportunity_submissions','inbox:event_rsvps','inbox:newsletter_subscribers','inbox:opportunity_alerts','inbox:safeguarding_reports']},
+  {group:'Settings',items:[{key:'settings',label:'Site settings',icon:'fa-gear',perm:['content']}]}
+];
+function navMeta(key){
+  if(key.startsWith('inbox:')){const c=INBOX[key.slice(6)];return{label:c.label,icon:c.icon,perm:c.perm};}
+  if(RES[key])return{label:RES[key].label,icon:RES[key].icon,perm:RES[key].perm};
+  return null;
+}
+function buildNav(){
+  const nav=$('nav'); nav.innerHTML='';
+  NAVGROUPS.forEach(g=>{
+    const items=(g.items||g.keys.map(k=>{const m=navMeta(k);return m?{key:k,label:m.label,icon:m.icon,perm:m.perm}:null;}).filter(Boolean));
+    const visible=items.filter(it=>{ if(it.always)return true; if(it.admin)return isAdmin; const m=navMeta(it.key)||it; return canSee(it.perm||(m&&m.perm),it.admin); });
+    if(!visible.length)return;
+    if(g.group){const h=document.createElement('div');h.className='px-3 pt-4 pb-1 text-[11px] font-bold uppercase tracking-wider text-white/35';h.textContent=g.group;nav.appendChild(h);}
+    visible.forEach(it=>{
+      const m=navMeta(it.key)||it;
+      const a=document.createElement('button');a.className='nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/75 hover:bg-white/5 transition-colors text-left';
+      a.dataset.key=it.key;
+      a.innerHTML=`<i class="fa-solid ${it.icon||m.icon} w-5 text-center text-white/50"></i><span class="truncate">${esc(it.label||m.label)}</span>`;
+      a.addEventListener('click',()=>{route(it.key);closeNav();});
+      nav.appendChild(a);
+    });
+  });
+}
+function setActive(key){ document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.key===key)); }
+
+function route(key){
+  setActive(key);
+  $('new-btn').classList.add('hidden'); $('new-btn').onclick=null;
+  if(key==='dashboard'){ $('page-title').textContent='Dashboard'; return renderDashboard(); }
+  if(key==='settings'){ $('page-title').textContent='Site settings'; return renderSettings(); }
+  if(key==='users'){ $('page-title').textContent='Users & roles'; return renderUsers(); }
+  if(key.startsWith('inbox:')){ const c=INBOX[key.slice(6)]; $('page-title').textContent=c.label; return renderInbox(key.slice(6),c); }
+  const res=RES[key]; if(res){ $('page-title').textContent=res.label; return renderList(key,res); }
+}
+
+async function renderDashboard(){
+  const c=$('content');
+  c.innerHTML=`<p class="text-gray-500 mb-6">Welcome back, <span class="font-semibold text-tnf-ink">${esc(ME.full_name||'')}</span>. Here's a snapshot of the Foundation.</p><div id="dash-cards" class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8"></div><div class="grid lg:grid-cols-2 gap-6"><div id="dash-apps"></div><div id="dash-msgs"></div></div>`;
+  const count=async t=>{try{const{count}=await db.from(t).select('*',{count:'exact',head:true});return count||0;}catch(e){return 0;}};
+  const cards=[['Opportunities','opportunities','fa-compass'],['Programmes','programs','fa-diagram-project'],['News posts','news_posts','fa-newspaper'],['Events','events','fa-calendar-day'],['Volunteer applications','volunteer_applications','fa-hand-holding-heart'],['Contact messages','contact_submissions','fa-envelope'],['Newsletter subs','newsletter_subscribers','fa-at'],['Partners','partners','fa-handshake']];
+  $('dash-cards').innerHTML=cards.map(([l,t,ic])=>`<div class="bg-white rounded-2xl border border-gray-100 p-5"><div class="w-10 h-10 rounded-xl bg-tnf-greenLight text-tnf-green grid place-items-center mb-3"><i class="fa-solid ${ic}"></i></div><div class="text-2xl font-extrabold text-tnf-ink" data-count="${t}">–</div><div class="text-gray-400 text-xs font-semibold">${l}</div></div>`).join('');
+  cards.forEach(async([l,t])=>{const n=await count(t);const el=document.querySelector(`[data-count="${t}"]`);if(el)el.textContent=n;});
+  try{const{data}=await db.from('volunteer_applications').select('name,email,created_at').order('created_at',{ascending:false}).limit(5);
+    $('dash-apps').innerHTML=`<h3 class="font-bold text-tnf-ink mb-3">Latest volunteer interest</h3><div class="bg-white rounded-2xl border border-gray-100 divide-y divide-gray-100">${(data&&data.length)?data.map(a=>`<div class="p-4"><div class="font-semibold text-sm text-tnf-ink">${esc(a.name)}</div><div class="text-xs text-gray-400">${esc(a.email)} · ${fmtDate(a.created_at)}</div></div>`).join(''):'<div class="p-4 text-sm text-gray-400 italic">No applications yet.</div>'}</div>`;
+  }catch(e){$('dash-apps').innerHTML='';}
+  try{const{data}=await db.from('contact_submissions').select('*').order('created_at',{ascending:false}).limit(5);
+    $('dash-msgs').innerHTML=`<h3 class="font-bold text-tnf-ink mb-3">Latest messages</h3><div class="bg-white rounded-2xl border border-gray-100 divide-y divide-gray-100">${(data&&data.length)?data.map(a=>`<div class="p-4"><div class="font-semibold text-sm text-tnf-ink">${esc(a.name||a.email||'Message')}</div><div class="text-xs text-gray-400">${esc(a.subject||a.email||'')} · ${fmtDate(a.created_at)}</div></div>`).join(''):'<div class="p-4 text-sm text-gray-400 italic">No messages yet.</div>'}</div>`;
+  }catch(e){$('dash-msgs').innerHTML='';}
+}
+
+async function renderList(key,res){
+  $('new-btn').classList.remove('hidden'); $('new-btn').onclick=()=>renderForm(key,res,null);
+  const c=$('content');
+  c.innerHTML=`<div class="mb-4 flex items-center gap-3"><div class="flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-3 flex-1 max-w-xs focus-within:border-tnf-green"><i class="fa-solid fa-magnifying-glass text-gray-400 text-sm"></i><input id="lsearch" placeholder="Search…" class="py-2.5 bg-transparent text-sm flex-1"/></div></div><div id="list-body"><div class="loader-spinner my-10"></div></div>`;
+  let rows=[];
+  try{ const{data,error}=await db.from(res.table).select('*').order(res.order[0],{ascending:res.order[1],nullsFirst:false}); if(error)throw error; rows=data||[]; }
+  catch(e){ $('list-body').innerHTML=`<p class="text-red-600 text-sm">${esc(e.message||'Could not load.')}</p>`; return; }
+  const titleF=res.fields[0].k;
+  function draw(list){
+    if(!list.length){$('list-body').innerHTML=`<div class="bg-white rounded-2xl border border-gray-100 p-10 text-center text-gray-400"><p class="mb-4">Nothing here yet.</p><button id="firstnew" class="bg-tnf-green text-white font-bold px-5 py-2.5 rounded-lg text-sm">Create the first one</button></div>`;const fn=$('firstnew');if(fn)fn.onclick=()=>renderForm(key,res,null);return;}
+    $('list-body').innerHTML=`<div class="bg-white rounded-2xl border border-gray-100 overflow-hidden divide-y divide-gray-100">${list.map(r=>{
+      const pub=res.pub?isPub(res,r):null;
+      const meta=res.list.slice(1).map(f=>fmtCell(r[f])).filter(Boolean).join(' · ');
+      return `<div class="flex items-center gap-4 p-4 hover:bg-gray-50">
+        <div class="flex-1 min-w-0"><div class="font-semibold text-tnf-ink truncate">${esc(r[titleF]||'(untitled)')}</div>${meta?`<div class="text-xs text-gray-400 mt-0.5">${esc(meta)}</div>`:''}</div>
+        ${res.pub?`<button class="pubtog text-[11px] font-bold px-2.5 py-1 rounded-full ${pub?'bg-tnf-greenLight text-tnf-greenDark':'bg-gray-100 text-gray-500'}" data-id="${r.id}">${pub?'Live':'Draft'}</button>`:''}
+        <button class="editbtn text-gray-400 hover:text-tnf-green px-2" data-id="${r.id}"><i class="fa-solid fa-pen"></i></button>
+        <button class="delbtn text-gray-400 hover:text-red-600 px-2" data-id="${r.id}"><i class="fa-solid fa-trash"></i></button>
+      </div>`;}).join('')}</div>`;
+    $('list-body').querySelectorAll('.editbtn').forEach(b=>b.onclick=()=>renderForm(key,res,list.find(x=>x.id===b.dataset.id)));
+    $('list-body').querySelectorAll('.delbtn').forEach(b=>b.onclick=()=>delRow(key,res,b.dataset.id));
+    $('list-body').querySelectorAll('.pubtog').forEach(b=>b.onclick=()=>togglePub(key,res,list.find(x=>x.id===b.dataset.id)));
+  }
+  draw(rows);
+  $('lsearch').oninput=e=>{const q=e.target.value.toLowerCase();draw(rows.filter(r=>String(r[titleF]||'').toLowerCase().includes(q)));};
+}
+function isPub(res,r){ return res.pub.on?r[res.pub.f]===res.pub.on:!!r[res.pub.f]; }
+function fmtCell(v){ if(v==null||v==='')return''; if(typeof v==='boolean')return v?'★':''; if(typeof v==='string'&&/^\d{4}-\d\d-\d\d/.test(v))return fmtDate(v); return String(v); }
+async function togglePub(key,res,r){ const cur=isPub(res,r); const val=res.pub.on?(cur?res.pub.off:res.pub.on):!cur; try{const{error}=await db.from(res.table).update({[res.pub.f]:val}).eq('id',r.id);if(error)throw error;toast(cur?'Unpublished':'Published');renderList(key,res);}catch(e){toast(e.message||'Failed',false);} }
+async function delRow(key,res,id){ if(!confirm('Delete this permanently?'))return; try{const{error}=await db.from(res.table).delete().eq('id',id);if(error)throw error;toast('Deleted');renderList(key,res);}catch(e){toast(e.message||'Failed',false);} }
+
+async function loadRef(table){ if(REFCACHE[table])return REFCACHE[table]; try{const{data}=await db.from(table).select('id,name').order('sort_order',{ascending:true});REFCACHE[table]=data||[];}catch(e){REFCACHE[table]=[];} return REFCACHE[table]; }
+async function renderForm(key,res,rec){
+  $('new-btn').classList.add('hidden');
+  const c=$('content'); const editing=!!rec; rec=rec||{};
+  for(const f of res.fields){ if(f.t==='ref') await loadRef(f.ref); }
+  $('page-title').textContent=(editing?'Edit ':'New ')+res.label.replace(/s$/,'');
+  c.innerHTML=`<button id="back" class="text-sm font-bold text-tnf-green mb-5"><i class="fa-solid fa-arrow-left mr-2"></i>Back to ${esc(res.label)}</button>
+    <form id="rform" class="bg-white rounded-2xl border border-gray-100 p-6 md:p-8 space-y-6 max-w-3xl">${res.fields.map(f=>fieldHtml(f,rec)).join('')}
+    <div class="flex items-center gap-3 pt-4 border-t border-gray-100"><button type="submit" id="fsave" class="bg-tnf-green hover:bg-tnf-greenDark text-white font-bold px-7 py-3 rounded-xl transition-colors">${editing?'Save changes':'Create'}</button><button type="button" id="fcancel" class="text-gray-500 font-semibold px-4">Cancel</button></div></form>`;
+  $('back').onclick=()=>renderList(key,res); $('fcancel').onclick=()=>renderList(key,res);
+  res.fields.forEach(f=>wireField(f,rec));
+  $('rform').addEventListener('submit',async e=>{e.preventDefault();await saveForm(key,res,rec,editing);});
+}
+function fieldHtml(f,rec){
+  const label=f.label||f.k.replace(/_/g,' ').replace(/\b\w/g,m=>m.toUpperCase());
+  const v=rec[f.k];
+  const lab=`<label class="block text-sm font-semibold text-tnf-ink mb-2">${esc(label)}${f.req?' <span class="text-tnf-green">*</span>':''}</label>`;
+  const base='w-full border border-gray-200 rounded-xl px-4 py-3 focus:border-tnf-green focus:ring-4 focus:ring-tnf-green/10 transition-all';
+  if(f.t==='textarea')return `<div>${lab}<textarea id="f_${f.k}" rows="3" class="${base} resize-y">${esc(v||'')}</textarea></div>`;
+  if(f.t==='rich')return `<div>${lab}<div class="border border-gray-200 rounded-xl overflow-hidden focus-within:border-tnf-green"><div class="rt-toolbar flex gap-1 p-2 border-b border-gray-100 bg-gray-50" data-for="f_${f.k}"><button type="button" data-cmd="bold" class="font-bold">B</button><button type="button" data-cmd="italic" class="italic">I</button><button type="button" data-cmd="h2">H2</button><button type="button" data-cmd="h3">H3</button><button type="button" data-cmd="insertUnorderedList">•</button><button type="button" data-cmd="insertOrderedList">1.</button><button type="button" data-cmd="createLink"><i class="fa-solid fa-link text-xs"></i></button></div><div id="f_${f.k}" class="rt px-4 py-3 text-[15px]" contenteditable="true" data-ph="Write here…">${v||''}</div></div></div>`;
+  if(f.t==='select'){const opts=f.opts.map(o=>`<option value="${o[0]}" ${v===o[0]?'selected':''}>${esc(o[1])}</option>`).join('');return `<div>${lab}<select id="f_${f.k}" class="${base} bg-white"><option value="">— select —</option>${opts}</select></div>`;}
+  if(f.t==='ref'){const opts=(REFCACHE[f.ref]||[]).map(o=>`<option value="${o.id}" ${v===o.id?'selected':''}>${esc(o.name)}</option>`).join('');return `<div>${lab}<select id="f_${f.k}" class="${base} bg-white"><option value="">— none —</option>${opts}</select></div>`;}
+  if(f.t==='bool'){const on=!!v;return `<div class="flex items-center justify-between gap-4"><label class="text-sm font-semibold text-tnf-ink">${esc(label)}</label><div class="toggle ${on?'on':''}" id="f_${f.k}" data-val="${on?1:0}"><span></span></div></div>`;}
+  if(f.t==='date')return `<div>${lab}<input type="date" id="f_${f.k}" value="${v?String(v).slice(0,10):''}" class="${base}"/></div>`;
+  if(f.t==='datetime')return `<div>${lab}<input type="datetime-local" id="f_${f.k}" value="${toLocalInput(v)}" class="${base}"/></div>`;
+  if(f.t==='number')return `<div>${lab}<input type="number" id="f_${f.k}" value="${v==null?'':v}" class="${base}"/></div>`;
+  if(f.t==='tags')return `<div>${lab}<input type="text" id="f_${f.k}" value="${esc((v||[]).join(', '))}" class="${base}" placeholder="Comma-separated"/></div>`;
+  if(f.t==='image'||f.t==='file'){const isImg=f.t==='image';return `<div>${lab}<div class="flex items-center gap-3"><input type="text" id="f_${f.k}" value="${esc(v||'')}" class="${base}" placeholder="URL, or upload →"/><label class="cursor-pointer bg-gray-100 hover:bg-gray-200 text-tnf-ink font-semibold text-sm px-4 py-3 rounded-xl whitespace-nowrap transition-colors"><i class="fa-solid fa-upload mr-1"></i>Upload<input type="file" class="hidden up-input" data-target="f_${f.k}" ${isImg?'accept="image/*"':''}/></label></div>${isImg?`<img id="prev_${f.k}" src="${esc(v||'')}" class="${v?'':'hidden'} mt-3 h-24 rounded-lg border border-gray-100 object-cover"/>`:''}<p class="up-status text-xs text-gray-400 mt-1" data-for="f_${f.k}"></p></div>`;}
+  if(f.t==='social'){const s=v||{};return `<div>${lab}<div class="grid grid-cols-2 gap-3">${SOCIALS.map(p=>`<input type="text" id="f_${f.k}__${p}" value="${esc(s[p]||'')}" class="${base}" placeholder="${p}"/>`).join('')}</div></div>`;}
+  return `<div>${lab}<input type="text" id="f_${f.k}" value="${esc(v||'')}" class="${base}" ${f.t==='slug'?'data-slug="1"':''}/></div>`;
+}
+function wireField(f,rec){
+  if(f.t==='rich'){const tb=document.querySelector(`.rt-toolbar[data-for="f_${f.k}"]`);if(tb)tb.querySelectorAll('button').forEach(b=>b.onmousedown=e=>{e.preventDefault();const cmd=b.dataset.cmd;if(cmd==='createLink'){const u=prompt('Link URL:');if(u)document.execCommand('createLink',false,u);}else if(cmd==='h2'||cmd==='h3'){document.execCommand('formatBlock',false,cmd);}else document.execCommand(cmd,false,null);});}
+  if(f.t==='bool'){const t=document.getElementById('f_'+f.k);if(t)t.onclick=()=>{const on=t.dataset.val==='1';t.dataset.val=on?'0':'1';t.classList.toggle('on',!on);};}
+}
+document.addEventListener('input',e=>{ if(e.target.id==='f_title'){const s=document.querySelector('[data-slug]');if(s&&!s.dataset.touched)s.value=slugify(e.target.value);} if(e.target.dataset&&e.target.dataset.slug!==undefined)e.target.dataset.touched='1'; });
+document.addEventListener('change',async e=>{
+  if(!e.target.classList||!e.target.classList.contains('up-input'))return;
+  const file=e.target.files[0]; if(!file)return; const target=e.target.dataset.target;
+  const st=document.querySelector(`.up-status[data-for="${target}"]`); if(st)st.textContent='Uploading…';
+  try{ const ext=(file.name.split('.').pop()||'bin').toLowerCase(); const path=`${target.replace('f_','')}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const{error}=await db.storage.from('public').upload(path,file,{upsert:false}); if(error)throw error;
+    const{data:pub}=db.storage.from('public').getPublicUrl(path); const url=pub.publicUrl;
+    document.getElementById(target).value=url; const prev=document.getElementById('prev_'+target.replace('f_',''));
+    if(prev){prev.src=url;prev.classList.remove('hidden');} if(st)st.textContent='Uploaded ✓';
+  }catch(err){ if(st)st.textContent='Upload failed: '+(err.message||''); }
+});
+async function saveForm(key,res,rec,editing){
+  const btn=$('fsave'); btn.disabled=true; const old=btn.innerHTML; btn.innerHTML='<span class="btn-spin"></span> Saving…';
+  const payload={};
+  try{
+    for(const f of res.fields){
+      if(f.t==='bool'){payload[f.k]=document.getElementById('f_'+f.k).dataset.val==='1';continue;}
+      if(f.t==='social'){const o={};SOCIALS.forEach(p=>{const val=document.getElementById(`f_${f.k}__${p}`).value.trim();if(val)o[p]=val;});payload[f.k]=o;continue;}
+      if(f.t==='rich'){payload[f.k]=document.getElementById('f_'+f.k).innerHTML.trim()||null;continue;}
+      const el=document.getElementById('f_'+f.k); if(!el)continue; let val=el.value;
+      if(f.t==='tags'){payload[f.k]=val.split(',').map(s=>s.trim()).filter(Boolean);continue;}
+      if(f.t==='number'){payload[f.k]=val===''?null:Number(val);continue;}
+      if(f.t==='datetime'){payload[f.k]=fromLocalInput(val);continue;}
+      if(f.t==='date'){payload[f.k]=val||null;continue;}
+      if(f.t==='ref'){payload[f.k]=val||null;continue;}
+      val=(val||'').trim();
+      if(f.t==='slug'){val=val?slugify(val):slugify(payload[res.fields[0].k]||'');}
+      payload[f.k]=val===''?null:val;
+    }
+    if(res.stampAuthor)payload.author_id=ME.id;
+    for(const f of res.fields){ if(f.req&&!payload[f.k]){toast('Please fill in: '+(f.label||f.k),false);btn.disabled=false;btn.innerHTML=old;return;} }
+    let error;
+    if(editing){ ({error}=await db.from(res.table).update(payload).eq('id',rec.id)); }
+    else { ({error}=await db.from(res.table).insert(payload)); }
+    if(error)throw error;
+    toast(editing?'Saved':'Created'); REFCACHE={}; renderList(key,res);
+  }catch(e){ toast(e.message||'Save failed',false); btn.disabled=false; btn.innerHTML=old; }
+}
+
+async function renderInbox(k,cfg){
+  const c=$('content');
+  if(cfg.sensitive) c.innerHTML=`<div class="bg-red-50 border border-red-100 rounded-xl p-4 text-sm text-red-700 mb-5"><i class="fa-solid fa-lock mr-1.5"></i>Confidential. Handle these reports with care and in line with our safeguarding policy.</div><div id="ibody"><div class="loader-spinner my-10"></div></div>`;
+  else c.innerHTML=`<div id="ibody"><div class="loader-spinner my-10"></div></div>`;
+  let rows=[];
+  try{ const{data,error}=await db.from(cfg.table).select('*').order('created_at',{ascending:false}); if(error)throw error; rows=data||[]; }
+  catch(e){ $('ibody').innerHTML=`<p class="text-gray-400 text-sm italic">Nothing to show, or you don't have access to these.</p>`; return; }
+  if(!rows.length){ $('ibody').innerHTML=`<div class="bg-white rounded-2xl border border-gray-100 p-10 text-center text-gray-400">No entries yet.</div>`; return; }
+  const hide=['id','event_id','reviewed_by','author_id','updated_at','search_vector'];
+  $('ibody').innerHTML=`<p class="text-gray-400 text-sm mb-4">${rows.length} ${rows.length===1?'entry':'entries'}</p><div class="space-y-3">${rows.map(r=>{
+    const fields=Object.keys(r).filter(kk=>!hide.includes(kk)&&r[kk]!=null&&r[kk]!==''&&!(Array.isArray(r[kk])&&!r[kk].length));
+    const created=r.created_at?fmtDateTime(r.created_at):'';
+    return `<div class="bg-white rounded-2xl border border-gray-100 p-5"><div class="flex justify-between items-start mb-2"><div class="font-bold text-tnf-ink">${esc(r.name||r.title||r.subject||r.email||'Entry')}</div><div class="text-xs text-gray-400 whitespace-nowrap ml-3">${created}</div></div><div class="space-y-1.5 text-sm">${fields.filter(kk=>kk!=='created_at'&&kk!=='name'&&kk!=='title').map(kk=>{let val=r[kk];if(Array.isArray(val))val=val.join(', ');if(typeof val==='string'&&/^\d{4}-\d\d-\d\dT/.test(val))val=fmtDateTime(val);return `<div><span class="text-gray-400 font-semibold">${esc(kk.replace(/_/g,' '))}:</span> <span class="text-gray-700">${esc(val)}</span></div>`;}).join('')}</div></div>`;
+  }).join('')}</div>`;
+}
+
+async function renderUsers(){
+  const c=$('content');
+  c.innerHTML=`<p class="text-gray-500 mb-6">Manage who has access and what they can do. Only administrators can change roles and permissions.</p><div id="ubody"><div class="loader-spinner my-10"></div></div>`;
+  let rows=[];
+  try{const{data,error}=await db.from('profiles').select('*').order('created_at',{ascending:true});if(error)throw error;rows=data||[];}
+  catch(e){$('ubody').innerHTML=`<p class="text-red-600 text-sm">${esc(e.message)}</p>`;return;}
+  $('ubody').innerHTML=`<div class="bg-white rounded-2xl border border-gray-100 divide-y divide-gray-100">${rows.map(u=>`<div class="flex items-center gap-4 p-4"><div class="w-10 h-10 rounded-full bg-tnf-greenLight text-tnf-greenDark grid place-items-center font-bold flex-none">${esc((u.full_name||u.email||'?').trim()[0].toUpperCase())}</div><div class="flex-1 min-w-0"><div class="font-semibold text-tnf-ink truncate">${esc(u.full_name||'(no name)')} ${u.id===ME.id?'<span class=\"text-xs text-gray-400\">(you)</span>':''}</div><div class="text-xs text-gray-400 truncate">${esc(u.email||'')}</div></div><span class="text-[11px] font-bold px-2.5 py-1 rounded-full ${['admin','superadmin'].includes(u.role)?'bg-tnf-greenLight text-tnf-greenDark':'bg-gray-100 text-gray-500'}">${esc((ROLES.find(r=>r[0]===u.role)||[])[1]||u.role)}</span>${u.is_active===false?'<span class=\"text-[11px] font-bold px-2 py-1 rounded-full bg-red-50 text-red-600\">Inactive</span>':''}<button class="uedit text-gray-400 hover:text-tnf-green px-2" data-id="${u.id}"><i class="fa-solid fa-pen"></i></button></div>`).join('')}</div>`;
+  $('ubody').querySelectorAll('.uedit').forEach(b=>b.onclick=()=>editUser(rows.find(x=>x.id===b.dataset.id)));
+}
+async function editUser(u){
+  await loadRef('departments');
+  const c=$('content'); $('page-title').textContent='Edit user';
+  c.innerHTML=`<button id="uback" class="text-sm font-bold text-tnf-green mb-5"><i class="fa-solid fa-arrow-left mr-2"></i>Back to users</button>
+  <form id="uform" class="bg-white rounded-2xl border border-gray-100 p-6 md:p-8 space-y-6 max-w-2xl">
+    <div><div class="font-bold text-tnf-ink text-lg">${esc(u.full_name||'(no name)')}</div><div class="text-gray-400 text-sm">${esc(u.email||'')}</div></div>
+    <div><label class="block text-sm font-semibold text-tnf-ink mb-2">Role</label><select id="u_role" class="w-full border border-gray-200 rounded-xl px-4 py-3 bg-white">${ROLES.map(r=>`<option value="${r[0]}" ${u.role===r[0]?'selected':''}>${r[1]}</option>`).join('')}</select></div>
+    <div><label class="block text-sm font-semibold text-tnf-ink mb-2">Title (job title)</label><input id="u_title" value="${esc(u.title||'')}" class="w-full border border-gray-200 rounded-xl px-4 py-3"/></div>
+    <div><label class="block text-sm font-semibold text-tnf-ink mb-2">Department</label><select id="u_dept" class="w-full border border-gray-200 rounded-xl px-4 py-3 bg-white"><option value="">— none —</option>${(REFCACHE['departments']||[]).map(d=>`<option value="${d.id}" ${u.department_id===d.id?'selected':''}>${esc(d.name)}</option>`).join('')}</select></div>
+    <div><label class="block text-sm font-semibold text-tnf-ink mb-3">Permissions <span class="text-gray-400 font-normal">· what they can manage</span></label><div class="grid grid-cols-2 sm:grid-cols-3 gap-2">${PERM_TAGS.map(t=>`<label class="flex items-center gap-2 text-sm border border-gray-200 rounded-lg px-3 py-2 cursor-pointer"><input type="checkbox" value="${t}" class="uperm accent-tnf-green" ${(u.permissions||[]).includes(t)?'checked':''}/> ${t}</label>`).join('')}</div><p class="text-xs text-gray-400 mt-2">Administrators have every permission automatically.</p></div>
+    <div class="flex items-center justify-between gap-4"><label class="text-sm font-semibold text-tnf-ink">Account active</label><div class="toggle ${u.is_active!==false?'on':''}" id="u_active" data-val="${u.is_active!==false?1:0}"><span></span></div></div>
+    <div class="flex items-center gap-3 pt-4 border-t border-gray-100"><button type="submit" id="usave" class="bg-tnf-green hover:bg-tnf-greenDark text-white font-bold px-7 py-3 rounded-xl">Save user</button><button type="button" id="ucancel" class="text-gray-500 font-semibold px-4">Cancel</button></div>
+  </form>`;
+  $('uback').onclick=renderUsers; $('ucancel').onclick=renderUsers;
+  $('u_active').onclick=()=>{const t=$('u_active');const on=t.dataset.val==='1';t.dataset.val=on?'0':'1';t.classList.toggle('on',!on);};
+  $('uform').addEventListener('submit',async e=>{e.preventDefault();const btn=$('usave');btn.disabled=true;const old=btn.innerHTML;btn.innerHTML='<span class="btn-spin"></span> Saving…';
+    const payload={role:$('u_role').value,title:$('u_title').value.trim()||null,department_id:$('u_dept').value||null,permissions:[...document.querySelectorAll('.uperm:checked')].map(x=>x.value),is_active:$('u_active').dataset.val==='1'};
+    try{const{error}=await db.from('profiles').update(payload).eq('id',u.id);if(error)throw error;toast('User updated');renderUsers();}catch(err){toast(err.message||'Failed',false);btn.disabled=false;btn.innerHTML=old;}
+  });
+}
+
+async function renderSettings(){
+  const c=$('content');
+  c.innerHTML=`<div id="sbody"><div class="loader-spinner my-10"></div></div>`;
+  let s={};
+  try{const{data}=await db.from('site_settings').select('*').maybeSingle();s=data||{id:true};}catch(e){s={id:true};}
+  const social=s.social_links||{};
+  const inp=(id,val,ph='')=>`<input id="${id}" value="${esc(val||'')}" placeholder="${ph}" class="w-full border border-gray-200 rounded-xl px-4 py-3 focus:border-tnf-green focus:ring-4 focus:ring-tnf-green/10"/>`;
+  const ta=(id,val)=>`<textarea id="${id}" rows="3" class="w-full border border-gray-200 rounded-xl px-4 py-3 resize-y focus:border-tnf-green focus:ring-4 focus:ring-tnf-green/10">${esc(val||'')}</textarea>`;
+  const card=(title,inner)=>`<div class="bg-white rounded-2xl border border-gray-100 p-6 md:p-8 space-y-5"><h3 class="font-bold text-tnf-ink">${title}</h3>${inner}</div>`;
+  const fld=(l,el)=>`<div><label class="block text-sm font-semibold text-tnf-ink mb-2">${l}</label>${el}</div>`;
+  $('sbody').innerHTML=`<div class="space-y-6 max-w-3xl">
+    ${card('Homepage hero',fld('Headline',inp('s_hero_headline',s.hero_headline))+fld('Sub-headline',ta('s_hero_subheadline',s.hero_subheadline)))}
+    ${card('Mission & vision',fld('Mission heading',inp('s_mission_heading',s.mission_heading))+fld('Mission text',ta('s_mission_text',s.mission_text))+fld('Vision text',ta('s_vision_text',s.vision_text)))}
+    ${card('About',fld('About heading',inp('s_about_heading',s.about_heading))+fld('About body',ta('s_about_body',s.about_body)))}
+    ${card('Founder',fld('Name',inp('s_founder_name',s.founder_name))+fld('Role',inp('s_founder_role',s.founder_role))+fld('Message',ta('s_founder_message',s.founder_message))+fld('Portrait image URL',inp('s_founder_image',s.founder_image)))}
+    ${card('Announcement bar',`<div class="flex items-center justify-between gap-4"><label class="text-sm font-semibold text-tnf-ink">Show announcement bar</label><div class="toggle ${s.announcement_active?'on':''}" id="s_announcement_active" data-val="${s.announcement_active?1:0}"><span></span></div></div>`+fld('Text',inp('s_announcement_text',s.announcement_text))+fld('Link (optional)',inp('s_announcement_url',s.announcement_url)))}
+    ${card('Contact',fld('Email',inp('s_contact_email',s.contact_email))+fld('Phone',inp('s_contact_phone',s.contact_phone))+fld('Address',ta('s_contact_address',s.contact_address))+fld('Office hours',inp('s_office_hours',s.office_hours)))}
+    ${card('Social links',`<div class="grid grid-cols-2 gap-3">${SOCIALS.map(p=>fld(p.charAt(0).toUpperCase()+p.slice(1),inp('soc_'+p,social[p]))).join('')}</div>`)}
+    ${card('SEO',fld('Title',inp('s_seo_title',s.seo_title))+fld('Description',ta('s_seo_description',s.seo_description))+fld('Share image URL',inp('s_seo_image',s.seo_image)))}
+    <div class="flex items-center gap-3"><button id="ssave" class="bg-tnf-green hover:bg-tnf-greenDark text-white font-bold px-7 py-3 rounded-xl">Save settings</button></div>
+  </div>`;
+  $('s_announcement_active').onclick=()=>{const t=$('s_announcement_active');const on=t.dataset.val==='1';t.dataset.val=on?'0':'1';t.classList.toggle('on',!on);};
+  $('ssave').onclick=async()=>{const btn=$('ssave');btn.disabled=true;const old=btn.innerHTML;btn.innerHTML='<span class="btn-spin"></span> Saving…';
+    const g=id=>{const e=document.getElementById(id);return e?(e.value.trim()||null):null;};
+    const soc={};SOCIALS.forEach(p=>{const v=g('soc_'+p);if(v)soc[p]=v;});
+    const payload={id:true,hero_headline:g('s_hero_headline'),hero_subheadline:g('s_hero_subheadline'),mission_heading:g('s_mission_heading'),mission_text:g('s_mission_text'),vision_text:g('s_vision_text'),about_heading:g('s_about_heading'),about_body:g('s_about_body'),founder_name:g('s_founder_name'),founder_role:g('s_founder_role'),founder_message:g('s_founder_message'),founder_image:g('s_founder_image'),announcement_active:$('s_announcement_active').dataset.val==='1',announcement_text:g('s_announcement_text'),announcement_url:g('s_announcement_url'),contact_email:g('s_contact_email'),contact_phone:g('s_contact_phone'),contact_address:g('s_contact_address'),office_hours:g('s_office_hours'),social_links:soc,seo_title:g('s_seo_title'),seo_description:g('s_seo_description'),seo_image:g('s_seo_image')};
+    try{const{error}=await db.from('site_settings').upsert(payload,{onConflict:'id'});if(error)throw error;toast('Settings saved');}catch(e){toast(e.message||'Failed',false);}
+    btn.disabled=false;btn.innerHTML=old;
+  };
+}
+</script>
+</body>
+</html>
