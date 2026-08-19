@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>My Portal | Tyler Nicholas Foundation</title>
+<meta name="robots" content="noindex" />
+<link rel="icon" href="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" />
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<script>
+tailwind.config={theme:{extend:{fontFamily:{sans:['Plus Jakarta Sans','sans-serif']},colors:{tnf:{green:'#2E9E44',greenDark:'#26863A',greenLight:'#EEF7EF',ink:'#152219',charcoal:'#0E1A13'}}}}}
+</script>
+<style>
+  body{background:#f1f5f4}
+  .loader-spinner{border:3px solid rgba(46,158,68,.2);border-left-color:#2E9E44;border-radius:50%;width:44px;height:44px;animation:spin .9s linear infinite}
+  .btn-spin{display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;vertical-align:-2px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .nav-item.active{background:rgba(46,158,68,.16);color:#fff}
+  .nav-item.active i{color:#2E9E44}
+  input:focus,textarea:focus,select:focus{outline:none}
+  ::-webkit-scrollbar{width:9px;height:9px}::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:5px}
+</style>
+</head>
+<body class="font-sans text-gray-900">
+
+<div id="gate" class="fixed inset-0 z-50 flex items-center justify-center bg-white">
+  <div class="text-center"><div class="loader-spinner mx-auto mb-4"></div><p id="gate-text" class="text-gray-500 font-semibold text-sm">Loading your portal…</p></div>
+</div>
+
+<div id="app" class="hidden min-h-screen lg:flex">
+  <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 w-64 bg-tnf-charcoal text-white flex flex-col z-40 -translate-x-full lg:translate-x-0 transition-transform">
+    <div class="px-6 py-5 border-b border-white/10 flex items-center gap-3">
+      <img src="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" class="h-10 w-10 rounded-lg bg-white p-1 object-contain" alt="TNF" />
+      <div class="leading-tight"><div class="font-extrabold text-sm">Foundation</div><div class="text-tnf-green text-xs font-bold">My Portal</div></div>
+    </div>
+    <nav id="nav" class="flex-1 overflow-y-auto py-4 px-3 space-y-1 text-sm"></nav>
+    <div class="px-4 py-4 border-t border-white/10">
+      <div class="flex items-center gap-3 mb-3">
+        <div id="u-avatar" class="w-9 h-9 rounded-full bg-tnf-green grid place-items-center font-bold text-sm flex-none bg-cover bg-center"></div>
+        <div class="min-w-0"><div id="u-name" class="font-semibold text-sm truncate"></div><div id="u-role" class="text-white/50 text-xs"></div></div>
+      </div>
+      <div class="flex gap-2">
+        <a href="/" class="flex-1 text-center text-xs font-semibold bg-white/10 hover:bg-white/20 rounded-lg py-2 transition-colors">View site</a>
+        <button id="signout" class="flex-1 text-center text-xs font-semibold bg-white/10 hover:bg-red-500/30 rounded-lg py-2 transition-colors">Sign out</button>
+      </div>
+    </div>
+  </aside>
+  <div id="backdrop" class="fixed inset-0 bg-black/40 z-30 hidden lg:hidden"></div>
+
+  <main class="flex-1 min-w-0 lg:h-screen lg:overflow-y-auto">
+    <header class="bg-white border-b border-gray-200 px-5 py-3.5 flex items-center gap-3 sticky top-0 z-20">
+      <button id="menu-btn" class="lg:hidden text-tnf-ink text-xl"><i class="fa-solid fa-bars"></i></button>
+      <h1 id="page-title" class="text-lg font-bold text-tnf-ink flex-1">Home</h1>
+    </header>
+    <div id="content" class="p-5 md:p-8 max-w-5xl"></div>
+  </main>
+</div>
+
+<!-- RSVP MODAL -->
+<div id="rsvp-modal" class="fixed inset-0 z-[55] hidden items-center justify-center bg-black/50 p-4">
+  <div class="bg-white rounded-2xl w-full max-w-md p-6 md:p-8">
+    <div class="flex justify-between items-start mb-4"><h3 class="text-xl font-bold text-tnf-ink">Reserve your spot</h3><button id="rsvp-close" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button></div>
+    <p id="rsvp-event" class="text-gray-500 text-sm mb-5"></p>
+    <form id="rsvp-form" class="space-y-4">
+      <div><label class="block text-sm font-semibold text-tnf-ink mb-2">Name</label><input id="rsvp-name" required class="w-full border border-gray-200 rounded-xl px-4 py-3 focus:border-tnf-green focus:ring-4 focus:ring-tnf-green/10"/></div>
+      <div><label class="block text-sm font-semibold text-tnf-ink mb-2">Email</label><input id="rsvp-email" type="email" required class="w-full border border-gray-200 rounded-xl px-4 py-3 focus:border-tnf-green focus:ring-4 focus:ring-tnf-green/10"/></div>
+      <p id="rsvp-msg" class="text-sm font-semibold text-red-600 min-h-[1em]"></p>
+      <button type="submit" id="rsvp-submit" class="w-full bg-tnf-green hover:bg-tnf-greenDark text-white font-bold py-3.5 rounded-xl transition-colors">Confirm RSVP</button>
+    </form>
+  </div>
+</div>
+
+<div id="toast" class="fixed bottom-6 right-6 z-[60] space-y-2"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>(s==null?'':String(s)).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+const fmtDate=v=>v?new Intl.DateTimeFormat('en-GB',{day:'numeric',month:'short',year:'numeric'}).format(new Date(v)):'';
+const fmtDT=v=>v?new Intl.DateTimeFormat('en-GB',{weekday:'short',day:'numeric',month:'short',hour:'numeric',minute:'2-digit'}).format(new Date(v)):'';
+function toast(msg,ok=true){const t=document.createElement('div');t.className=`px-4 py-3 rounded-xl shadow-lg text-sm font-semibold text-white ${ok?'bg-tnf-green':'bg-red-600'}`;t.textContent=msg;$('toast').appendChild(t);setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .3s';setTimeout(()=>t.remove(),300);},2600);}
+const CATLABEL={scholarship:'Scholarship',exchange:'Exchange',international:'International',internship:'Internship',university:'University',conference:'Conference',competition:'Competition',fellowship:'Fellowship',training:'Training',volunteering:'Volunteering',entrepreneurship:'Entrepreneurship',mentorship:'Mentorship'};
+const ROLELABEL={member:'Member',volunteer:'Volunteer',staff:'Staff',board:'Board Member',admin:'Administrator',superadmin:'Administrator'};
+const STAFF_ROLES=['staff','board','admin','superadmin'];
+
+let db, ME={};
+
+document.addEventListener('DOMContentLoaded',()=>{
+  const wait=setInterval(async()=>{
+    if(!window.supabase)return; clearInterval(wait);
+    db=window.supabase.createClient('https://mcnemlwalcgdlmclijxc.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jbmVtbHdhbGNnZGxtY2xpanhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5NDMzNTAsImV4cCI6MjEwMjUxOTM1MH0.jVPTsfz7Htho4EZKvHzlgr1vSkj41EuVpMBgaHzLm-Q');
+    const {data:{session}}=await db.auth.getSession();
+    if(!session){ location.replace('/login'); return; }
+    try{ const{data}=await db.from('profiles').select('*').eq('id',session.user.id).maybeSingle(); ME=data||{id:session.user.id,email:session.user.email,role:'member'}; }
+    catch(e){ ME={id:session.user.id,email:session.user.email,role:'member'}; }
+    if(ME.is_active===false){ await db.auth.signOut(); location.replace('/login'); return; }
+    const nm=ME.full_name||ME.email||'You';
+    $('u-name').textContent=nm; $('u-role').textContent=ROLELABEL[ME.role]||ME.role;
+    if(ME.avatar_url){ $('u-avatar').style.backgroundImage=`url('${ME.avatar_url}')`; $('u-avatar').textContent=''; }
+    else { $('u-avatar').textContent=(nm.trim()[0]||'?').toUpperCase(); }
+    buildNav(); route('home');
+    $('gate').classList.add('hidden'); $('app').classList.remove('hidden');
+    $('signout').addEventListener('click',async()=>{ await db.auth.signOut(); location.replace('/login'); });
+    $('menu-btn').addEventListener('click',()=>{ $('sidebar').classList.remove('-translate-x-full'); $('backdrop').classList.remove('hidden'); });
+    $('backdrop').addEventListener('click',closeNav);
+    $('rsvp-close').addEventListener('click',closeRsvp);
+    $('rsvp-modal').addEventListener('click',e=>{if(e.target.id==='rsvp-modal')closeRsvp();});
+  },80);
+});
+function closeNav(){ $('sidebar').classList.add('-translate-x-full'); $('backdrop').classList.add('hidden'); }
+
+const NAV=[['home','Home','fa-house'],['hours','My Hours','fa-clock'],['events','Events','fa-calendar-day'],['resources','Resources','fa-folder-open'],['opportunities','Opportunities','fa-compass'],['profile','My Profile','fa-user']];
+function buildNav(){
+  const nav=$('nav'); nav.innerHTML='';
+  NAV.forEach(([k,l,ic])=>{ const a=document.createElement('button'); a.className='nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/75 hover:bg-white/5 transition-colors text-left'; a.dataset.key=k; a.innerHTML=`<i class="fa-solid ${ic} w-5 text-center text-white/50"></i><span>${l}</span>`; a.onclick=()=>{route(k);closeNav();}; nav.appendChild(a); });
+}
+function setActive(k){ document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.key===k)); }
+function route(k){ setActive(k); const t={home:'Home',hours:'My Hours',events:'Events',resources:'Resources',opportunities:'Opportunities',profile:'My Profile'}[k]; $('page-title').textContent=t;
+  if(k==='home')return renderHome(); if(k==='hours')return renderHours(); if(k==='events')return renderEvents(); if(k==='resources')return renderResources(); if(k==='opportunities')return renderOpps(); if(k==='profile')return renderProfile();
+}
+
+// ---------- HOME ----------
+async function renderHome(){
+  const c=$('content'); const first=(ME.full_name||'').trim().split(' ')[0]||'there';
+  const staffBanner=STAFF_ROLES.includes(ME.role)?`<a href="/staff" class="flex items-center justify-between gap-3 bg-tnf-ink text-white rounded-2xl p-5 mb-6 hover:bg-black transition-colors"><div><div class="font-bold">You have staff access</div><div class="text-white/60 text-sm">Open the staff portal to manage the Foundation.</div></div><i class="fa-solid fa-arrow-right"></i></a>`:'';
+  c.innerHTML=`${staffBanner}
+    <div class="bg-gradient-to-br from-tnf-green to-tnf-charcoal rounded-3xl p-7 md:p-9 text-white mb-6">
+      <h2 class="text-2xl md:text-3xl font-extrabold mb-1">Hi ${esc(first)} 👋</h2>
+      <p class="text-white/80">Welcome to your portal. Here's everything in one place.</p>
+    </div>
+    <div id="home-stats" class="grid grid-cols-3 gap-3 md:gap-4 mb-6"></div>
+    <div class="grid sm:grid-cols-2 gap-3 mb-8">
+      <button onclick="route('hours')" class="bg-white border border-gray-100 rounded-2xl p-5 text-left hover:border-tnf-green transition-colors flex items-center gap-4"><div class="w-11 h-11 rounded-xl bg-tnf-greenLight text-tnf-green grid place-items-center"><i class="fa-solid fa-clock"></i></div><div><div class="font-bold text-tnf-ink">Log volunteer hours</div><div class="text-gray-400 text-sm">Record time you've given</div></div></button>
+      <button onclick="route('opportunities')" class="bg-white border border-gray-100 rounded-2xl p-5 text-left hover:border-tnf-green transition-colors flex items-center gap-4"><div class="w-11 h-11 rounded-xl bg-tnf-greenLight text-tnf-green grid place-items-center"><i class="fa-solid fa-compass"></i></div><div><div class="font-bold text-tnf-ink">Find opportunities</div><div class="text-gray-400 text-sm">Scholarships, programmes & more</div></div></button>
+    </div>
+    <div id="home-events"></div>`;
+  // stats
+  let approved=0,pending=0,ev=0;
+  try{const{data}=await db.from('volunteer_hours').select('hours,is_approved').eq('volunteer_id',ME.id);(data||[]).forEach(h=>{if(h.is_approved)approved+=Number(h.hours)||0;else pending+=Number(h.hours)||0;});}catch(e){}
+  try{const now=new Date().toISOString();const{data}=await db.from('events').select('id,starts_at,is_published').eq('is_published',true);ev=(data||[]).filter(e=>!e.starts_at||e.starts_at>=now).length;}catch(e){}
+  $('home-stats').innerHTML=[['Approved hours',approved%1?approved.toFixed(1):approved,'fa-circle-check'],['Pending hours',pending%1?pending.toFixed(1):pending,'fa-hourglass-half'],['Upcoming events',ev,'fa-calendar-day']].map(([l,v,ic])=>`<div class="bg-white rounded-2xl border border-gray-100 p-4 md:p-5 text-center"><div class="text-2xl md:text-3xl font-extrabold text-tnf-ink">${v}</div><div class="text-gray-400 text-xs font-semibold mt-1">${l}</div></div>`).join('');
+  // upcoming events preview
+  try{const now=new Date().toISOString();const{data}=await db.from('events').select('*').eq('is_published',true).order('starts_at',{ascending:true});const up=(data||[]).filter(e=>!e.starts_at||e.starts_at>=now).slice(0,2);
+    if(up.length)$('home-events').innerHTML=`<h3 class="font-bold text-tnf-ink mb-3">Coming up</h3><div class="space-y-3">${up.map(evc=>eventCard(evc,true)).join('')}</div>`;
+    wireRsvpButtons();
+  }catch(e){}
+}
+
+// ---------- HOURS ----------
+async function renderHours(){
+  const c=$('content');
+  c.innerHTML=`<div class="grid lg:grid-cols-5 gap-6">
+    <div class="lg:col-span-2">
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 sticky top-24">
+        <h3 class="font-bold text-tnf-ink mb-4">Log hours</h3>
+        <form id="hform" class="space-y-4">
+          <div><label class="block text-sm font-semibold text-tnf-ink mb-2">What did you do?</label><input id="h-activity" required placeholder="e.g. Beach clean-up" class="w-full border border-gray-200 rounded-xl px-4 py-3 focus:border-tnf-green focus:ring-4 focus:ring-tnf-green/10"/></div>
+          <div class="grid grid-cols-2 gap-3">
+            <div><label class="block text-sm font-semibold text-tnf-ink mb-2">Hours</label><input id="h-hours" type="number" step="0.5" min="0" required placeholder="2.5" class="w-full border border-gray-200 rounded-xl px-4 py-3 focus:border-tnf-green focus:ring-4 focus:ring-tnf-green/10"/></div>
+            <div><label class="block text-sm font-semibold text-tnf-ink mb-2">Date</label><input id="h-date" type="date" class="w-full border border-gray-200 rounded-xl px-4 py-3 focus:border-tnf-green focus:ring-4 focus:ring-tnf-green/10"/></div>
+          </div>
+          <p id="h-msg" class="text-sm font-semibold text-red-600 min-h-[1em]"></p>
+          <button type="submit" id="h-submit" class="w-full bg-tnf-green hover:bg-tnf-greenDark text-white font-bold py-3 rounded-xl transition-colors">Add entry</button>
+        </form>
+        <p class="text-xs text-gray-400 mt-4">Logged hours are reviewed by a coordinator before being approved.</p>
+      </div>
+    </div>
+    <div class="lg:col-span-3" id="h-list"><div class="loader-spinner my-10"></div></div>
+  </div>`;
+  $('h-date').value=new Date().toISOString().slice(0,10);
+  $('hform').addEventListener('submit',async e=>{e.preventDefault();const btn=$('h-submit'),msg=$('h-msg');msg.textContent='';
+    const activity=$('h-activity').value.trim(),hours=parseFloat($('h-hours').value),logged_on=$('h-date').value;
+    if(!activity||!hours||hours<=0){msg.textContent='Add an activity and a number of hours.';return;}
+    btn.disabled=true;const old=btn.innerHTML;btn.innerHTML='<span class="btn-spin"></span> Adding…';
+    try{const{error}=await db.from('volunteer_hours').insert({volunteer_id:ME.id,activity,hours,logged_on});if(error)throw error;toast('Hours logged');$('h-activity').value='';$('h-hours').value='';loadHours();}catch(err){msg.textContent=err.message||'Could not save.';}
+    btn.disabled=false;btn.innerHTML=old;
+  });
+  loadHours();
+}
+async function loadHours(){
+  let rows=[];
+  try{const{data,error}=await db.from('volunteer_hours').select('*').eq('volunteer_id',ME.id).order('logged_on',{ascending:false});if(error)throw error;rows=data||[];}
+  catch(e){$('h-list').innerHTML=`<p class="text-red-600 text-sm">${esc(e.message)}</p>`;return;}
+  const approved=rows.filter(r=>r.is_approved).reduce((s,r)=>s+(Number(r.hours)||0),0);
+  const pending=rows.filter(r=>!r.is_approved).reduce((s,r)=>s+(Number(r.hours)||0),0);
+  const fmt=n=>n%1?n.toFixed(1):n;
+  const head=`<div class="grid grid-cols-2 gap-3 mb-4"><div class="bg-tnf-greenLight rounded-2xl p-4"><div class="text-2xl font-extrabold text-tnf-greenDark">${fmt(approved)}</div><div class="text-tnf-greenDark/70 text-xs font-semibold">Approved hours</div></div><div class="bg-amber-50 rounded-2xl p-4"><div class="text-2xl font-extrabold text-amber-700">${fmt(pending)}</div><div class="text-amber-700/70 text-xs font-semibold">Pending approval</div></div></div>`;
+  if(!rows.length){$('h-list').innerHTML=head+`<div class="bg-white rounded-2xl border border-gray-100 p-10 text-center text-gray-400">No hours logged yet. Add your first entry.</div>`;return;}
+  $('h-list').innerHTML=head+`<div class="bg-white rounded-2xl border border-gray-100 divide-y divide-gray-100">${rows.map(r=>`<div class="flex items-center gap-3 p-4"><div class="flex-1 min-w-0"><div class="font-semibold text-tnf-ink truncate">${esc(r.activity||'Volunteering')}</div><div class="text-xs text-gray-400">${fmtDate(r.logged_on)}</div></div><div class="font-bold text-tnf-ink whitespace-nowrap">${fmt(Number(r.hours)||0)}h</div>${r.is_approved?'<span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-tnf-greenLight text-tnf-greenDark">Approved</span>':`<span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-700">Pending</span><button class="hdel text-gray-300 hover:text-red-600 px-1" data-id="${r.id}"><i class="fa-solid fa-trash text-sm"></i></button>`}</div>`).join('')}</div>`;
+  $('h-list').querySelectorAll('.hdel').forEach(b=>b.onclick=async()=>{if(!confirm('Remove this entry?'))return;try{const{error}=await db.from('volunteer_hours').delete().eq('id',b.dataset.id);if(error)throw error;toast('Removed');loadHours();}catch(e){toast(e.message||'Failed',false);}});
+}
+
+// ---------- EVENTS ----------
+function eventCard(e,compact){
+  const d=e.starts_at?new Date(e.starts_at):null;
+  const badge=d?`<div class="flex-none w-14 text-center bg-tnf-greenLight rounded-xl py-2"><div class="text-tnf-greenDark font-extrabold text-lg leading-none">${d.getDate()}</div><div class="text-tnf-greenDark/70 text-[11px] font-bold uppercase">${d.toLocaleString('en',{month:'short'})}</div></div>`:'';
+  const act=e.registration_url?`<a href="${esc(e.registration_url)}" target="_blank" rel="noopener" class="text-sm font-bold text-tnf-green hover:text-tnf-greenDark whitespace-nowrap">Register <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i></a>`:`<button class="rsvp-btn text-sm font-bold text-tnf-green hover:text-tnf-greenDark whitespace-nowrap" data-id="${e.id}" data-title="${esc(e.title)}" data-when="${esc(fmtDT(e.starts_at))}">RSVP</button>`;
+  return `<div class="bg-white rounded-2xl border border-gray-100 p-4 flex items-center gap-4">${badge}<div class="flex-1 min-w-0"><div class="font-bold text-tnf-ink truncate">${esc(e.title)}</div><div class="text-xs text-gray-400">${e.starts_at?esc(fmtDT(e.starts_at)):'Date TBC'}${e.location?' · '+esc(e.location):''}</div>${!compact&&e.description?`<p class="text-sm text-gray-500 mt-1 line-clamp-2">${esc(e.description)}</p>`:''}</div>${act}</div>`;
+}
+async function renderEvents(){
+  const c=$('content'); c.innerHTML=`<div id="ev-body"><div class="loader-spinner my-10"></div></div>`;
+  let rows=[];
+  try{const{data,error}=await db.from('events').select('*').eq('is_published',true).order('starts_at',{ascending:true});if(error)throw error;rows=data||[];}
+  catch(e){$('ev-body').innerHTML=`<p class="text-gray-400 text-sm italic">Could not load events.</p>`;return;}
+  const now=new Date().toISOString();
+  const up=rows.filter(e=>!e.starts_at||e.starts_at>=now);
+  if(!up.length){$('ev-body').innerHTML=`<div class="bg-white rounded-2xl border border-gray-100 p-10 text-center text-gray-400">No upcoming events right now — check back soon.</div>`;return;}
+  $('ev-body').innerHTML=`<p class="text-gray-500 mb-4">${up.length} upcoming ${up.length===1?'event':'events'}</p><div class="space-y-3">${up.map(e=>eventCard(e,false)).join('')}</div>`;
+  wireRsvpButtons();
+}
+let RSVP_EVENT=null;
+function wireRsvpButtons(){ document.querySelectorAll('.rsvp-btn').forEach(b=>b.onclick=()=>openRsvp(b.dataset.id,b.dataset.title,b.dataset.when)); }
+function openRsvp(id,title,when){ RSVP_EVENT=id; $('rsvp-event').textContent=title+(when?' · '+when:''); $('rsvp-name').value=ME.full_name||''; $('rsvp-email').value=ME.email||''; $('rsvp-msg').textContent=''; $('rsvp-modal').classList.remove('hidden'); $('rsvp-modal').classList.add('flex'); }
+function closeRsvp(){ $('rsvp-modal').classList.add('hidden'); $('rsvp-modal').classList.remove('flex'); }
+document.addEventListener('DOMContentLoaded',()=>{ const iv=setInterval(()=>{ if(!$('rsvp-form'))return; clearInterval(iv);
+  $('rsvp-form').addEventListener('submit',async e=>{e.preventDefault();const btn=$('rsvp-submit'),msg=$('rsvp-msg');msg.textContent='';
+    const name=$('rsvp-name').value.trim(),email=$('rsvp-email').value.trim();
+    if(!name||!email){msg.textContent='Please add your name and email.';return;}
+    btn.disabled=true;const old=btn.innerHTML;btn.innerHTML='<span class="btn-spin"></span> Confirming…';
+    try{const{error}=await db.from('event_rsvps').insert({event_id:RSVP_EVENT,name,email});if(error)throw error;closeRsvp();toast("You're on the list!");}catch(err){msg.textContent=err.message||'Could not RSVP.';}
+    btn.disabled=false;btn.innerHTML=old;
+  });
+},80); });
+
+// ---------- RESOURCES ----------
+async function renderResources(){
+  const c=$('content'); c.innerHTML=`<div id="rc-body"><div class="loader-spinner my-10"></div></div>`;
+  let rows=[];
+  try{const{data,error}=await db.from('resources').select('*').eq('is_published',true).order('sort_order',{ascending:true});if(error)throw error;rows=data||[];}
+  catch(e){$('rc-body').innerHTML=`<p class="text-gray-400 text-sm italic">Could not load resources.</p>`;return;}
+  if(!rows.length){$('rc-body').innerHTML=`<div class="bg-white rounded-2xl border border-gray-100 p-10 text-center text-gray-400">No resources yet.</div>`;return;}
+  $('rc-body').innerHTML=`<div class="grid sm:grid-cols-2 gap-4">${rows.map(r=>{const link=r.file_url||r.link_url;const dl=!!r.file_url;return `<div class="bg-white rounded-2xl border border-gray-100 p-5 flex flex-col"><div class="w-11 h-11 rounded-xl bg-tnf-greenLight text-tnf-green grid place-items-center mb-3"><i class="fa-solid ${dl?'fa-file-arrow-down':'fa-link'}"></i></div><div class="font-bold text-tnf-ink">${esc(r.title)}</div>${r.category?`<div class="text-xs text-gray-400 mt-0.5">${esc(r.category)}</div>`:''}${r.description?`<p class="text-sm text-gray-500 mt-2 flex-1">${esc(r.description)}</p>`:'<div class="flex-1"></div>'}${link?`<a href="${esc(link)}" target="_blank" rel="noopener" class="mt-4 inline-flex items-center gap-2 text-sm font-bold text-tnf-green hover:text-tnf-greenDark">${dl?'Download':'Open'} <i class="fa-solid fa-arrow-right text-xs"></i></a>`:''}</div>`;}).join('')}</div>`;
+}
+
+// ---------- OPPORTUNITIES ----------
+async function renderOpps(){
+  const c=$('content');
+  c.innerHTML=`<div class="flex items-center justify-between mb-4"><p class="text-gray-500">A few opportunities open now.</p><a href="/opportunities" class="text-sm font-bold text-tnf-green hover:text-tnf-greenDark whitespace-nowrap">Browse all <i class="fa-solid fa-arrow-right text-xs"></i></a></div><div id="op-body"><div class="loader-spinner my-10"></div></div>`;
+  let rows=[];
+  try{const{data,error}=await db.from('opportunities').select('*').eq('is_published',true).neq('status','closed').order('created_at',{ascending:false}).limit(6);if(error)throw error;rows=data||[];}
+  catch(e){$('op-body').innerHTML=`<p class="text-gray-400 text-sm italic">Could not load opportunities.</p>`;return;}
+  if(!rows.length){$('op-body').innerHTML=`<div class="bg-white rounded-2xl border border-gray-100 p-10 text-center text-gray-400">No open opportunities right now. <a href="/opportunities" class="text-tnf-green font-bold">See the full hub</a>.</div>`;return;}
+  const daysLeft=d=>{if(!d)return null;const n=Math.ceil((new Date(d)-new Date())/86400000);return n;};
+  $('op-body').innerHTML=`<div class="space-y-3">${rows.map(o=>{const dl=daysLeft(o.deadline);const soon=dl!=null&&dl>=0&&dl<=14;return `<a href="/opportunities/opportunity?slug=${encodeURIComponent(o.slug||'')}" class="block bg-white rounded-2xl border border-gray-100 p-5 hover:border-tnf-green transition-colors"><div class="flex items-start justify-between gap-3"><div class="min-w-0"><div class="text-xs font-bold text-tnf-green uppercase tracking-wide mb-1">${esc(CATLABEL[o.category]||o.category||'Opportunity')}</div><div class="font-bold text-tnf-ink">${esc(o.title)}</div>${o.organization?`<div class="text-sm text-gray-400 mt-0.5">${esc(o.organization)}${o.location?' · '+esc(o.location):''}</div>`:''}</div><i class="fa-solid fa-arrow-right text-gray-300 mt-1"></i></div>${dl!=null&&dl>=0?`<div class="mt-3 text-xs font-bold ${soon?'text-amber-600':'text-gray-400'}">${dl===0?'Closes today':dl+' day'+(dl===1?'':'s')+' left'}</div>`:''}</a>`;}).join('')}</div>`;
+}
+
+// ---------- PROFILE ----------
+async function renderProfile(){
+  const c=$('content');
+  c.innerHTML=`<form id="pform" class="bg-white rounded-2xl border border-gray-100 p-6 md:p-8 space-y-6 max-w-2xl">
+    <div class="flex items-center gap-5">
+      <div id="p-avatar" class="w-20 h-20 rounded-full bg-tnf-greenLight text-tnf-greenDark grid place-items-center text-2xl font-extrabold bg-cover bg-center flex-none">${ME.avatar_url?'':esc((ME.full_name||ME.email||'?').trim()[0].toUpperCase())}</div>
+      <div><label class="cursor-pointer inline-flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-tnf-ink font-semibold text-sm px-4 py-2.5 rounded-xl transition-colors"><i class="fa-solid fa-camera"></i>Change photo<input type="file" id="p-photo" accept="image/*" class="hidden"/></label><p id="p-photo-status" class="text-xs text-gray-400 mt-1"></p></div>
+    </div>
+    <div><label class="block text-sm font-semibold text-tnf-ink mb-2">Full name</label><input id="p-name" value="${esc(ME.full_name||'')}" class="w-full border border-gray-200 rounded-xl px-4 py-3 focus:border-tnf-green focus:ring-4 focus:ring-tnf-green/10"/></div>
+    <div class="grid sm:grid-cols-2 gap-4">
+      <div><label class="block text-sm font-semibold text-tnf-ink mb-2">Email</label><input value="${esc(ME.email||'')}" disabled class="w-full border border-gray-100 bg-gray-50 text-gray-400 rounded-xl px-4 py-3"/></div>
+      <div><label class="block text-sm font-semibold text-tnf-ink mb-2">Phone</label><input id="p-phone" value="${esc(ME.phone||'')}" class="w-full border border-gray-200 rounded-xl px-4 py-3 focus:border-tnf-green focus:ring-4 focus:ring-tnf-green/10"/></div>
+    </div>
+    <div><label class="block text-sm font-semibold text-tnf-ink mb-2">About you</label><textarea id="p-bio" rows="3" class="w-full border border-gray-200 rounded-xl px-4 py-3 resize-y focus:border-tnf-green focus:ring-4 focus:ring-tnf-green/10">${esc(ME.bio||'')}</textarea></div>
+    <div class="flex items-center gap-2 text-sm"><span class="text-gray-400">Your role:</span><span class="font-bold px-2.5 py-1 rounded-full bg-tnf-greenLight text-tnf-greenDark text-xs">${esc(ROLELABEL[ME.role]||ME.role)}</span></div>
+    <div class="flex items-center gap-3 pt-4 border-t border-gray-100"><button type="submit" id="p-save" class="bg-tnf-green hover:bg-tnf-greenDark text-white font-bold px-7 py-3 rounded-xl transition-colors">Save changes</button></div>
+  </form>`;
+  let newAvatar=ME.avatar_url||null;
+  $('p-photo').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;const st=$('p-photo-status');st.textContent='Uploading…';
+    try{const ext=(file.name.split('.').pop()||'jpg').toLowerCase();const path=`avatars/${ME.id}-${Date.now()}.${ext}`;const{error}=await db.storage.from('public').upload(path,file,{upsert:true});if(error)throw error;const{data:pub}=db.storage.from('public').getPublicUrl(path);newAvatar=pub.publicUrl;$('p-avatar').style.backgroundImage=`url('${newAvatar}')`;$('p-avatar').textContent='';st.textContent='Photo ready — save to keep it.';}catch(err){st.textContent='Upload failed: '+(err.message||'');}
+  });
+  $('pform').addEventListener('submit',async e=>{e.preventDefault();const btn=$('p-save');btn.disabled=true;const old=btn.innerHTML;btn.innerHTML='<span class="btn-spin"></span> Saving…';
+    const payload={full_name:$('p-name').value.trim()||null,phone:$('p-phone').value.trim()||null,bio:$('p-bio').value.trim()||null,avatar_url:newAvatar};
+    try{const{error}=await db.from('profiles').update(payload).eq('id',ME.id);if(error)throw error;Object.assign(ME,payload);toast('Profile saved');
+      const nm=ME.full_name||ME.email||'You';$('u-name').textContent=nm;if(newAvatar){$('u-avatar').style.backgroundImage=`url('${newAvatar}')`;$('u-avatar').textContent='';}else{$('u-avatar').textContent=(nm.trim()[0]||'?').toUpperCase();}
+    }catch(err){toast(err.message||'Could not save.',false);}
+    btn.disabled=false;btn.innerHTML=old;
+  });
+}
+</script>
+</body>
+</html>
