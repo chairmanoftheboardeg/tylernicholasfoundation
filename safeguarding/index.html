@@ -280,6 +280,10 @@
     window.addEventListener('load',()=>{const l=document.getElementById('loading-screen');setTimeout(()=>{l.style.opacity='0';l.style.visibility='hidden';document.body.classList.remove('loading');AOS.init({duration:800,once:true,offset:60});},700);});
     document.getElementById('mobile-menu-btn').addEventListener('click',()=>document.getElementById('mobile-menu').classList.toggle('hidden'));
     document.getElementById('current-year').innerText=new Date().getFullYear();
+    // Keep #anchor jumps aligned under the sticky nav while the page settles — stops if the user scrolls.
+    (function(){ if(!location.hash) return; let n=0, stop=false; const cancel=()=>{stop=true;};
+      ['wheel','touchstart','keydown'].forEach(ev=>window.addEventListener(ev,cancel,{passive:true,once:true}));
+      const iv=setInterval(()=>{ if(stop){clearInterval(iv);return;} const t=document.querySelector(location.hash); if(t) t.scrollIntoView({block:'start'}); if(++n>=14) clearInterval(iv); },140); })();
     const esc=s=>(s==null?'':String(s)).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
 
     document.addEventListener('DOMContentLoaded',()=>{
