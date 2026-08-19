@@ -33,10 +33,7 @@ tailwind.config={theme:{extend:{fontFamily:{sans:['Plus Jakarta Sans','sans-seri
 <body class="font-sans text-gray-900">
 
 <div id="gate" class="fixed inset-0 z-50 flex items-center justify-center bg-white">
-  <div class="text-center">
-    <div class="loader-spinner mx-auto mb-4"></div>
-    <p id="gate-text" class="text-gray-500 font-semibold text-sm">Checking your access…</p>
-  </div>
+  <div class="text-center"><div class="loader-spinner mx-auto mb-4"></div><p id="gate-text" class="text-gray-500 font-semibold text-sm">Checking your access…</p></div>
 </div>
 
 <div id="app" class="hidden min-h-screen lg:flex">
@@ -77,6 +74,7 @@ const esc=s=>(s==null?'':String(s)).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;
 const slugify=s=>(s||'').toLowerCase().trim().replace(/[^a-z0-9\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').slice(0,80);
 const fmtDate=v=>v?new Intl.DateTimeFormat('en-GB',{day:'numeric',month:'short',year:'numeric'}).format(new Date(v)):'';
 const fmtDateTime=v=>v?new Intl.DateTimeFormat('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'numeric',minute:'2-digit'}).format(new Date(v)):'';
+const fmtTime=v=>v?new Intl.DateTimeFormat('en-GB',{hour:'numeric',minute:'2-digit'}).format(new Date(v)):'';
 function toast(msg,ok=true){const t=document.createElement('div');t.className=`px-4 py-3 rounded-xl shadow-lg text-sm font-semibold text-white ${ok?'bg-tnf-green':'bg-red-600'}`;t.textContent=msg;$('toast').appendChild(t);setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .3s';setTimeout(()=>t.remove(),300);},2600);}
 function toLocalInput(iso){if(!iso)return'';const d=new Date(iso);const l=new Date(d.getTime()-d.getTimezoneOffset()*60000);return l.toISOString().slice(0,16);}
 const fromLocalInput=v=>v?new Date(v).toISOString():null;
@@ -89,6 +87,16 @@ const AUDIENCE=[['all','Everyone'],['staff','Staff only'],['board','Board only']
 const ROLES=[['member','Member'],['volunteer','Volunteer'],['staff','Staff'],['board','Board Member'],['admin','Administrator'],['superadmin','Super Administrator']];
 const PERM_TAGS=['opportunities','programs','news','events','partners','resources','content','volunteers','hr','finance','safeguarding','comms','governance'];
 const SOCIALS=['facebook','instagram','x','linkedin','youtube','tiktok','threads','website'];
+const PROJ_STATUS=[['active','Active'],['on_hold','On hold'],['completed','Completed'],['archived','Archived']];
+const TASK_STATUS=[['todo','To do'],['in_progress','In progress'],['blocked','Blocked'],['done','Done']];
+const PRIORITY=[['low','Low'],['normal','Normal'],['high','High'],['urgent','Urgent']];
+const JOB_STATUS=[['open','Open'],['closed','Closed']];
+const LEAVE_TYPE=[['annual','Annual leave'],['sick','Sick leave'],['unpaid','Unpaid leave'],['study','Study leave'],['other','Other']];
+const LEAVE_STATUS=[['pending','Pending'],['approved','Approved'],['rejected','Rejected']];
+const ATT_STATUS=[['present','Present'],['absent','Absent'],['leave','On leave'],['remote','Remote']];
+const MTG_STATUS=[['scheduled','Scheduled'],['held','Held'],['cancelled','Cancelled']];
+const RES_STATUS=[['open','Open'],['passed','Passed'],['rejected','Rejected'],['withdrawn','Withdrawn']];
+const EXP_STATUS=[['pending','Pending'],['approved','Approved'],['rejected','Rejected'],['paid','Paid']];
 
 const RES={
   opportunities:{label:'Opportunities',icon:'fa-compass',perm:['opportunities','content'],table:'opportunities',order:['created_at',false],list:['title','category','status','deadline'],pub:{f:'is_published'},fields:[
@@ -153,12 +161,86 @@ const RES={
     {k:'name',t:'text',req:1},{k:'slug',t:'slug',label:'Slug'},{k:'description',t:'textarea'},
     {k:'icon',t:'text',label:'Icon (optional)'},{k:'sort_order',t:'number'},{k:'is_published',t:'bool',label:'Published'}
   ]},
-  announcements:{label:'Announcements',icon:'fa-bullhorn',perm:['comms'],table:'announcements',order:['created_at',false],list:['title','audience'],pub:null,stampAuthor:1,fields:[
+  announcements:{label:'Announcements',icon:'fa-bullhorn',perm:['comms'],table:'announcements',order:['created_at',false],list:['title','audience'],pub:null,stampMe:'author_id',fields:[
     {k:'title',t:'text',req:1},{k:'body',t:'textarea'},{k:'audience',t:'select',opts:AUDIENCE},{k:'is_pinned',t:'bool',label:'Pin to top'}
+  ]},
+
+  /* ---- PROJECTS (any staff) ---- */
+  projects:{label:'Projects',icon:'fa-folder-tree',perm:['__staff__'],table:'projects',order:['created_at',false],list:['name','status','department_id','lead_id'],pub:null,fields:[
+    {k:'name',t:'text',req:1},{k:'description',t:'textarea'},
+    {k:'department_id',t:'ref',ref:'departments',label:'Department'},
+    {k:'lead_id',t:'ref',ref:'profiles',label:'Project lead'},
+    {k:'status',t:'select',opts:PROJ_STATUS}
+  ]},
+  tasks:{label:'Tasks',icon:'fa-list-check',perm:['__staff__'],table:'tasks',order:['created_at',false],list:['title','status','priority','assignee_id','due_date'],pub:null,stampMe:'created_by',fields:[
+    {k:'title',t:'text',req:1},{k:'description',t:'textarea'},
+    {k:'project_id',t:'ref',ref:'projects',label:'Project'},
+    {k:'department_id',t:'ref',ref:'departments',label:'Department'},
+    {k:'assignee_id',t:'ref',ref:'profiles',label:'Assigned to'},
+    {k:'status',t:'select',opts:TASK_STATUS},{k:'priority',t:'select',opts:PRIORITY},{k:'due_date',t:'date'}
+  ]},
+
+  /* ---- HR (perm 'hr') ---- */
+  job_postings:{label:'Job postings',icon:'fa-briefcase',perm:['hr'],table:'job_postings',order:['created_at',false],list:['title','status','location'],pub:{f:'is_published'},fields:[
+    {k:'title',t:'text',req:1},{k:'slug',t:'slug',label:'Slug (URL)'},
+    {k:'department_id',t:'ref',ref:'departments',label:'Department'},
+    {k:'description',t:'rich',label:'Job description'},{k:'location',t:'text'},
+    {k:'type',t:'text',label:'Type (e.g. Full-time, Volunteer)'},{k:'status',t:'select',opts:JOB_STATUS},
+    {k:'is_published',t:'bool',label:'Published on site'}
+  ]},
+  hr_leave_requests:{label:'Leave requests',icon:'fa-plane-departure',perm:['hr'],table:'hr_leave_requests',order:['created_at',false],list:['type','profile_id','status','start_date'],pub:null,fields:[
+    {k:'type',t:'select',opts:LEAVE_TYPE,req:1},
+    {k:'profile_id',t:'ref',ref:'profiles',label:'Team member',req:1},
+    {k:'start_date',t:'date'},{k:'end_date',t:'date'},{k:'reason',t:'textarea'},
+    {k:'status',t:'select',opts:LEAVE_STATUS}
+  ]},
+  hr_attendance:{label:'Attendance',icon:'fa-user-clock',perm:['hr'],table:'hr_attendance',order:['attend_date',false],list:['attend_date','profile_id','status'],pub:null,fields:[
+    {k:'attend_date',t:'date',req:1,label:'Date'},
+    {k:'profile_id',t:'ref',ref:'profiles',label:'Team member',req:1},
+    {k:'status',t:'select',opts:ATT_STATUS},{k:'check_in',t:'datetime'},{k:'check_out',t:'datetime'}
+  ]},
+  onboarding_tasks:{label:'Onboarding',icon:'fa-clipboard-list',perm:['hr'],table:'onboarding_tasks',order:['sort_order',true],list:['task','profile_id','is_done'],pub:null,fields:[
+    {k:'task',t:'text',req:1,label:'Task'},
+    {k:'profile_id',t:'ref',ref:'profiles',label:'For team member',req:1},
+    {k:'is_done',t:'bool',label:'Completed'},{k:'sort_order',t:'number'}
+  ]},
+  hr_documents:{label:'HR documents',icon:'fa-file-shield',perm:['hr'],table:'hr_documents',order:['created_at',false],list:['title','category','profile_id'],pub:null,fields:[
+    {k:'title',t:'text',req:1},{k:'profile_id',t:'ref',ref:'profiles',label:'Relates to (optional)'},
+    {k:'category',t:'text'},{k:'file_url',t:'file',label:'File'}
+  ]},
+
+  /* ---- GOVERNANCE (perm 'governance' / board) ---- */
+  meetings:{label:'Meetings',icon:'fa-people-group',perm:['governance'],table:'meetings',order:['scheduled_at',false],list:['title','scheduled_at','status'],pub:null,stampMe:'created_by',fields:[
+    {k:'title',t:'text',req:1},{k:'scheduled_at',t:'datetime',label:'Date & time'},{k:'location',t:'text'},
+    {k:'agenda',t:'rich',label:'Agenda'},{k:'minutes',t:'rich',label:'Minutes'},{k:'status',t:'select',opts:MTG_STATUS}
+  ]},
+  resolutions:{label:'Resolutions',icon:'fa-gavel',perm:['governance'],table:'resolutions',order:['created_at',false],list:['title','status','meeting_id'],pub:null,fields:[
+    {k:'title',t:'text',req:1},{k:'meeting_id',t:'ref',ref:'meetings',label:'Related meeting'},
+    {k:'description',t:'rich',label:'Details'},{k:'status',t:'select',opts:RES_STATUS}
+  ]},
+  board_documents:{label:'Board documents',icon:'fa-folder-closed',perm:['governance'],table:'board_documents',order:['created_at',false],list:['title','category'],pub:null,stampMe:'uploaded_by',fields:[
+    {k:'title',t:'text',req:1},{k:'category',t:'text'},{k:'file_url',t:'file',label:'File'}
+  ]},
+
+  /* ---- FINANCE (perm 'finance' / board) ---- */
+  budgets:{label:'Budgets',icon:'fa-scale-balanced',perm:['finance'],table:'budgets',order:['created_at',false],list:['name','amount','period'],pub:null,fields:[
+    {k:'name',t:'text',req:1},{k:'department_id',t:'ref',ref:'departments',label:'Department'},
+    {k:'amount',t:'number',label:'Amount (SCR)'},{k:'period',t:'text',label:'Period (e.g. 2025)'},{k:'notes',t:'textarea'}
+  ]},
+  expenses:{label:'Expenses',icon:'fa-receipt',perm:['finance'],table:'expenses',order:['created_at',false],list:['description','amount','status'],pub:null,stampMe:'submitted_by',fields:[
+    {k:'description',t:'text',req:1},{k:'amount',t:'number',req:1,label:'Amount (SCR)'},{k:'category',t:'text'},
+    {k:'department_id',t:'ref',ref:'departments',label:'Department'},
+    {k:'status',t:'select',opts:EXP_STATUS},{k:'receipt_url',t:'file',label:'Receipt'}
+  ]},
+  donations:{label:'Donations',icon:'fa-hand-holding-dollar',perm:['finance'],table:'donations',order:['created_at',false],list:['donor_name','amount','method'],pub:null,fields:[
+    {k:'donor_name',t:'text',label:'Donor name'},{k:'donor_email',t:'text',label:'Donor email'},
+    {k:'amount',t:'number',req:1,label:'Amount'},{k:'currency',t:'text',label:'Currency (e.g. SCR)'},
+    {k:'method',t:'text',label:'Method'},{k:'is_anonymous',t:'bool',label:'Anonymous'},{k:'note',t:'textarea'}
   ]}
 };
 const INBOX={
   volunteer_applications:{label:'Volunteer applications',icon:'fa-hand-holding-heart',perm:['volunteers'],table:'volunteer_applications'},
+  job_applications:{label:'Job applications',icon:'fa-file-lines',perm:['hr'],table:'job_applications'},
   contact_submissions:{label:'Contact messages',icon:'fa-envelope',perm:['comms','content'],table:'contact_submissions'},
   opportunity_submissions:{label:'Submitted opportunities',icon:'fa-inbox',perm:['opportunities','content'],table:'opportunity_submissions'},
   event_rsvps:{label:'Event RSVPs',icon:'fa-clipboard-check',perm:['events','content'],table:'event_rsvps'},
@@ -167,8 +249,9 @@ const INBOX={
   safeguarding_reports:{label:'Safeguarding reports',icon:'fa-shield-halved',perm:['safeguarding'],table:'safeguarding_reports',sensitive:1}
 };
 
-let db, ME={}, isAdmin=false, PERMS=[], REFCACHE={};
-function canSee(perm,adminOnly){ if(adminOnly) return isAdmin; if(isAdmin) return true; return (perm||[]).some(t=>PERMS.includes(t)); }
+const REF_LABEL={profiles:'full_name',departments:'name',projects:'name',meetings:'title',job_postings:'title'};
+let db, ME={}, isAdmin=false, isBoard=false, PERMS=[], REFCACHE={}, REFMAP={};
+function canSee(perm,adminOnly){ if(adminOnly) return isAdmin; if(isAdmin) return true; if(!perm) return false; if(perm.includes('__staff__')) return true; return perm.some(t=>PERMS.includes(t)); }
 
 document.addEventListener('DOMContentLoaded',()=>{
   const wait=setInterval(async()=>{
@@ -179,7 +262,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     let prof=null;
     try{ const{data}=await db.from('profiles').select('*').eq('id',session.user.id).maybeSingle(); prof=data; }catch(e){}
     if(!prof){ $('gate-text').textContent='Could not load your profile.'; return; }
-    ME=prof; PERMS=prof.permissions||[]; isAdmin=['admin','superadmin'].includes(prof.role);
+    ME=prof; PERMS=prof.permissions||[]; isAdmin=['admin','superadmin'].includes(prof.role); isBoard=['board','admin','superadmin'].includes(prof.role);
     const staff=['staff','board','admin','superadmin'].includes(prof.role);
     if(!staff){ location.replace('/portal'); return; }
     if(prof.is_active===false){ await db.auth.signOut(); location.replace('/login'); return; }
@@ -199,12 +282,17 @@ const NAVGROUPS=[
   {group:null,items:[{key:'dashboard',label:'Dashboard',icon:'fa-gauge',always:1}]},
   {group:'Content',keys:['opportunities','programs','news_posts','events','partners','resources','faqs','impact_stats']},
   {group:'Organisation',keys:['about_team','departments','announcements']},
+  {group:'Projects',staffAll:1,keys:['projects','tasks']},
   {group:'People',items:[{key:'inbox:volunteer_applications'},{key:'users',label:'Users & roles',icon:'fa-user-shield',admin:1}]},
+  {group:'Human Resources',keys:['job_postings','inbox:job_applications','hr_leave_requests','hr_attendance','onboarding_tasks','hr_documents']},
+  {group:'Governance',boardOk:1,keys:['meetings','resolutions','board_documents']},
+  {group:'Finance',boardOk:1,keys:['budgets','expenses','donations']},
   {group:'Inbox',keys:['inbox:contact_submissions','inbox:opportunity_submissions','inbox:event_rsvps','inbox:newsletter_subscribers','inbox:opportunity_alerts','inbox:safeguarding_reports']},
+  {group:'Communication',staffAll:1,items:[{key:'chat',label:'Team chat',icon:'fa-comments',staffAll:1}]},
   {group:'Settings',items:[{key:'settings',label:'Site settings',icon:'fa-gear',perm:['content']}]}
 ];
 function navMeta(key){
-  if(key.startsWith('inbox:')){const c=INBOX[key.slice(6)];return{label:c.label,icon:c.icon,perm:c.perm};}
+  if(key.startsWith('inbox:')){const c=INBOX[key.slice(6)];return c?{label:c.label,icon:c.icon,perm:c.perm}:null;}
   if(RES[key])return{label:RES[key].label,icon:RES[key].icon,perm:RES[key].perm};
   return null;
 }
@@ -212,7 +300,15 @@ function buildNav(){
   const nav=$('nav'); nav.innerHTML='';
   NAVGROUPS.forEach(g=>{
     const items=(g.items||g.keys.map(k=>{const m=navMeta(k);return m?{key:k,label:m.label,icon:m.icon,perm:m.perm}:null;}).filter(Boolean));
-    const visible=items.filter(it=>{ if(it.always)return true; if(it.admin)return isAdmin; const m=navMeta(it.key)||it; return canSee(it.perm||(m&&m.perm),it.admin); });
+    const visible=items.filter(it=>{
+      if(it.always)return true;
+      if(it.admin)return isAdmin;
+      if(isAdmin)return true;
+      if(g.staffAll||it.staffAll)return true;
+      if(g.boardOk&&isBoard)return true;
+      const m=navMeta(it.key)||it;
+      return canSee(it.perm||(m&&m.perm),it.admin);
+    });
     if(!visible.length)return;
     if(g.group){const h=document.createElement('div');h.className='px-3 pt-4 pb-1 text-[11px] font-bold uppercase tracking-wider text-white/35';h.textContent=g.group;nav.appendChild(h);}
     visible.forEach(it=>{
@@ -228,11 +324,13 @@ function buildNav(){
 function setActive(key){ document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.key===key)); }
 
 function route(key){
+  if(window.__chatPoll){clearInterval(window.__chatPoll);window.__chatPoll=null;}
   setActive(key);
   $('new-btn').classList.add('hidden'); $('new-btn').onclick=null;
   if(key==='dashboard'){ $('page-title').textContent='Dashboard'; return renderDashboard(); }
   if(key==='settings'){ $('page-title').textContent='Site settings'; return renderSettings(); }
   if(key==='users'){ $('page-title').textContent='Users & roles'; return renderUsers(); }
+  if(key==='chat'){ $('page-title').textContent='Team chat'; return renderChat(); }
   if(key.startsWith('inbox:')){ const c=INBOX[key.slice(6)]; $('page-title').textContent=c.label; return renderInbox(key.slice(6),c); }
   const res=RES[key]; if(res){ $('page-title').textContent=res.label; return renderList(key,res); }
 }
@@ -241,7 +339,7 @@ async function renderDashboard(){
   const c=$('content');
   c.innerHTML=`<p class="text-gray-500 mb-6">Welcome back, <span class="font-semibold text-tnf-ink">${esc(ME.full_name||'')}</span>. Here's a snapshot of the Foundation.</p><div id="dash-cards" class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8"></div><div class="grid lg:grid-cols-2 gap-6"><div id="dash-apps"></div><div id="dash-msgs"></div></div>`;
   const count=async t=>{try{const{count}=await db.from(t).select('*',{count:'exact',head:true});return count||0;}catch(e){return 0;}};
-  const cards=[['Opportunities','opportunities','fa-compass'],['Programmes','programs','fa-diagram-project'],['News posts','news_posts','fa-newspaper'],['Events','events','fa-calendar-day'],['Volunteer applications','volunteer_applications','fa-hand-holding-heart'],['Contact messages','contact_submissions','fa-envelope'],['Newsletter subs','newsletter_subscribers','fa-at'],['Partners','partners','fa-handshake']];
+  const cards=[['Opportunities','opportunities','fa-compass'],['Programmes','programs','fa-diagram-project'],['News posts','news_posts','fa-newspaper'],['Events','events','fa-calendar-day'],['Volunteer applications','volunteer_applications','fa-hand-holding-heart'],['Open tasks','tasks','fa-list-check'],['Contact messages','contact_submissions','fa-envelope'],['Newsletter subs','newsletter_subscribers','fa-at']];
   $('dash-cards').innerHTML=cards.map(([l,t,ic])=>`<div class="bg-white rounded-2xl border border-gray-100 p-5"><div class="w-10 h-10 rounded-xl bg-tnf-greenLight text-tnf-green grid place-items-center mb-3"><i class="fa-solid ${ic}"></i></div><div class="text-2xl font-extrabold text-tnf-ink" data-count="${t}">–</div><div class="text-gray-400 text-xs font-semibold">${l}</div></div>`).join('');
   cards.forEach(async([l,t])=>{const n=await count(t);const el=document.querySelector(`[data-count="${t}"]`);if(el)el.textContent=n;});
   try{const{data}=await db.from('volunteer_applications').select('name,email,created_at').order('created_at',{ascending:false}).limit(5);
@@ -252,21 +350,37 @@ async function renderDashboard(){
   }catch(e){$('dash-msgs').innerHTML='';}
 }
 
+function fieldByKey(res,k){return res.fields.find(f=>f.k===k);}
+function fmtCell(v){ if(v==null||v==='')return''; if(typeof v==='boolean')return v?'Yes':''; if(typeof v==='string'&&/^\d{4}-\d\d-\d\d/.test(v))return fmtDate(v); return String(v); }
+function formatValue(field,val,pubcfg){
+  if(val==null||val==='')return'';
+  if(!field)return fmtCell(val);
+  if(field.t==='ref')return (REFMAP[field.ref]&&REFMAP[field.ref][val])||'—';
+  if(field.t==='date')return fmtDate(val);
+  if(field.t==='datetime')return fmtDateTime(val);
+  if(field.t==='bool')return val?(field.label||'Yes'):'';
+  if(field.t==='select'){const o=(field.opts||[]).find(x=>x[0]===val);return o?o[1]:val;}
+  return String(val);
+}
 async function renderList(key,res){
   $('new-btn').classList.remove('hidden'); $('new-btn').onclick=()=>renderForm(key,res,null);
   const c=$('content');
   c.innerHTML=`<div class="mb-4 flex items-center gap-3"><div class="flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-3 flex-1 max-w-xs focus-within:border-tnf-green"><i class="fa-solid fa-magnifying-glass text-gray-400 text-sm"></i><input id="lsearch" placeholder="Search…" class="py-2.5 bg-transparent text-sm flex-1"/></div></div><div id="list-body"><div class="loader-spinner my-10"></div></div>`;
+  const titleF=res.fields[0].k;
+  // preload refs needed for title/meta columns
+  const need=new Set(); [titleF,...res.list].forEach(k=>{const f=fieldByKey(res,k);if(f&&f.t==='ref')need.add(f.ref);});
+  for(const tb of need) await loadRef(tb);
   let rows=[];
   try{ const{data,error}=await db.from(res.table).select('*').order(res.order[0],{ascending:res.order[1],nullsFirst:false}); if(error)throw error; rows=data||[]; }
   catch(e){ $('list-body').innerHTML=`<p class="text-red-600 text-sm">${esc(e.message||'Could not load.')}</p>`; return; }
-  const titleF=res.fields[0].k;
   function draw(list){
     if(!list.length){$('list-body').innerHTML=`<div class="bg-white rounded-2xl border border-gray-100 p-10 text-center text-gray-400"><p class="mb-4">Nothing here yet.</p><button id="firstnew" class="bg-tnf-green text-white font-bold px-5 py-2.5 rounded-lg text-sm">Create the first one</button></div>`;const fn=$('firstnew');if(fn)fn.onclick=()=>renderForm(key,res,null);return;}
     $('list-body').innerHTML=`<div class="bg-white rounded-2xl border border-gray-100 overflow-hidden divide-y divide-gray-100">${list.map(r=>{
       const pub=res.pub?isPub(res,r):null;
-      const meta=res.list.slice(1).map(f=>fmtCell(r[f])).filter(Boolean).join(' · ');
+      const title=formatValue(fieldByKey(res,titleF),r[titleF])||'(untitled)';
+      const meta=res.list.filter(f=>f!==titleF).map(f=>formatValue(fieldByKey(res,f),r[f])).filter(Boolean).join(' · ');
       return `<div class="flex items-center gap-4 p-4 hover:bg-gray-50">
-        <div class="flex-1 min-w-0"><div class="font-semibold text-tnf-ink truncate">${esc(r[titleF]||'(untitled)')}</div>${meta?`<div class="text-xs text-gray-400 mt-0.5">${esc(meta)}</div>`:''}</div>
+        <div class="flex-1 min-w-0"><div class="font-semibold text-tnf-ink truncate">${esc(title)}</div>${meta?`<div class="text-xs text-gray-400 mt-0.5">${esc(meta)}</div>`:''}</div>
         ${res.pub?`<button class="pubtog text-[11px] font-bold px-2.5 py-1 rounded-full ${pub?'bg-tnf-greenLight text-tnf-greenDark':'bg-gray-100 text-gray-500'}" data-id="${r.id}">${pub?'Live':'Draft'}</button>`:''}
         <button class="editbtn text-gray-400 hover:text-tnf-green px-2" data-id="${r.id}"><i class="fa-solid fa-pen"></i></button>
         <button class="delbtn text-gray-400 hover:text-red-600 px-2" data-id="${r.id}"><i class="fa-solid fa-trash"></i></button>
@@ -279,11 +393,15 @@ async function renderList(key,res){
   $('lsearch').oninput=e=>{const q=e.target.value.toLowerCase();draw(rows.filter(r=>String(r[titleF]||'').toLowerCase().includes(q)));};
 }
 function isPub(res,r){ return res.pub.on?r[res.pub.f]===res.pub.on:!!r[res.pub.f]; }
-function fmtCell(v){ if(v==null||v==='')return''; if(typeof v==='boolean')return v?'★':''; if(typeof v==='string'&&/^\d{4}-\d\d-\d\d/.test(v))return fmtDate(v); return String(v); }
 async function togglePub(key,res,r){ const cur=isPub(res,r); const val=res.pub.on?(cur?res.pub.off:res.pub.on):!cur; try{const{error}=await db.from(res.table).update({[res.pub.f]:val}).eq('id',r.id);if(error)throw error;toast(cur?'Unpublished':'Published');renderList(key,res);}catch(e){toast(e.message||'Failed',false);} }
 async function delRow(key,res,id){ if(!confirm('Delete this permanently?'))return; try{const{error}=await db.from(res.table).delete().eq('id',id);if(error)throw error;toast('Deleted');renderList(key,res);}catch(e){toast(e.message||'Failed',false);} }
 
-async function loadRef(table){ if(REFCACHE[table])return REFCACHE[table]; try{const{data}=await db.from(table).select('id,name').order('sort_order',{ascending:true});REFCACHE[table]=data||[];}catch(e){REFCACHE[table]=[];} return REFCACHE[table]; }
+async function loadRef(table){ if(REFCACHE[table])return REFCACHE[table]; const label=REF_LABEL[table]||'name';
+  try{const{data}=await db.from(table).select('id,'+label).order(label,{ascending:true});REFCACHE[table]=(data||[]).map(r=>({id:r.id,label:r[label]}));}
+  catch(e){REFCACHE[table]=[];}
+  REFMAP[table]=Object.fromEntries(REFCACHE[table].map(r=>[r.id,r.label]));
+  return REFCACHE[table];
+}
 async function renderForm(key,res,rec){
   $('new-btn').classList.add('hidden');
   const c=$('content'); const editing=!!rec; rec=rec||{};
@@ -304,11 +422,11 @@ function fieldHtml(f,rec){
   if(f.t==='textarea')return `<div>${lab}<textarea id="f_${f.k}" rows="3" class="${base} resize-y">${esc(v||'')}</textarea></div>`;
   if(f.t==='rich')return `<div>${lab}<div class="border border-gray-200 rounded-xl overflow-hidden focus-within:border-tnf-green"><div class="rt-toolbar flex gap-1 p-2 border-b border-gray-100 bg-gray-50" data-for="f_${f.k}"><button type="button" data-cmd="bold" class="font-bold">B</button><button type="button" data-cmd="italic" class="italic">I</button><button type="button" data-cmd="h2">H2</button><button type="button" data-cmd="h3">H3</button><button type="button" data-cmd="insertUnorderedList">•</button><button type="button" data-cmd="insertOrderedList">1.</button><button type="button" data-cmd="createLink"><i class="fa-solid fa-link text-xs"></i></button></div><div id="f_${f.k}" class="rt px-4 py-3 text-[15px]" contenteditable="true" data-ph="Write here…">${v||''}</div></div></div>`;
   if(f.t==='select'){const opts=f.opts.map(o=>`<option value="${o[0]}" ${v===o[0]?'selected':''}>${esc(o[1])}</option>`).join('');return `<div>${lab}<select id="f_${f.k}" class="${base} bg-white"><option value="">— select —</option>${opts}</select></div>`;}
-  if(f.t==='ref'){const opts=(REFCACHE[f.ref]||[]).map(o=>`<option value="${o.id}" ${v===o.id?'selected':''}>${esc(o.name)}</option>`).join('');return `<div>${lab}<select id="f_${f.k}" class="${base} bg-white"><option value="">— none —</option>${opts}</select></div>`;}
+  if(f.t==='ref'){const opts=(REFCACHE[f.ref]||[]).map(o=>`<option value="${o.id}" ${v===o.id?'selected':''}>${esc(o.label)}</option>`).join('');return `<div>${lab}<select id="f_${f.k}" class="${base} bg-white"><option value="">— none —</option>${opts}</select></div>`;}
   if(f.t==='bool'){const on=!!v;return `<div class="flex items-center justify-between gap-4"><label class="text-sm font-semibold text-tnf-ink">${esc(label)}</label><div class="toggle ${on?'on':''}" id="f_${f.k}" data-val="${on?1:0}"><span></span></div></div>`;}
   if(f.t==='date')return `<div>${lab}<input type="date" id="f_${f.k}" value="${v?String(v).slice(0,10):''}" class="${base}"/></div>`;
   if(f.t==='datetime')return `<div>${lab}<input type="datetime-local" id="f_${f.k}" value="${toLocalInput(v)}" class="${base}"/></div>`;
-  if(f.t==='number')return `<div>${lab}<input type="number" id="f_${f.k}" value="${v==null?'':v}" class="${base}"/></div>`;
+  if(f.t==='number')return `<div>${lab}<input type="number" step="any" id="f_${f.k}" value="${v==null?'':v}" class="${base}"/></div>`;
   if(f.t==='tags')return `<div>${lab}<input type="text" id="f_${f.k}" value="${esc((v||[]).join(', '))}" class="${base}" placeholder="Comma-separated"/></div>`;
   if(f.t==='image'||f.t==='file'){const isImg=f.t==='image';return `<div>${lab}<div class="flex items-center gap-3"><input type="text" id="f_${f.k}" value="${esc(v||'')}" class="${base}" placeholder="URL, or upload →"/><label class="cursor-pointer bg-gray-100 hover:bg-gray-200 text-tnf-ink font-semibold text-sm px-4 py-3 rounded-xl whitespace-nowrap transition-colors"><i class="fa-solid fa-upload mr-1"></i>Upload<input type="file" class="hidden up-input" data-target="f_${f.k}" ${isImg?'accept="image/*"':''}/></label></div>${isImg?`<img id="prev_${f.k}" src="${esc(v||'')}" class="${v?'':'hidden'} mt-3 h-24 rounded-lg border border-gray-100 object-cover"/>`:''}<p class="up-status text-xs text-gray-400 mt-1" data-for="f_${f.k}"></p></div>`;}
   if(f.t==='social'){const s=v||{};return `<div>${lab}<div class="grid grid-cols-2 gap-3">${SOCIALS.map(p=>`<input type="text" id="f_${f.k}__${p}" value="${esc(s[p]||'')}" class="${base}" placeholder="${p}"/>`).join('')}</div></div>`;}
@@ -348,13 +466,13 @@ async function saveForm(key,res,rec,editing){
       if(f.t==='slug'){val=val?slugify(val):slugify(payload[res.fields[0].k]||'');}
       payload[f.k]=val===''?null:val;
     }
-    if(res.stampAuthor)payload.author_id=ME.id;
-    for(const f of res.fields){ if(f.req&&!payload[f.k]){toast('Please fill in: '+(f.label||f.k),false);btn.disabled=false;btn.innerHTML=old;return;} }
+    if(res.stampMe&&!editing)payload[res.stampMe]=ME.id;
+    for(const f of res.fields){ if(f.req&&(payload[f.k]==null||payload[f.k]==='')){toast('Please fill in: '+(f.label||f.k),false);btn.disabled=false;btn.innerHTML=old;return;} }
     let error;
     if(editing){ ({error}=await db.from(res.table).update(payload).eq('id',rec.id)); }
     else { ({error}=await db.from(res.table).insert(payload)); }
     if(error)throw error;
-    toast(editing?'Saved':'Created'); REFCACHE={}; renderList(key,res);
+    toast(editing?'Saved':'Created'); REFCACHE={};REFMAP={}; renderList(key,res);
   }catch(e){ toast(e.message||'Save failed',false); btn.disabled=false; btn.innerHTML=old; }
 }
 
@@ -366,11 +484,11 @@ async function renderInbox(k,cfg){
   try{ const{data,error}=await db.from(cfg.table).select('*').order('created_at',{ascending:false}); if(error)throw error; rows=data||[]; }
   catch(e){ $('ibody').innerHTML=`<p class="text-gray-400 text-sm italic">Nothing to show, or you don't have access to these.</p>`; return; }
   if(!rows.length){ $('ibody').innerHTML=`<div class="bg-white rounded-2xl border border-gray-100 p-10 text-center text-gray-400">No entries yet.</div>`; return; }
-  const hide=['id','event_id','reviewed_by','author_id','updated_at','search_vector'];
+  const hide=['id','event_id','job_id','reviewed_by','author_id','updated_at','search_vector'];
   $('ibody').innerHTML=`<p class="text-gray-400 text-sm mb-4">${rows.length} ${rows.length===1?'entry':'entries'}</p><div class="space-y-3">${rows.map(r=>{
     const fields=Object.keys(r).filter(kk=>!hide.includes(kk)&&r[kk]!=null&&r[kk]!==''&&!(Array.isArray(r[kk])&&!r[kk].length));
     const created=r.created_at?fmtDateTime(r.created_at):'';
-    return `<div class="bg-white rounded-2xl border border-gray-100 p-5"><div class="flex justify-between items-start mb-2"><div class="font-bold text-tnf-ink">${esc(r.name||r.title||r.subject||r.email||'Entry')}</div><div class="text-xs text-gray-400 whitespace-nowrap ml-3">${created}</div></div><div class="space-y-1.5 text-sm">${fields.filter(kk=>kk!=='created_at'&&kk!=='name'&&kk!=='title').map(kk=>{let val=r[kk];if(Array.isArray(val))val=val.join(', ');if(typeof val==='string'&&/^\d{4}-\d\d-\d\dT/.test(val))val=fmtDateTime(val);return `<div><span class="text-gray-400 font-semibold">${esc(kk.replace(/_/g,' '))}:</span> <span class="text-gray-700">${esc(val)}</span></div>`;}).join('')}</div></div>`;
+    return `<div class="bg-white rounded-2xl border border-gray-100 p-5"><div class="flex justify-between items-start mb-2"><div class="font-bold text-tnf-ink">${esc(r.name||r.title||r.subject||r.email||r.donor_name||'Entry')}</div><div class="text-xs text-gray-400 whitespace-nowrap ml-3">${created}</div></div><div class="space-y-1.5 text-sm">${fields.filter(kk=>kk!=='created_at'&&kk!=='name'&&kk!=='title').map(kk=>{let val=r[kk];if(Array.isArray(val))val=val.join(', ');if(typeof val==='string'&&/^\d{4}-\d\d-\d\dT/.test(val))val=fmtDateTime(val);return `<div><span class="text-gray-400 font-semibold">${esc(kk.replace(/_/g,' '))}:</span> <span class="text-gray-700">${esc(val)}</span></div>`;}).join('')}</div></div>`;
   }).join('')}</div>`;
 }
 
@@ -391,7 +509,7 @@ async function editUser(u){
     <div><div class="font-bold text-tnf-ink text-lg">${esc(u.full_name||'(no name)')}</div><div class="text-gray-400 text-sm">${esc(u.email||'')}</div></div>
     <div><label class="block text-sm font-semibold text-tnf-ink mb-2">Role</label><select id="u_role" class="w-full border border-gray-200 rounded-xl px-4 py-3 bg-white">${ROLES.map(r=>`<option value="${r[0]}" ${u.role===r[0]?'selected':''}>${r[1]}</option>`).join('')}</select></div>
     <div><label class="block text-sm font-semibold text-tnf-ink mb-2">Title (job title)</label><input id="u_title" value="${esc(u.title||'')}" class="w-full border border-gray-200 rounded-xl px-4 py-3"/></div>
-    <div><label class="block text-sm font-semibold text-tnf-ink mb-2">Department</label><select id="u_dept" class="w-full border border-gray-200 rounded-xl px-4 py-3 bg-white"><option value="">— none —</option>${(REFCACHE['departments']||[]).map(d=>`<option value="${d.id}" ${u.department_id===d.id?'selected':''}>${esc(d.name)}</option>`).join('')}</select></div>
+    <div><label class="block text-sm font-semibold text-tnf-ink mb-2">Department</label><select id="u_dept" class="w-full border border-gray-200 rounded-xl px-4 py-3 bg-white"><option value="">— none —</option>${(REFCACHE['departments']||[]).map(d=>`<option value="${d.id}" ${u.department_id===d.id?'selected':''}>${esc(d.label)}</option>`).join('')}</select></div>
     <div><label class="block text-sm font-semibold text-tnf-ink mb-3">Permissions <span class="text-gray-400 font-normal">· what they can manage</span></label><div class="grid grid-cols-2 sm:grid-cols-3 gap-2">${PERM_TAGS.map(t=>`<label class="flex items-center gap-2 text-sm border border-gray-200 rounded-lg px-3 py-2 cursor-pointer"><input type="checkbox" value="${t}" class="uperm accent-tnf-green" ${(u.permissions||[]).includes(t)?'checked':''}/> ${t}</label>`).join('')}</div><p class="text-xs text-gray-400 mt-2">Administrators have every permission automatically.</p></div>
     <div class="flex items-center justify-between gap-4"><label class="text-sm font-semibold text-tnf-ink">Account active</label><div class="toggle ${u.is_active!==false?'on':''}" id="u_active" data-val="${u.is_active!==false?1:0}"><span></span></div></div>
     <div class="flex items-center gap-3 pt-4 border-t border-gray-100"><button type="submit" id="usave" class="bg-tnf-green hover:bg-tnf-greenDark text-white font-bold px-7 py-3 rounded-xl">Save user</button><button type="button" id="ucancel" class="text-gray-500 font-semibold px-4">Cancel</button></div>
@@ -433,6 +551,95 @@ async function renderSettings(){
     try{const{error}=await db.from('site_settings').upsert(payload,{onConflict:'id'});if(error)throw error;toast('Settings saved');}catch(e){toast(e.message||'Failed',false);}
     btn.disabled=false;btn.innerHTML=old;
   };
+}
+
+/* ================= TEAM CHAT ================= */
+let CHAT={channel:null,channels:[],open:false};
+function chatLayout(showMain){const wide=window.innerWidth>=640;const list=$('ch-list'),main=$('ch-main');if(!list||!main)return;if(wide){list.style.display='flex';main.style.display='flex';}else{list.style.display=showMain?'none':'flex';main.style.display=showMain?'flex':'none';}}
+async function renderChat(){
+  $('new-btn').classList.add('hidden');
+  const c=$('content'); c.classList.remove('max-w-6xl'); c.classList.add('max-w-none');
+  c.innerHTML=`<div class="flex gap-4" style="height:calc(100vh - 9rem)">
+    <div id="ch-list" class="w-full sm:w-72 flex-none bg-white rounded-2xl border border-gray-100 flex flex-col overflow-hidden">
+      <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between"><span class="font-bold text-tnf-ink text-sm">Channels</span><button id="ch-new" class="w-7 h-7 rounded-lg bg-tnf-greenLight text-tnf-green hover:bg-tnf-green hover:text-white transition-colors"><i class="fa-solid fa-plus text-xs"></i></button></div>
+      <div id="ch-channels" class="flex-1 overflow-y-auto p-2 space-y-1"><div class="loader-spinner my-8 mx-auto"></div></div>
+    </div>
+    <div id="ch-main" class="hidden sm:flex flex-1 min-w-0 bg-white rounded-2xl border border-gray-100 flex-col overflow-hidden">
+      <div class="flex-1 grid place-items-center text-gray-400 text-sm">Select a channel to start chatting</div>
+    </div>
+  </div>`;
+  $('ch-new').onclick=newChannel;
+  CHAT.open=false; window.onresize=()=>chatLayout(CHAT.open); chatLayout(false);
+  await loadChannels();
+}
+async function loadChannels(){
+  try{const{data,error}=await db.from('chat_channels').select('*').order('created_at',{ascending:true});if(error)throw error;CHAT.channels=data||[];}
+  catch(e){$('ch-channels').innerHTML=`<p class="text-gray-400 text-xs p-3">Couldn't load channels.</p>`;return;}
+  if(!CHAT.channels.length){$('ch-channels').innerHTML=`<div class="p-4 text-center text-gray-400 text-sm">No channels yet.${isAdmin?' Create one with +':''}</div>`;return;}
+  $('ch-channels').innerHTML=CHAT.channels.map(ch=>`<button class="ch-item w-full text-left px-3 py-2.5 rounded-lg hover:bg-gray-50 flex items-center gap-2 ${CHAT.channel&&CHAT.channel.id===ch.id?'bg-tnf-greenLight':''}" data-id="${ch.id}"><i class="fa-solid ${ch.type==='dm'?'fa-user':'fa-hashtag'} text-gray-400 text-xs"></i><span class="font-semibold text-sm text-tnf-ink truncate">${esc(ch.name)}</span></button>`).join('');
+  $('ch-channels').querySelectorAll('.ch-item').forEach(b=>b.onclick=()=>openChannel(CHAT.channels.find(x=>x.id===b.dataset.id)));
+}
+async function newChannel(){
+  const name=prompt('Channel name:'); if(!name||!name.trim())return;
+  try{const{data,error}=await db.from('chat_channels').insert({name:name.trim(),type:'channel',is_private:true,created_by:ME.id}).select().maybeSingle();if(error)throw error;
+    try{await db.from('chat_channel_members').insert({channel_id:data.id,profile_id:ME.id,role:'owner'});}catch(_){}
+    toast('Channel created'); await loadChannels(); if(data)openChannel(data);
+  }catch(e){toast(e.message||'Could not create channel',false);}
+}
+function openChannel(ch){
+  if(!ch)return; CHAT.channel=ch;
+  if(window.__chatPoll){clearInterval(window.__chatPoll);window.__chatPoll=null;}
+  CHAT.open=true; chatLayout(true); const main=$('ch-main');
+  main.innerHTML=`<div class="px-4 py-3 border-b border-gray-100 flex items-center gap-3">
+      <button id="ch-back" class="sm:hidden text-gray-400"><i class="fa-solid fa-arrow-left"></i></button>
+      <i class="fa-solid fa-hashtag text-gray-400 text-sm"></i><span class="font-bold text-tnf-ink truncate flex-1">${esc(ch.name)}</span>
+      ${isAdmin?`<button id="ch-add" class="text-xs font-semibold text-tnf-green hover:text-tnf-greenDark"><i class="fa-solid fa-user-plus mr-1"></i>Add people</button>`:''}
+    </div>
+    <div id="ch-messages" class="flex-1 overflow-y-auto p-4 space-y-3"><div class="loader-spinner my-8 mx-auto"></div></div>
+    <div id="ch-add-panel" class="hidden border-t border-gray-100 p-3 max-h-48 overflow-y-auto"></div>
+    <form id="ch-form" class="border-t border-gray-100 p-3 flex items-center gap-2">
+      <input id="ch-input" autocomplete="off" placeholder="Write a message…" class="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 focus:border-tnf-green focus:ring-4 focus:ring-tnf-green/10"/>
+      <button type="submit" class="bg-tnf-green hover:bg-tnf-greenDark text-white w-10 h-10 rounded-xl flex-none"><i class="fa-solid fa-paper-plane"></i></button>
+    </form>`;
+  const back=$('ch-back'); if(back)back.onclick=()=>{CHAT.open=false;chatLayout(false);if(window.__chatPoll){clearInterval(window.__chatPoll);window.__chatPoll=null;}};
+  const add=$('ch-add'); if(add)add.onclick=toggleAddPeople;
+  $('ch-form').onsubmit=sendMessage;
+  loadMessages(true);
+  window.__chatPoll=setInterval(()=>loadMessages(false),4000);
+  // reflect active state in list
+  document.querySelectorAll('.ch-item').forEach(b=>b.classList.toggle('bg-tnf-greenLight',b.dataset.id===ch.id));
+}
+async function loadMessages(scroll){
+  if(!CHAT.channel)return; const box=$('ch-messages'); if(!box)return;
+  let msgs=[];
+  try{const{data,error}=await db.from('chat_messages').select('*').eq('channel_id',CHAT.channel.id).order('created_at',{ascending:true}).limit(200);if(error)throw error;msgs=data||[];}
+  catch(e){box.innerHTML=`<p class="text-gray-400 text-sm text-center">Couldn't load messages.</p>`;return;}
+  if(!msgs.length){box.innerHTML=`<div class="text-center text-gray-400 text-sm py-8">No messages yet — say hello 👋</div>`;return;}
+  const ids=[...new Set(msgs.map(m=>m.sender_id))]; await loadRef('profiles');
+  const nameOf=id=>(REFMAP.profiles&&REFMAP.profiles[id])||'Someone';
+  const atBottom=box.scrollHeight-box.scrollTop-box.clientHeight<80;
+  box.innerHTML=msgs.map(m=>{const mine=m.sender_id===ME.id;const nm=nameOf(m.sender_id);
+    return `<div class="flex ${mine?'justify-end':'justify-start'}"><div class="max-w-[75%]">${mine?'':`<div class="text-[11px] font-bold text-gray-400 mb-0.5 ml-1">${esc(nm)}</div>`}<div class="rounded-2xl px-4 py-2 ${mine?'bg-tnf-green text-white rounded-br-sm':'bg-gray-100 text-gray-800 rounded-bl-sm'}"><div class="text-sm whitespace-pre-wrap break-words">${esc(m.body||'')}</div></div><div class="text-[10px] text-gray-400 mt-0.5 ${mine?'text-right mr-1':'ml-1'}">${fmtTime(m.created_at)}</div></div></div>`;
+  }).join('');
+  if(scroll||atBottom)box.scrollTop=box.scrollHeight;
+}
+async function sendMessage(e){
+  e.preventDefault(); const inp=$('ch-input'); const body=inp.value.trim(); if(!body||!CHAT.channel)return;
+  inp.value='';
+  try{const{error}=await db.from('chat_messages').insert({channel_id:CHAT.channel.id,sender_id:ME.id,body});if(error)throw error;await loadMessages(true);}
+  catch(err){toast(err.message||'Message not sent',false);inp.value=body;}
+}
+async function toggleAddPeople(){
+  const panel=$('ch-add-panel'); if(!panel)return;
+  if(!panel.classList.contains('hidden')){panel.classList.add('hidden');return;}
+  panel.classList.remove('hidden'); panel.innerHTML='<div class="loader-spinner my-4 mx-auto"></div>';
+  let staff=[],members=[];
+  try{const{data}=await db.from('profiles').select('id,full_name,email,role').in('role',['staff','board','admin','superadmin']).order('full_name');staff=data||[];}catch(e){}
+  try{const{data}=await db.from('chat_channel_members').select('profile_id').eq('channel_id',CHAT.channel.id);members=(data||[]).map(m=>m.profile_id);}catch(e){}
+  const avail=staff.filter(s=>!members.includes(s.id));
+  if(!avail.length){panel.innerHTML='<p class="text-xs text-gray-400 p-2">Everyone is already in this channel.</p>';return;}
+  panel.innerHTML=avail.map(s=>`<div class="flex items-center justify-between gap-2 py-1.5"><span class="text-sm text-tnf-ink truncate">${esc(s.full_name||s.email)}</span><button class="addp text-xs font-bold text-tnf-green hover:text-tnf-greenDark" data-id="${s.id}">Add</button></div>`).join('');
+  panel.querySelectorAll('.addp').forEach(b=>b.onclick=async()=>{b.disabled=true;b.textContent='…';try{const{error}=await db.from('chat_channel_members').insert({channel_id:CHAT.channel.id,profile_id:b.dataset.id});if(error)throw error;b.textContent='Added ✓';b.classList.add('text-gray-400');}catch(e){toast(e.message||'Could not add',false);b.disabled=false;b.textContent='Add';}});
 }
 </script>
 </body>
