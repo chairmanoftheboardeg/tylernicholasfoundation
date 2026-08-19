@@ -1,86 +1,285 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>News | Tyler Nicholas Foundation</title>
-    <link rel="icon" type="image/png" href="https://i.ibb.co/wNsNvyRw/TNF-Logo.png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="../style.css">
-    <style>
-        .news-card {
-            background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 30px;
-        }
-        .news-card h3 { color: var(--primary-blue); font-size: 1.8rem; margin-bottom: 10px; }
-        .news-date { color: var(--primary-green); font-size: 0.9rem; font-weight: bold; margin-bottom: 15px; display: block; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>News &amp; Stories | Tyler Nicholas Foundation</title>
+  <meta name="description" content="The latest news, updates and stories from the Tyler Nicholas Foundation — programmes, opportunities and young people making a difference across Seychelles." />
+  <link rel="icon" href="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = { theme: { extend: {
+      fontFamily: { sans: ['Plus Jakarta Sans','sans-serif'] },
+      colors: { tnf: { green:'#2E9E44', greenDark:'#26863A', greenLight:'#EEF7EF', ink:'#152219', charcoal:'#0E1A13' } }
+    }}}
+  </script>
+  <style>
+    body{background-color:#f8fafc}
+    body.loading{overflow:hidden;height:100vh}
+    #loading-screen{transition:opacity .6s ease-out,visibility .6s}
+    .loader-spinner{border:4px solid rgba(46,158,68,.15);border-left-color:#2E9E44;border-radius:50%;width:52px;height:52px;animation:spin 1s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .page-hero{background:linear-gradient(120deg,#0E1A13 0%,#152219 45%,#26863A 130%)}
+    .card-ph{background:linear-gradient(135deg,#2E9E44,#0E1A13)}
+    ::-webkit-scrollbar{width:9px}::-webkit-scrollbar-track{background:#eef2ee}::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:5px}::-webkit-scrollbar-thumb:hover{background:#2E9E44}
+    .line-clamp-2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .line-clamp-3{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+    .cat-scroll::-webkit-scrollbar{height:0}
+  </style>
 </head>
-<body>
+<body class="font-sans text-gray-900 flex flex-col min-h-screen loading">
 
-    <nav class="navbar">
-        <a href="/" class="logo"><img src="https://i.ibb.co/wNsNvyRw/TNF-Logo.png" alt="TNF Logo" style="height: 40px; margin-right: 10px; vertical-align: middle;">Tyler Nicholas <span>Foundation</span></a>
-        <ul class="nav-links">
-            <li><a href="/about/">About Us</a></li>
-            <li><a href="/pillars/">Our Pillars</a></li>
-            <li><a href="/action-board/">Action Board</a></li>
-            <li><a href="/news/" style="color: var(--primary-green);">News</a></li>
-            <li><a href="/volunteer/" class="btn-nav">Join the Movement</a></li>
-        </ul>
-    </nav>
+  <div id="loading-screen" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white">
+    <img src="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" alt="TNF" class="h-20 w-20 object-contain rounded-2xl mb-6" />
+    <div class="loader-spinner mb-5"></div>
+    <h2 class="text-sm font-bold tracking-[.2em] uppercase text-tnf-ink">Tyler Nicholas Foundation</h2>
+  </div>
 
-    <section class="hero" style="min-height: 40vh; padding: 60px 5%;">
-        <h1>Latest News</h1>
-        <p>Updates and dispatches from the field.</p>
+  <div id="announcement-bar" class="hidden bg-tnf-green text-white text-center py-2.5 text-sm font-semibold z-50 relative"></div>
+
+  <!-- NAV -->
+  <nav class="bg-white/90 backdrop-blur-md text-tnf-ink py-3.5 px-6 md:px-12 flex justify-between items-center shadow-sm sticky top-0 z-40 border-b border-gray-100">
+    <a href="/" class="flex items-center space-x-3">
+      <img src="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" alt="TNF Logo" class="h-11 w-11 object-contain rounded-lg" />
+      <div class="font-extrabold text-base leading-tight tracking-tight hidden sm:block">Tyler Nicholas<br><span class="text-tnf-green">Foundation</span></div>
+    </a>
+    <button id="mobile-menu-btn" class="md:hidden text-tnf-ink hover:text-tnf-green transition-colors text-2xl" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
+    <div class="hidden md:flex space-x-7 text-sm items-center font-semibold">
+      <a href="/" class="text-gray-500 hover:text-tnf-ink transition-colors">Home</a>
+      <div class="relative group">
+        <button class="text-gray-500 hover:text-tnf-ink transition-colors flex items-center py-2">About <i class="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i></button>
+        <div class="absolute left-0 mt-1 w-52 bg-white rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 border border-gray-100 overflow-hidden">
+          <a href="/about" class="block px-5 py-3 hover:bg-tnf-greenLight border-b border-gray-100 transition-colors">About the Foundation</a>
+          <a href="/about#board" class="block px-5 py-3 hover:bg-tnf-greenLight border-b border-gray-100 transition-colors">Our Board &amp; Team</a>
+          <a href="/safeguarding" class="block px-5 py-3 hover:bg-tnf-greenLight transition-colors">Safeguarding</a>
+        </div>
+      </div>
+      <a href="/programs" class="text-gray-500 hover:text-tnf-ink transition-colors">Programs</a>
+      <a href="/opportunities" class="text-gray-500 hover:text-tnf-ink transition-colors">Opportunities</a>
+      <a href="/get-involved" class="text-gray-500 hover:text-tnf-ink transition-colors">Get Involved</a>
+      <a href="/news" class="text-tnf-ink border-b-2 border-tnf-green pb-1">News</a>
+      <a href="/opportunities" class="bg-tnf-green text-white px-5 py-2.5 rounded-lg hover:bg-tnf-greenDark transition-all shadow-sm transform hover:-translate-y-0.5">Find an Opportunity</a>
+    </div>
+  </nav>
+
+  <div id="mobile-menu" class="hidden bg-white border-t border-gray-100 px-6 py-5 flex-col space-y-3 text-tnf-ink text-base font-medium md:hidden sticky top-[68px] z-30 shadow-xl">
+    <a href="/" class="hover:text-tnf-green">Home</a>
+    <a href="/about" class="hover:text-tnf-green">About the Foundation</a>
+    <a href="/programs" class="hover:text-tnf-green">Programs</a>
+    <a href="/opportunities" class="hover:text-tnf-green">Opportunities</a>
+    <a href="/get-involved" class="hover:text-tnf-green">Get Involved</a>
+    <a href="/news" class="text-tnf-green font-semibold">News</a>
+    <a href="/contact" class="hover:text-tnf-green">Contact</a>
+  </div>
+
+  <main class="flex-grow w-full">
+
+    <!-- HERO -->
+    <header class="page-hero w-full py-24 md:py-28 px-4">
+      <div class="max-w-3xl mx-auto text-center text-white" data-aos="fade-up">
+        <h1 class="text-4xl md:text-6xl font-extrabold mb-6 leading-tight">News &amp; stories</h1>
+        <p class="text-lg md:text-xl text-white/85 max-w-2xl mx-auto font-light leading-relaxed">Updates from the Foundation, our programmes and the young people making a difference across Seychelles.</p>
+      </div>
+    </header>
+
+    <!-- FEATURED -->
+    <section id="featured-section" class="w-full pt-16 pb-4 hidden">
+      <div class="max-w-6xl mx-auto px-4">
+        <div id="featured" data-aos="fade-up"></div>
+      </div>
     </section>
 
-    <section style="padding: 60px 5%; max-width: 900px; margin: 0 auto;">
-        <div id="news-container">
-            <p id="loading-news" style="text-align: center;">Loading the latest updates...</p>
+    <!-- ALL NEWS -->
+    <section class="w-full py-16">
+      <div class="max-w-6xl mx-auto px-4">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 mb-10">
+          <h2 class="text-2xl md:text-3xl font-bold text-tnf-ink">Latest updates</h2>
+          <div class="flex items-center gap-3 bg-white border border-gray-200 rounded-xl px-4 max-w-xs w-full lg:w-auto focus-within:border-tnf-green transition-colors">
+            <i class="fa-solid fa-magnifying-glass text-gray-400 text-sm"></i>
+            <input id="search" type="search" placeholder="Search news…" class="flex-1 py-3 bg-transparent outline-none text-sm" aria-label="Search news" />
+          </div>
         </div>
+
+        <div id="cat-pills" class="flex gap-2.5 mb-10 overflow-x-auto cat-scroll pb-1 hidden"></div>
+
+        <div id="news-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <p class="text-gray-400 italic col-span-full text-center py-10" id="news-status">Loading news…</p>
+        </div>
+
+        <div id="empty" class="hidden text-center py-16">
+          <div class="w-16 h-16 rounded-2xl bg-tnf-greenLight text-tnf-green grid place-items-center text-2xl mx-auto mb-5"><i class="fa-regular fa-newspaper"></i></div>
+          <h3 class="text-xl font-bold text-tnf-ink mb-2" id="empty-title">No stories yet</h3>
+          <p class="text-gray-500 mb-6 max-w-md mx-auto" id="empty-text">News and updates from the Foundation will appear here soon.</p>
+          <button id="empty-reset" class="hidden bg-tnf-green hover:bg-tnf-greenDark text-white font-bold py-3 px-7 rounded-lg transition-colors">Clear filters</button>
+        </div>
+      </div>
     </section>
 
-    <footer class="site-footer">
-        <div class="social-icons">
-            <a href="https://www.linkedin.com/company/tylernicholas-foundation" target="_blank"><i class="fab fa-linkedin"></i></a>
-            <a href="https://x.com/tnfseychelles" target="_blank"><i class="fab fa-x-twitter"></i></a>
+    <!-- NEWSLETTER -->
+    <section class="w-full bg-white border-t border-gray-100 py-20">
+      <div class="max-w-3xl mx-auto px-4">
+        <div class="bg-tnf-greenLight rounded-3xl px-8 py-12 text-center" data-aos="fade-up">
+          <h2 class="text-2xl md:text-3xl font-bold text-tnf-ink mb-3">Stay in the loop</h2>
+          <p class="text-gray-600 mb-8 max-w-lg mx-auto">Get the Foundation's news, stories and highlights delivered to your inbox.</p>
+          <form id="news-form" class="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
+            <input id="news-email" type="email" required placeholder="Your email address" class="flex-1 rounded-xl px-5 py-4 text-gray-900 bg-white border border-gray-200 outline-none focus:border-tnf-green" aria-label="Your email" />
+            <button type="submit" class="bg-tnf-green hover:bg-tnf-greenDark text-white font-bold py-4 px-8 rounded-xl transition-colors">Subscribe</button>
+          </form>
+          <p id="news-msg" class="mt-4 font-semibold text-tnf-greenDark text-sm min-h-[1.2em]"></p>
         </div>
-        <div class="footer-contact">
-            Contact: <a href="mailto:nicholasfoundation.sc@gmail.com">nicholasfoundation.sc@gmail.com</a>
-        </div>
-        <div class="admin-link">
-            <a href="/admin/"><i class="fas fa-lock"></i> Admin Dashboard</a>
-        </div>
-        <div class="footer-copyright">
-            &copy; 2026 Copyright Tyler Nicholas Foundation by <a href="https://tylernicholasgroup.com" target="_blank">Tyler Nicholas Group</a>. All rights reserved.
-        </div>
-    </footer>
+      </div>
+    </section>
 
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
-        const supabase = createClient('https://hicowukbjsbpuebquqbh.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpY293dWtianNicHVlYnF1cWJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE5NzgyNzQsImV4cCI6MjA4NzU1NDI3NH0.sz7ZNU3-WcsskIaHC5Cjs_-WVmXLtYR15Iy8VGi8ch0')
+  </main>
 
-        async function fetchNews() {
-            const { data, error } = await supabase.from('tnf_news').select('*').order('publish_date', { ascending: false });
-            const container = document.getElementById('news-container');
-            
-            if (data && data.length > 0) {
-                container.innerHTML = '';
-                data.forEach(article => {
-                    const pubDate = new Date(article.publish_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-                    const card = document.createElement('div');
-                    card.className = 'news-card';
-                    card.innerHTML = `
-                        <h3>${article.title}</h3>
-                        <span class="news-date">${pubDate}</span>
-                        <p>${article.content.replace(/\n/g, '<br>')}</p>
-                    `;
-                    container.appendChild(card);
-                });
-            } else {
-                container.innerHTML = '<p style="text-align: center;">No news articles published yet.</p>';
-            }
-        }
-        fetchNews();
-    </script>
+  <!-- FOOTER -->
+  <footer class="bg-tnf-charcoal text-white pt-20 pb-10 px-6 md:px-12 border-t-[6px] border-tnf-green">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-14">
+      <div>
+        <div class="flex items-center gap-3 mb-5"><img src="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" alt="TNF" class="h-12 w-12 object-contain rounded-lg bg-white p-1" /><div class="font-extrabold leading-tight">Tyler Nicholas<br>Foundation</div></div>
+        <p class="text-sm text-gray-400 mb-4 max-w-sm leading-relaxed">Empowering young people across Seychelles through education, opportunity, leadership, community service and innovation.</p>
+        <p class="text-tnf-green font-semibold text-sm">For the Youth. For the Islands. For Tomorrow.</p>
+        <div id="footer-social" class="flex space-x-3 mt-5"></div>
+      </div>
+      <div class="flex flex-col space-y-3 text-sm"><h4 class="font-bold text-base mb-2">Explore</h4>
+        <a href="/about" class="text-gray-400 hover:text-tnf-green transition-colors">About</a>
+        <a href="/programs" class="text-gray-400 hover:text-tnf-green transition-colors">Programs</a>
+        <a href="/opportunities" class="text-gray-400 hover:text-tnf-green transition-colors">Opportunities</a>
+        <a href="/news" class="text-gray-400 hover:text-tnf-green transition-colors">News</a>
+        <a href="/events" class="text-gray-400 hover:text-tnf-green transition-colors">Events</a>
+      </div>
+      <div class="flex flex-col space-y-3 text-sm"><h4 class="font-bold text-base mb-2">Get Involved</h4>
+        <a href="/get-involved#interest" class="text-gray-400 hover:text-tnf-green transition-colors">Volunteer</a>
+        <a href="/get-involved#interest" class="text-gray-400 hover:text-tnf-green transition-colors">Mentor</a>
+        <a href="/get-involved#interest" class="text-gray-400 hover:text-tnf-green transition-colors">Partner</a>
+        <a href="/get-involved#submit" class="text-gray-400 hover:text-tnf-green transition-colors">Submit an Opportunity</a>
+      </div>
+      <div class="flex flex-col space-y-3 text-sm"><h4 class="font-bold text-base mb-2">Organisation</h4>
+        <a href="/about#board" class="text-gray-400 hover:text-tnf-green transition-colors">Our Board</a>
+        <a href="/safeguarding" class="text-gray-400 hover:text-tnf-green transition-colors">Safeguarding</a>
+        <a href="/contact" class="text-gray-400 hover:text-tnf-green transition-colors">Contact</a>
+        <a href="/login" class="text-gray-400 hover:text-tnf-green transition-colors">Staff &amp; Volunteer Login</a>
+      </div>
+    </div>
+    <div class="max-w-7xl mx-auto border-t border-white/10 pt-8 text-center text-xs text-gray-500">
+      <p class="font-bold text-white text-sm mb-2">Tyler Nicholas Foundation</p>
+      <p>&copy; <span id="current-year"></span> Tyler Nicholas Foundation · Republic of Seychelles · <a href="/admin" class="text-tnf-green hover:underline">Admin</a></p>
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    window.addEventListener('load',()=>{const l=document.getElementById('loading-screen');setTimeout(()=>{l.style.opacity='0';l.style.visibility='hidden';document.body.classList.remove('loading');AOS.init({duration:700,once:true,offset:40});},700);});
+    document.getElementById('mobile-menu-btn').addEventListener('click',()=>document.getElementById('mobile-menu').classList.toggle('hidden'));
+    document.getElementById('current-year').innerText=new Date().getFullYear();
+    (function(){ if(!location.hash) return; let n=0, stop=false; const cancel=()=>{stop=true;};
+      ['wheel','touchstart','keydown'].forEach(ev=>window.addEventListener(ev,cancel,{passive:true,once:true}));
+      const iv=setInterval(()=>{ if(stop){clearInterval(iv);return;} const t=document.querySelector(location.hash); if(t) t.scrollIntoView({block:'start'}); if(++n>=14) clearInterval(iv); },140); })();
+
+    const esc=s=>(s==null?'':String(s)).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+    const fmtDate=v=>v?new Intl.DateTimeFormat('en-GB',{day:'numeric',month:'short',year:'numeric'}).format(new Date(v)):'';
+
+    let ALL=[];
+    const state={ q:'', cat:'all' };
+
+    function gridCard(n){
+      const media=n.cover_url
+        ? `<div class="h-48 overflow-hidden"><img src="${esc(n.cover_url)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt=""></div>`
+        : `<div class="card-ph h-48 flex items-center justify-center p-6"><span class="text-white/90 font-extrabold text-center leading-tight">${esc(n.title)}</span></div>`;
+      const dateline=[n.category,fmtDate(n.published_at)].filter(Boolean).map(esc).join(' · ');
+      return `<a href="/news/article?slug=${encodeURIComponent(n.slug)}" class="group block bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-lg transition-all transform hover:-translate-y-1">
+        ${media}
+        <div class="p-6">
+          <p class="text-xs text-tnf-greenDark font-bold uppercase tracking-wider mb-2">${dateline||'News'}</p>
+          <h3 class="text-lg font-bold text-tnf-ink mb-2 group-hover:text-tnf-green transition-colors leading-snug line-clamp-2">${esc(n.title)}</h3>
+          ${n.excerpt?`<p class="text-gray-500 text-sm leading-relaxed line-clamp-3">${esc(n.excerpt)}</p>`:''}
+        </div>
+      </a>`;
+    }
+    function featuredCard(n){
+      const media=n.cover_url
+        ? `<div class="h-64 md:h-full min-h-[280px]"><img src="${esc(n.cover_url)}" class="w-full h-full object-cover" alt=""></div>`
+        : `<div class="card-ph min-h-[280px] flex items-center justify-center p-10"><span class="text-white font-extrabold text-2xl text-center leading-tight">${esc(n.title)}</span></div>`;
+      const dateline=[n.category,fmtDate(n.published_at)].filter(Boolean).map(esc).join(' · ');
+      return `<a href="/news/article?slug=${encodeURIComponent(n.slug)}" class="group grid md:grid-cols-2 bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl transition-all overflow-hidden">
+        ${media}
+        <div class="p-8 md:p-12 flex flex-col justify-center">
+          <p class="text-xs text-tnf-greenDark font-bold uppercase tracking-wider mb-3">${dateline||'Featured'}</p>
+          <h2 class="text-2xl md:text-3xl font-bold text-tnf-ink mb-4 group-hover:text-tnf-green transition-colors leading-tight">${esc(n.title)}</h2>
+          ${n.excerpt?`<p class="text-gray-500 leading-relaxed mb-6 line-clamp-3">${esc(n.excerpt)}</p>`:''}
+          <span class="text-tnf-green font-bold inline-flex items-center">Read the story <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i></span>
+        </div>
+      </a>`;
+    }
+
+    function render(){
+      const grid=document.getElementById('news-grid'), empty=document.getElementById('empty'), fsec=document.getElementById('featured-section'), status=document.getElementById('news-status');
+      status.style.display='none';
+      const filtering = !!state.q || state.cat!=='all';
+      let list=ALL.slice();
+      if(state.cat!=='all') list=list.filter(n=>n.category===state.cat);
+      if(state.q){const q=state.q.toLowerCase();list=list.filter(n=>((n.title||'')+' '+(n.excerpt||'')+' '+(n.category||'')).toLowerCase().includes(q));}
+
+      if(!ALL.length){ grid.innerHTML=''; fsec.classList.add('hidden'); empty.classList.remove('hidden'); document.getElementById('empty-title').innerText='No stories yet'; document.getElementById('empty-text').innerText='News and updates from the Foundation will appear here soon.'; document.getElementById('empty-reset').classList.add('hidden'); return; }
+
+      let gridList=list;
+      if(!filtering){ fsec.classList.remove('hidden'); document.getElementById('featured').innerHTML=featuredCard(ALL[0]); gridList=list.slice(1); }
+      else { fsec.classList.add('hidden'); }
+
+      if(!list.length){ grid.innerHTML=''; empty.classList.remove('hidden'); document.getElementById('empty-title').innerText='No articles found'; document.getElementById('empty-text').innerText='Try a different search or category.'; document.getElementById('empty-reset').classList.remove('hidden'); return; }
+      empty.classList.add('hidden');
+      grid.innerHTML=gridList.length ? gridList.map(gridCard).join('') : '<p class="text-gray-400 italic col-span-full text-center py-6">That\u2019s the latest for now.</p>';
+    }
+
+    function renderPills(){
+      const cats=[...new Set(ALL.map(n=>n.category).filter(Boolean))];
+      const wrap=document.getElementById('cat-pills');
+      if(!cats.length){ wrap.classList.add('hidden'); return; }
+      wrap.classList.remove('hidden'); wrap.innerHTML='';
+      const mk=(label,val)=>{const b=document.createElement('button');b.dataset.cat=val;b.className='cat-pill whitespace-nowrap px-4 py-2 rounded-full font-semibold text-sm border transition-all';b.textContent=label;b.addEventListener('click',()=>{state.cat=val;syncPills();render();});return b;};
+      wrap.appendChild(mk('All','all'));
+      cats.forEach(c=>wrap.appendChild(mk(c,c)));
+      syncPills();
+    }
+    function syncPills(){ document.querySelectorAll('.cat-pill').forEach(b=>{const on=b.dataset.cat===state.cat;b.classList.toggle('bg-tnf-green',on);b.classList.toggle('text-white',on);b.classList.toggle('border-tnf-green',on);b.classList.toggle('bg-white',!on);b.classList.toggle('text-tnf-ink',!on);b.classList.toggle('border-gray-200',!on);}); }
+
+    const si=document.getElementById('search');
+    si.addEventListener('input',()=>{state.q=si.value.trim();render();});
+    document.getElementById('empty-reset').addEventListener('click',()=>{state.q='';state.cat='all';si.value='';syncPills();render();});
+
+    document.addEventListener('DOMContentLoaded',()=>{
+      const wait=setInterval(()=>{
+        if(!window.supabase)return; clearInterval(wait);
+        const db=window.supabase.createClient('https://mcnemlwalcgdlmclijxc.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jbmVtbHdhbGNnZGxtY2xpanhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5NDMzNTAsImV4cCI6MjEwMjUxOTM1MH0.jVPTsfz7Htho4EZKvHzlgr1vSkj41EuVpMBgaHzLm-Q');
+
+        (async()=>{try{const{data:s}=await db.from('site_settings').select('*').maybeSingle();if(!s)return;
+          if(s.announcement_active&&s.announcement_text){const b=document.getElementById('announcement-bar');b.classList.remove('hidden');b.innerHTML=s.announcement_url?`<a href="${esc(s.announcement_url)}" class="hover:underline block w-full">${esc(s.announcement_text)}</a>`:esc(s.announcement_text);}
+          const links=s.social_links||{},fs=document.getElementById('footer-social');
+          [['facebook','fa-facebook-f'],['instagram','fa-instagram'],['x','fa-x-twitter'],['linkedin','fa-linkedin-in'],['youtube','fa-youtube'],['tiktok','fa-tiktok'],['threads','fa-threads']].forEach(([k,ic])=>{if(links[k]){const a=document.createElement('a');a.href=links[k];a.target='_blank';a.rel='noopener';a.className='w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-tnf-green hover:scale-110 transition-all';a.setAttribute('aria-label',k);a.innerHTML=`<i class="fa-brands ${ic}"></i>`;fs.appendChild(a);}});
+        }catch(e){}})();
+
+        (async()=>{
+          try{
+            const{data,error}=await db.from('news_posts').select('title,slug,excerpt,cover_url,category,published_at').eq('status','published').order('published_at',{ascending:false,nullsFirst:false});
+            if(error)throw error;
+            ALL=data||[];
+          }catch(e){ ALL=[]; }
+          renderPills(); render();
+        })();
+
+        document.getElementById('news-form').addEventListener('submit',async e=>{e.preventDefault();const email=document.getElementById('news-email').value.trim(),msg=document.getElementById('news-msg');if(!email)return;msg.innerText='Subscribing…';try{const{error}=await db.from('newsletter_subscribers').insert({email});if(error)throw error;document.getElementById('news-form').reset();msg.innerText="You're subscribed — thank you!";}catch(err){msg.innerText='Something went wrong. Please try again.';}});
+
+      },80);
+    });
+  </script>
 </body>
 </html>
