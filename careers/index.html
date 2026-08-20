@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Careers | Tyler Nicholas Foundation</title>
+  <meta name="description" content="Join the Tyler Nicholas Foundation. Explore open roles and opportunities to work with our team empowering young people across Seychelles." />
+  <link rel="icon" href="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Plus Jakarta Sans','sans-serif']},colors:{tnf:{green:'#2E9E44',greenDark:'#26863A',greenLight:'#EEF7EF',ink:'#152219',charcoal:'#0E1A13'}}}}}</script>
+  <style>
+    body{background-color:#f8fafc}body.loading{overflow:hidden;height:100vh}
+    #loading-screen{transition:opacity .6s ease-out,visibility .6s}
+    .loader-spinner{border:4px solid rgba(46,158,68,.15);border-left-color:#2E9E44;border-radius:50%;width:52px;height:52px;animation:spin 1s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .page-hero{background:linear-gradient(120deg,#0E1A13 0%,#152219 45%,#26863A 130%)}
+    ::-webkit-scrollbar{width:9px}::-webkit-scrollbar-track{background:#eef2ee}::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:5px}::-webkit-scrollbar-thumb:hover{background:#2E9E44}
+  </style>
+</head>
+<body class="font-sans text-gray-900 flex flex-col min-h-screen loading">
+  <div id="loading-screen" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white">
+    <img src="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" alt="TNF" class="h-20 w-20 object-contain rounded-2xl mb-6" />
+    <div class="loader-spinner mb-5"></div>
+    <h2 class="text-sm font-bold tracking-[.2em] uppercase text-tnf-ink">Tyler Nicholas Foundation</h2>
+  </div>
+  <div id="announcement-bar" class="hidden bg-tnf-green text-white text-center py-2.5 text-sm font-semibold z-50 relative"></div>
+  <nav class="bg-white/90 backdrop-blur-md text-tnf-ink py-3.5 px-6 md:px-12 flex justify-between items-center shadow-sm sticky top-0 z-40 border-b border-gray-100">
+    <a href="/" class="flex items-center space-x-3"><img src="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" alt="TNF Logo" class="h-11 w-11 object-contain rounded-lg" /><div class="font-extrabold text-base leading-tight tracking-tight hidden sm:block">Tyler Nicholas<br><span class="text-tnf-green">Foundation</span></div></a>
+    <button id="mobile-menu-btn" class="md:hidden text-tnf-ink hover:text-tnf-green transition-colors text-2xl" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
+    <div class="hidden md:flex space-x-7 text-sm items-center font-semibold">
+      <a href="/" class="text-gray-500 hover:text-tnf-ink transition-colors">Home</a>
+      <div class="relative group"><button class="text-gray-500 hover:text-tnf-ink transition-colors flex items-center py-2">About <i class="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i></button>
+        <div class="absolute left-0 mt-1 w-52 bg-white rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 border border-gray-100 overflow-hidden">
+          <a href="/about" class="block px-5 py-3 hover:bg-tnf-greenLight border-b border-gray-100 transition-colors">About the Foundation</a>
+          <a href="/about#board" class="block px-5 py-3 hover:bg-tnf-greenLight border-b border-gray-100 transition-colors">Our Board &amp; Team</a>
+          <a href="/safeguarding" class="block px-5 py-3 hover:bg-tnf-greenLight transition-colors">Safeguarding</a>
+        </div></div>
+      <a href="/programs" class="text-gray-500 hover:text-tnf-ink transition-colors">Programs</a>
+      <a href="/opportunities" class="text-gray-500 hover:text-tnf-ink transition-colors">Opportunities</a>
+      <a href="/get-involved" class="text-gray-500 hover:text-tnf-ink transition-colors">Get Involved</a>
+      <a href="/news" class="text-gray-500 hover:text-tnf-ink transition-colors">News</a>
+      <a href="/opportunities" class="bg-tnf-green text-white px-5 py-2.5 rounded-lg hover:bg-tnf-greenDark transition-all shadow-sm transform hover:-translate-y-0.5">Find an Opportunity</a>
+    </div>
+  </nav>
+  <div id="mobile-menu" class="hidden bg-white border-t border-gray-100 px-6 py-5 flex-col space-y-3 text-tnf-ink text-base font-medium md:hidden sticky top-[68px] z-30 shadow-xl">
+    <a href="/" class="hover:text-tnf-green">Home</a><a href="/about" class="hover:text-tnf-green">About the Foundation</a><a href="/programs" class="hover:text-tnf-green">Programs</a><a href="/opportunities" class="hover:text-tnf-green">Opportunities</a><a href="/get-involved" class="hover:text-tnf-green">Get Involved</a><a href="/news" class="hover:text-tnf-green">News</a><a href="/careers" class="text-tnf-green font-semibold">Careers</a><a href="/contact" class="hover:text-tnf-green">Contact</a>
+  </div>
+
+  <main class="flex-grow w-full">
+    <header class="page-hero w-full py-24 md:py-28 px-4">
+      <div class="max-w-3xl mx-auto text-center text-white" data-aos="fade-up">
+        <h1 class="text-4xl md:text-6xl font-extrabold mb-6 leading-tight">Work with us</h1>
+        <p class="text-lg md:text-xl text-white/85 max-w-2xl mx-auto font-light leading-relaxed">Help build a brighter future for young Seychellois. Explore our open roles and find where you fit.</p>
+      </div>
+    </header>
+
+    <section class="w-full py-20 md:py-24">
+      <div class="max-w-4xl mx-auto px-4">
+        <div class="mb-10" data-aos="fade-up">
+          <h2 class="text-3xl font-bold text-tnf-ink mb-2">Open roles</h2>
+          <p class="text-gray-500">Positions and opportunities to join the Foundation team.</p>
+        </div>
+        <div id="jobs-body" class="space-y-4" data-aos="fade-up"><div class="loader-spinner my-16 mx-auto"></div></div>
+
+        <div class="mt-14 bg-white rounded-2xl border border-gray-100 shadow-sm p-8 text-center" data-aos="fade-up">
+          <h3 class="text-xl font-bold text-tnf-ink mb-2">Don't see the right role?</h3>
+          <p class="text-gray-500 max-w-xl mx-auto mb-6">We're always keen to meet young people who share our mission. Tell us how you'd like to contribute and we'll keep you in mind.</p>
+          <div class="flex flex-col sm:flex-row justify-center gap-3">
+            <a href="/get-involved" class="bg-tnf-green hover:bg-tnf-greenDark text-white font-bold py-3 px-7 rounded-lg transition-colors">Register your interest</a>
+            <a href="/contact" class="bg-white border border-gray-200 hover:border-tnf-green text-tnf-ink font-bold py-3 px-7 rounded-lg transition-colors">Contact us</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-tnf-charcoal text-white pt-20 pb-10 px-6 md:px-12 border-t-[6px] border-tnf-green">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-14">
+      <div><div class="flex items-center gap-3 mb-5"><img src="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" alt="TNF" class="h-12 w-12 object-contain rounded-lg bg-white p-1" /><div class="font-extrabold leading-tight">Tyler Nicholas<br>Foundation</div></div>
+        <p class="text-sm text-gray-400 mb-4 max-w-sm leading-relaxed">Empowering young people across Seychelles through education, opportunity, leadership, community service and innovation.</p>
+        <p class="text-tnf-green font-semibold text-sm">For the Youth. For the Islands. For Tomorrow.</p>
+        <div id="footer-social" class="flex space-x-3 mt-5"></div></div>
+      <div class="flex flex-col space-y-3 text-sm"><h4 class="font-bold text-base mb-2">Explore</h4><a href="/about" class="text-gray-400 hover:text-tnf-green transition-colors">About</a><a href="/programs" class="text-gray-400 hover:text-tnf-green transition-colors">Programs</a><a href="/opportunities" class="text-gray-400 hover:text-tnf-green transition-colors">Opportunities</a><a href="/news" class="text-gray-400 hover:text-tnf-green transition-colors">News</a><a href="/events" class="text-gray-400 hover:text-tnf-green transition-colors">Events</a></div>
+      <div class="flex flex-col space-y-3 text-sm"><h4 class="font-bold text-base mb-2">Get Involved</h4><a href="/get-involved#interest" class="text-gray-400 hover:text-tnf-green transition-colors">Volunteer</a><a href="/get-involved#interest" class="text-gray-400 hover:text-tnf-green transition-colors">Mentor</a><a href="/donate" class="text-gray-400 hover:text-tnf-green transition-colors">Donate</a><a href="/get-involved#submit" class="text-gray-400 hover:text-tnf-green transition-colors">Submit an Opportunity</a></div>
+      <div class="flex flex-col space-y-3 text-sm"><h4 class="font-bold text-base mb-2">Organisation</h4><a href="/about#board" class="text-gray-400 hover:text-tnf-green transition-colors">Our Board</a><a href="/careers" class="text-gray-400 hover:text-tnf-green transition-colors">Careers</a><a href="/resources" class="text-gray-400 hover:text-tnf-green transition-colors">Resources</a><a href="/faq" class="text-gray-400 hover:text-tnf-green transition-colors">FAQ</a><a href="/safeguarding" class="text-gray-400 hover:text-tnf-green transition-colors">Safeguarding</a><a href="/contact" class="text-gray-400 hover:text-tnf-green transition-colors">Contact</a><a href="/login" class="text-gray-400 hover:text-tnf-green transition-colors">Staff &amp; Volunteer Login</a></div>
+    </div>
+    <div class="max-w-7xl mx-auto border-t border-white/10 pt-8 text-center text-xs text-gray-500"><p class="font-bold text-white text-sm mb-2">Tyler Nicholas Foundation</p><p>&copy; <span id="current-year"></span> Tyler Nicholas Foundation · Republic of Seychelles · <a href="/admin" class="text-tnf-green hover:underline">Admin</a></p></div>
+  </footer>
+
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    window.addEventListener('load',()=>{const l=document.getElementById('loading-screen');setTimeout(()=>{l.style.opacity='0';l.style.visibility='hidden';document.body.classList.remove('loading');AOS.init({duration:800,once:true,offset:60});},700);});
+    document.getElementById('mobile-menu-btn').addEventListener('click',()=>document.getElementById('mobile-menu').classList.toggle('hidden'));
+    document.getElementById('current-year').innerText=new Date().getFullYear();
+    const esc=s=>(s==null?'':String(s)).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+    document.addEventListener('DOMContentLoaded',()=>{
+      const wait=setInterval(()=>{ if(!window.supabase)return; clearInterval(wait);
+        const db=window.supabase.createClient('https://mcnemlwalcgdlmclijxc.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jbmVtbHdhbGNnZGxtY2xpanhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5NDMzNTAsImV4cCI6MjEwMjUxOTM1MH0.jVPTsfz7Htho4EZKvHzlgr1vSkj41EuVpMBgaHzLm-Q');
+        (async()=>{try{const{data:s}=await db.from('site_settings').select('*').maybeSingle();if(!s)return;
+          if(s.announcement_active&&s.announcement_text){const b=document.getElementById('announcement-bar');b.classList.remove('hidden');b.innerHTML=s.announcement_url?`<a href="${esc(s.announcement_url)}" class="hover:underline block w-full">${esc(s.announcement_text)}</a>`:esc(s.announcement_text);}
+          const links=s.social_links||{},fs=document.getElementById('footer-social');
+          [['facebook','fa-facebook-f'],['instagram','fa-instagram'],['x','fa-x-twitter'],['linkedin','fa-linkedin-in'],['youtube','fa-youtube'],['tiktok','fa-tiktok'],['threads','fa-threads']].forEach(([k,ic])=>{if(links[k]){const a=document.createElement('a');a.href=links[k];a.target='_blank';a.rel='noopener';a.className='w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-tnf-green hover:scale-110 transition-all';a.setAttribute('aria-label',k);a.innerHTML=`<i class="fa-brands ${ic}"></i>`;fs.appendChild(a);}});
+        }catch(e){}})();
+        (async()=>{const box=document.getElementById('jobs-body');
+          let depMap={}; try{const{data}=await db.from('departments').select('id,name');(data||[]).forEach(d=>depMap[d.id]=d.name);}catch(e){}
+          try{const{data,error}=await db.from('job_postings').select('*').eq('is_published',true).order('created_at',{ascending:false});if(error)throw error;const jobs=data||[];
+            if(!jobs.length){box.innerHTML=`<div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center"><div class="w-14 h-14 rounded-2xl bg-tnf-greenLight text-tnf-green grid place-items-center text-2xl mx-auto mb-4"><i class="fa-solid fa-briefcase"></i></div><h3 class="text-xl font-bold text-tnf-ink mb-2">No open roles right now</h3><p class="text-gray-500 max-w-md mx-auto">We're not actively hiring at the moment — but check back soon, or register your interest below.</p></div>`;return;}
+            box.innerHTML=jobs.map(j=>`<a href="/careers/job?slug=${encodeURIComponent(j.slug||'')}" class="block bg-white rounded-2xl border border-gray-100 shadow-sm p-6 hover:border-tnf-green hover:shadow-md transition-all"><div class="flex items-start justify-between gap-4"><div><h3 class="text-xl font-bold text-tnf-ink mb-1.5">${esc(j.title)}</h3><div class="text-sm text-gray-400 flex flex-wrap gap-x-4 gap-y-1">${j.department_id&&depMap[j.department_id]?`<span><i class="fa-solid fa-sitemap mr-1.5 text-tnf-green"></i>${esc(depMap[j.department_id])}</span>`:''}${j.location?`<span><i class="fa-solid fa-location-dot mr-1.5 text-tnf-green"></i>${esc(j.location)}</span>`:''}${j.type?`<span><i class="fa-solid fa-clock mr-1.5 text-tnf-green"></i>${esc(j.type)}</span>`:''}</div></div><span class="text-tnf-green font-bold text-sm whitespace-nowrap hidden sm:block">View role <i class="fa-solid fa-arrow-right ml-1"></i></span></div></a>`).join('');
+          }catch(e){box.innerHTML=`<p class="text-gray-400 italic text-center py-10">Couldn't load roles right now.</p>`;}
+        })();
+      },80);
+    });
+  </script>
+</body>
+</html>
