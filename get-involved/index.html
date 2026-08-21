@@ -46,39 +46,97 @@
   <div id="announcement-bar" class="hidden bg-tnf-green text-white text-center py-2.5 text-sm font-semibold z-50 relative"></div>
 
   <!-- NAV -->
-  <nav class="bg-white/90 backdrop-blur-md text-tnf-ink py-3.5 px-6 md:px-12 flex justify-between items-center shadow-sm sticky top-0 z-40 border-b border-gray-100">
-    <a href="/" class="flex items-center space-x-3">
-      <img src="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" alt="TNF Logo" class="h-11 w-11 object-contain rounded-lg" />
-      <div class="font-extrabold text-base leading-tight tracking-tight hidden sm:block">Tyler Nicholas<br><span class="text-tnf-green">Foundation</span></div>
-    </a>
-    <button id="mobile-menu-btn" class="md:hidden text-tnf-ink hover:text-tnf-green transition-colors text-2xl" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
-    <div class="hidden md:flex space-x-7 text-sm items-center font-semibold">
-      <a href="/" class="text-gray-500 hover:text-tnf-ink transition-colors">Home</a>
-      <div class="relative group">
-        <button class="text-gray-500 hover:text-tnf-ink transition-colors flex items-center py-2">About <i class="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i></button>
-        <div class="absolute left-0 mt-1 w-52 bg-white rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 border border-gray-100 overflow-hidden">
-          <a href="/about" class="block px-5 py-3 hover:bg-tnf-greenLight border-b border-gray-100 transition-colors">About the Foundation</a>
-          <a href="/about#board" class="block px-5 py-3 hover:bg-tnf-greenLight border-b border-gray-100 transition-colors">Our Board &amp; Team</a>
-          <a href="/safeguarding" class="block px-5 py-3 hover:bg-tnf-greenLight transition-colors">Safeguarding</a>
+  <nav class="bg-white/90 backdrop-blur-md text-tnf-ink sticky top-0 z-40 border-b border-gray-100 shadow-sm">
+    <div class="max-w-[1400px] mx-auto px-5 md:px-10 h-[68px] flex justify-between items-center">
+      <a href="/" class="flex items-center gap-3 shrink-0">
+        <img src="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" alt="TNF Logo" class="h-11 w-11 object-contain rounded-lg" />
+        <div class="font-extrabold text-[15px] leading-tight tracking-tight hidden sm:block">Tyler Nicholas<br><span class="text-tnf-green">Foundation</span></div>
+      </a>
+      <div class="hidden lg:flex items-center gap-1 text-[15px] font-semibold" id="primary-nav">
+        <a href="/" data-nav="/" class="nav-link px-3 py-2 rounded-lg text-gray-600 hover:bg-tnf-greenLight hover:text-tnf-greenDark transition-colors">Home</a>
+        <div class="relative group">
+          <button data-group="/about,/careers,/safeguarding,/contact" class="nav-link px-3 py-2 rounded-lg text-gray-600 hover:bg-tnf-greenLight hover:text-tnf-greenDark transition-colors flex items-center gap-1.5">About <i class="fa-solid fa-chevron-down text-[10px] opacity-60 group-hover:rotate-180 transition-transform"></i></button>
+          <div class="absolute top-full pt-2 w-64 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 left-0">
+            <div class="bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden py-1.5">
+              <a href="/about" class="flex items-center gap-3 px-4 py-2.5 text-[15px] text-gray-600 hover:bg-tnf-greenLight hover:text-tnf-greenDark transition-colors"><i class="fa-solid fa-circle-info w-4 text-center text-tnf-green"></i>About the Foundation</a>
+              <a href="/about#board" class="flex items-center gap-3 px-4 py-2.5 text-[15px] text-gray-600 hover:bg-tnf-greenLight hover:text-tnf-greenDark transition-colors"><i class="fa-solid fa-users w-4 text-center text-tnf-green"></i>Our Board &amp; Team</a>
+              <a href="/careers" class="flex items-center gap-3 px-4 py-2.5 text-[15px] text-gray-600 hover:bg-tnf-greenLight hover:text-tnf-greenDark transition-colors"><i class="fa-solid fa-briefcase w-4 text-center text-tnf-green"></i>Careers</a>
+              <a href="/safeguarding" class="flex items-center gap-3 px-4 py-2.5 text-[15px] text-gray-600 hover:bg-tnf-greenLight hover:text-tnf-greenDark transition-colors"><i class="fa-solid fa-shield-heart w-4 text-center text-tnf-green"></i>Safeguarding</a>
+              <a href="/contact" class="flex items-center gap-3 px-4 py-2.5 text-[15px] text-gray-600 hover:bg-tnf-greenLight hover:text-tnf-greenDark transition-colors"><i class="fa-solid fa-envelope w-4 text-center text-tnf-green"></i>Contact</a>
+            </div>
+          </div>
         </div>
+        <a href="/programs" data-nav="/programs" class="nav-link px-3 py-2 rounded-lg text-gray-600 hover:bg-tnf-greenLight hover:text-tnf-greenDark transition-colors">Programs</a>
+        <a href="/opportunities" data-nav="/opportunities" class="nav-link px-3 py-2 rounded-lg text-gray-600 hover:bg-tnf-greenLight hover:text-tnf-greenDark transition-colors">Opportunities</a>
+        <div class="relative group">
+          <button data-group="/get-involved,/resources,/faq,/donate" class="nav-link px-3 py-2 rounded-lg text-gray-600 hover:bg-tnf-greenLight hover:text-tnf-greenDark transition-colors flex items-center gap-1.5">Get Involved <i class="fa-solid fa-chevron-down text-[10px] opacity-60 group-hover:rotate-180 transition-transform"></i></button>
+          <div class="absolute top-full pt-2 w-64 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 left-0">
+            <div class="bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden py-1.5">
+              <a href="/get-involved#interest" class="flex items-center gap-3 px-4 py-2.5 text-[15px] text-gray-600 hover:bg-tnf-greenLight hover:text-tnf-greenDark transition-colors"><i class="fa-solid fa-hand-holding-heart w-4 text-center text-tnf-green"></i>Volunteer &amp; Mentor</a>
+              <a href="/get-involved#submit" class="flex items-center gap-3 px-4 py-2.5 text-[15px] text-gray-600 hover:bg-tnf-greenLight hover:text-tnf-greenDark transition-colors"><i class="fa-solid fa-lightbulb w-4 text-center text-tnf-green"></i>Submit an Opportunity</a>
+              <a href="/resources" class="flex items-center gap-3 px-4 py-2.5 text-[15px] text-gray-600 hover:bg-tnf-greenLight hover:text-tnf-greenDark transition-colors"><i class="fa-solid fa-folder-open w-4 text-center text-tnf-green"></i>Resources &amp; Guides</a>
+              <a href="/faq" class="flex items-center gap-3 px-4 py-2.5 text-[15px] text-gray-600 hover:bg-tnf-greenLight hover:text-tnf-greenDark transition-colors"><i class="fa-solid fa-circle-question w-4 text-center text-tnf-green"></i>FAQ</a>
+              <a href="/donate" class="flex items-center gap-3 px-4 py-2.5 text-[15px] text-gray-600 hover:bg-tnf-greenLight hover:text-tnf-greenDark transition-colors"><i class="fa-solid fa-heart w-4 text-center text-tnf-green"></i>Donate</a>
+            </div>
+          </div>
+        </div>
+        <div class="relative group">
+          <button data-group="/news,/events" class="nav-link px-3 py-2 rounded-lg text-gray-600 hover:bg-tnf-greenLight hover:text-tnf-greenDark transition-colors flex items-center gap-1.5">News &amp; Events <i class="fa-solid fa-chevron-down text-[10px] opacity-60 group-hover:rotate-180 transition-transform"></i></button>
+          <div class="absolute top-full pt-2 w-64 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 right-0">
+            <div class="bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden py-1.5">
+              <a href="/news" class="flex items-center gap-3 px-4 py-2.5 text-[15px] text-gray-600 hover:bg-tnf-greenLight hover:text-tnf-greenDark transition-colors"><i class="fa-solid fa-newspaper w-4 text-center text-tnf-green"></i>Latest News</a>
+              <a href="/events" class="flex items-center gap-3 px-4 py-2.5 text-[15px] text-gray-600 hover:bg-tnf-greenLight hover:text-tnf-greenDark transition-colors"><i class="fa-solid fa-calendar-days w-4 text-center text-tnf-green"></i>Events</a>
+            </div>
+          </div>
+        </div>
+        <a href="/opportunities" class="ml-2 bg-tnf-green text-white px-5 py-2.5 rounded-lg hover:bg-tnf-greenDark transition-all shadow-sm transform hover:-translate-y-0.5 whitespace-nowrap">Find an Opportunity</a>
       </div>
-      <a href="/programs" class="text-gray-500 hover:text-tnf-ink transition-colors">Programs</a>
-      <a href="/opportunities" class="text-gray-500 hover:text-tnf-ink transition-colors">Opportunities</a>
-      <a href="/get-involved" class="text-tnf-ink border-b-2 border-tnf-green pb-1">Get Involved</a>
-      <a href="/news" class="text-gray-500 hover:text-tnf-ink transition-colors">News</a>
-      <a href="/opportunities" class="bg-tnf-green text-white px-5 py-2.5 rounded-lg hover:bg-tnf-greenDark transition-all shadow-sm transform hover:-translate-y-0.5">Find an Opportunity</a>
+      <button id="mobile-menu-btn" class="lg:hidden text-tnf-ink hover:text-tnf-green transition-colors text-2xl -mr-1" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
     </div>
   </nav>
 
-  <div id="mobile-menu" class="hidden bg-white border-t border-gray-100 px-6 py-5 flex-col space-y-3 text-tnf-ink text-base font-medium md:hidden sticky top-[68px] z-30 shadow-xl">
-    <a href="/" class="hover:text-tnf-green">Home</a>
-    <a href="/about" class="hover:text-tnf-green">About the Foundation</a>
-    <a href="/programs" class="hover:text-tnf-green">Programs</a>
-    <a href="/opportunities" class="hover:text-tnf-green">Opportunities</a>
-    <a href="/get-involved" class="text-tnf-green font-semibold">Get Involved</a>
-    <a href="/news" class="hover:text-tnf-green">News</a>
-    <a href="/contact" class="hover:text-tnf-green">Contact</a>
+  <div id="mobile-menu" class="hidden lg:hidden bg-white border-t border-gray-100 sticky top-[68px] z-30 shadow-xl max-h-[calc(100vh-68px)] overflow-y-auto">
+    <div class="px-5 py-4 flex flex-col text-tnf-ink">
+      <a href="/" class="py-3 border-b border-gray-100 font-semibold hover:text-tnf-green transition-colors">Home</a>
+      <div class="py-3 border-b border-gray-100">
+        <div class="font-bold text-tnf-ink text-sm mb-1">About</div>
+        <a href="/about" class="mnav block py-2.5 pl-3 text-gray-600 hover:text-tnf-green transition-colors">About the Foundation</a>
+        <a href="/about#board" class="mnav block py-2.5 pl-3 text-gray-600 hover:text-tnf-green transition-colors">Our Board &amp; Team</a>
+        <a href="/careers" class="mnav block py-2.5 pl-3 text-gray-600 hover:text-tnf-green transition-colors">Careers</a>
+        <a href="/safeguarding" class="mnav block py-2.5 pl-3 text-gray-600 hover:text-tnf-green transition-colors">Safeguarding</a>
+        <a href="/contact" class="mnav block py-2.5 pl-3 text-gray-600 hover:text-tnf-green transition-colors">Contact</a>
+      </div>
+      <a href="/programs" class="py-3 border-b border-gray-100 font-semibold hover:text-tnf-green transition-colors">Programs</a>
+      <a href="/opportunities" class="py-3 border-b border-gray-100 font-semibold hover:text-tnf-green transition-colors">Opportunities</a>
+      <div class="py-3 border-b border-gray-100">
+        <div class="font-bold text-tnf-ink text-sm mb-1">Get Involved</div>
+        <a href="/get-involved#interest" class="mnav block py-2.5 pl-3 text-gray-600 hover:text-tnf-green transition-colors">Volunteer &amp; Mentor</a>
+        <a href="/get-involved#submit" class="mnav block py-2.5 pl-3 text-gray-600 hover:text-tnf-green transition-colors">Submit an Opportunity</a>
+        <a href="/resources" class="mnav block py-2.5 pl-3 text-gray-600 hover:text-tnf-green transition-colors">Resources &amp; Guides</a>
+        <a href="/faq" class="mnav block py-2.5 pl-3 text-gray-600 hover:text-tnf-green transition-colors">FAQ</a>
+        <a href="/donate" class="mnav block py-2.5 pl-3 text-gray-600 hover:text-tnf-green transition-colors">Donate</a>
+      </div>
+      <div class="py-3 border-b border-gray-100">
+        <div class="font-bold text-tnf-ink text-sm mb-1">News &amp; Events</div>
+        <a href="/news" class="mnav block py-2.5 pl-3 text-gray-600 hover:text-tnf-green transition-colors">Latest News</a>
+        <a href="/events" class="mnav block py-2.5 pl-3 text-gray-600 hover:text-tnf-green transition-colors">Events</a>
+      </div>
+      <a href="/opportunities" class="mt-4 bg-tnf-green text-white text-center font-bold py-3 rounded-lg hover:bg-tnf-greenDark transition-colors">Find an Opportunity</a>
+      <a href="/donate" class="mt-2 border-2 border-tnf-green text-tnf-greenDark text-center font-bold py-3 rounded-lg hover:bg-tnf-greenLight transition-colors">Donate</a>
+    </div>
   </div>
+  <script>
+    (function(){
+      function apply(){
+        var path=location.pathname.replace(/\/index\.html$/,'').replace(/\/+$/,'')||'/';
+        function m(t){ if(!t)return false; t=t.replace(/#.*$/,''); if(t==='/')return path==='/'; return path===t||path.indexOf(t+'/')===0; }
+        document.querySelectorAll('#primary-nav [data-nav]').forEach(function(a){ if(m(a.getAttribute('data-nav'))){a.style.color='#26863A';a.style.backgroundColor='#EEF7EF';} });
+        document.querySelectorAll('#primary-nav [data-group]').forEach(function(b){ if(b.getAttribute('data-group').split(',').some(m)){b.style.color='#26863A';b.style.backgroundColor='#EEF7EF';} });
+        document.querySelectorAll('#mobile-menu a[href]').forEach(function(a){ if(m(a.getAttribute('href'))){a.style.color='#2E9E44';a.style.fontWeight='700';} });
+      }
+      if(document.readyState!=='loading')apply(); else document.addEventListener('DOMContentLoaded',apply);
+    })();
+  </script>
 
   <main class="flex-grow w-full">
 
@@ -265,6 +323,10 @@
         <a href="/about#board" class="text-gray-400 hover:text-tnf-green transition-colors">Our Board</a>
         <a href="/safeguarding" class="text-gray-400 hover:text-tnf-green transition-colors">Safeguarding</a>
         <a href="/contact" class="text-gray-400 hover:text-tnf-green transition-colors">Contact</a>
+        <a href="/careers" class="text-gray-400 hover:text-tnf-green transition-colors">Careers</a>
+        <a href="/donate" class="text-gray-400 hover:text-tnf-green transition-colors">Donate</a>
+        <a href="/resources" class="text-gray-400 hover:text-tnf-green transition-colors">Resources</a>
+        <a href="/faq" class="text-gray-400 hover:text-tnf-green transition-colors">FAQ</a>
         <a href="/login" class="text-gray-400 hover:text-tnf-green transition-colors">Staff &amp; Volunteer Login</a>
       </div>
     </div>
