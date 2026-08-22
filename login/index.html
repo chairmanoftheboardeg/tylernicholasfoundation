@@ -68,33 +68,7 @@
           <p id="si-msg" class="text-sm font-semibold text-red-600 min-h-[1em]"></p>
           <button type="submit" id="si-submit" class="w-full bg-tnf-green hover:bg-tnf-greenDark text-white font-bold py-3.5 rounded-xl transition-colors">Sign in</button>
         </form>
-        <p class="text-center text-gray-500 text-sm mt-7">Don't have an account? <button data-go="signup" class="font-bold text-tnf-green hover:text-tnf-greenDark">Create one</button></p>
-      </div>
-
-      <!-- SIGN UP -->
-      <div id="m-signup" class="hidden">
-        <h2 class="text-2xl font-bold text-tnf-ink mb-1 text-center">Create your account</h2>
-        <p class="text-gray-500 mb-7 text-center text-sm">Join the Foundation</p>
-        <form id="signup-form" class="space-y-4">
-          <div>
-            <label for="su-name" class="block text-sm font-semibold text-tnf-ink mb-2">Full name</label>
-            <input id="su-name" type="text" required autocomplete="name" class="w-full border border-gray-200 rounded-xl px-4 py-3.5 focus:border-tnf-green focus:ring-4 focus:ring-tnf-green/10 transition-all" placeholder="Your name" />
-          </div>
-          <div>
-            <label for="su-email" class="block text-sm font-semibold text-tnf-ink mb-2">Email</label>
-            <input id="su-email" type="email" required autocomplete="email" class="w-full border border-gray-200 rounded-xl px-4 py-3.5 focus:border-tnf-green focus:ring-4 focus:ring-tnf-green/10 transition-all" placeholder="you@example.com" />
-          </div>
-          <div>
-            <label for="su-pass" class="block text-sm font-semibold text-tnf-ink mb-2">Password</label>
-            <div class="relative">
-              <input id="su-pass" type="password" required minlength="8" autocomplete="new-password" class="w-full border border-gray-200 rounded-xl px-4 py-3.5 pr-11 focus:border-tnf-green focus:ring-4 focus:ring-tnf-green/10 transition-all" placeholder="At least 8 characters" />
-              <button type="button" class="toggle-pass absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600" data-target="su-pass" aria-label="Show password"><i class="fa-regular fa-eye"></i></button>
-            </div>
-          </div>
-          <p id="su-msg" class="text-sm font-semibold text-red-600 min-h-[1em]"></p>
-          <button type="submit" id="su-submit" class="w-full bg-tnf-green hover:bg-tnf-greenDark text-white font-bold py-3.5 rounded-xl transition-colors">Create account</button>
-        </form>
-        <p class="text-center text-gray-500 text-sm mt-7">Already have an account? <button data-go="signin" class="font-bold text-tnf-green hover:text-tnf-greenDark">Sign in</button></p>
+        <p class="text-center text-gray-400 text-xs mt-7 leading-relaxed">Accounts are created by the Foundation. If you're a volunteer or staff member and need access, please <a href="/contact" class="font-semibold text-tnf-green hover:text-tnf-greenDark">contact us</a>.</p>
       </div>
 
       <!-- FORGOT -->
@@ -149,7 +123,7 @@
 
   <script>
     const $=id=>document.getElementById(id);
-    const MODES=['m-init','m-signin','m-signup','m-forgot','m-recovery','m-signedin'];
+    const MODES=['m-init','m-signin','m-forgot','m-recovery','m-signedin'];
     function showMode(m){ MODES.forEach(x=>$(x).classList.toggle('hidden',x!==('m-'+m))); }
     document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>{ ['si-msg','su-msg','fo-msg','rc-msg'].forEach(id=>{const e=$(id);if(e){e.textContent='';e.className='text-sm font-semibold min-h-[1em]';}}); showMode(b.dataset.go); }));
     document.querySelectorAll('.toggle-pass').forEach(btn=>btn.addEventListener('click',()=>{ const inp=$(btn.dataset.target); const show=inp.type==='password'; inp.type=show?'text':'password'; btn.innerHTML=show?'<i class="fa-regular fa-eye-slash"></i>':'<i class="fa-regular fa-eye"></i>'; }));
@@ -189,18 +163,6 @@
           const{data,error}=await db.auth.signInWithPassword({email,password});
           if(error){ msg.textContent = /invalid/i.test(error.message)?'Incorrect email or password.':(/confirm/i.test(error.message)?'Please confirm your email first, check your inbox.':error.message); unbusy(btn); return; }
           await showSignedIn(data.user); unbusy(btn);
-        });
-
-        $('signup-form').addEventListener('submit',async e=>{ e.preventDefault();
-          const btn=$('su-submit'), msg=$('su-msg'); msg.className='text-sm font-semibold text-red-600 min-h-[1em]'; msg.textContent='';
-          const full_name=$('su-name').value.trim(), email=$('su-email').value.trim(), password=$('su-pass').value;
-          if(password.length<8){ msg.textContent='Password must be at least 8 characters.'; return; }
-          busy(btn,'Creating account…');
-          const{data,error}=await db.auth.signUp({ email, password, options:{ data:{ full_name }, emailRedirectTo:REDIRECT } });
-          if(error){ msg.textContent = /registered|already/i.test(error.message)?'That email already has an account, try signing in.':error.message; unbusy(btn); return; }
-          if(data.session&&data.user){ await showSignedIn(data.user); }
-          else { msg.className='text-sm font-semibold text-tnf-greenDark min-h-[1em]'; msg.textContent='Account created! Check your email to confirm, then sign in.'; }
-          unbusy(btn);
         });
 
         $('forgot-form').addEventListener('submit',async e=>{ e.preventDefault();
