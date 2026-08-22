@@ -14,6 +14,7 @@
 tailwind.config={theme:{extend:{fontFamily:{sans:['Plus Jakarta Sans','sans-serif']},colors:{tnf:{green:'#2E9E44',greenDark:'#26863A',greenLight:'#EEF7EF',ink:'#152219',charcoal:'#0E1A13'}}}}}
 </script>
 <style>
+    html{overflow-x:hidden}body{overflow-x:clip}
   body{background:#f1f5f4}
   .loader-spinner{border:3px solid rgba(46,158,68,.2);border-left-color:#2E9E44;border-radius:50%;width:44px;height:44px;animation:spin .9s linear infinite}
   .btn-spin{display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;vertical-align:-2px}
@@ -355,7 +356,7 @@ function fmtCell(v){ if(v==null||v==='')return''; if(typeof v==='boolean')return
 function formatValue(field,val,pubcfg){
   if(val==null||val==='')return'';
   if(!field)return fmtCell(val);
-  if(field.t==='ref')return (REFMAP[field.ref]&&REFMAP[field.ref][val])||'—';
+  if(field.t==='ref')return (REFMAP[field.ref]&&REFMAP[field.ref][val])||'-';
   if(field.t==='date')return fmtDate(val);
   if(field.t==='datetime')return fmtDateTime(val);
   if(field.t==='bool')return val?(field.label||'Yes'):'';
@@ -421,8 +422,8 @@ function fieldHtml(f,rec){
   const base='w-full border border-gray-200 rounded-xl px-4 py-3 focus:border-tnf-green focus:ring-4 focus:ring-tnf-green/10 transition-all';
   if(f.t==='textarea')return `<div>${lab}<textarea id="f_${f.k}" rows="3" class="${base} resize-y">${esc(v||'')}</textarea></div>`;
   if(f.t==='rich')return `<div>${lab}<div class="border border-gray-200 rounded-xl overflow-hidden focus-within:border-tnf-green"><div class="rt-toolbar flex gap-1 p-2 border-b border-gray-100 bg-gray-50" data-for="f_${f.k}"><button type="button" data-cmd="bold" class="font-bold">B</button><button type="button" data-cmd="italic" class="italic">I</button><button type="button" data-cmd="h2">H2</button><button type="button" data-cmd="h3">H3</button><button type="button" data-cmd="insertUnorderedList">•</button><button type="button" data-cmd="insertOrderedList">1.</button><button type="button" data-cmd="createLink"><i class="fa-solid fa-link text-xs"></i></button></div><div id="f_${f.k}" class="rt px-4 py-3 text-[15px]" contenteditable="true" data-ph="Write here…">${v||''}</div></div></div>`;
-  if(f.t==='select'){const opts=f.opts.map(o=>`<option value="${o[0]}" ${v===o[0]?'selected':''}>${esc(o[1])}</option>`).join('');return `<div>${lab}<select id="f_${f.k}" class="${base} bg-white"><option value="">— select —</option>${opts}</select></div>`;}
-  if(f.t==='ref'){const opts=(REFCACHE[f.ref]||[]).map(o=>`<option value="${o.id}" ${v===o.id?'selected':''}>${esc(o.label)}</option>`).join('');return `<div>${lab}<select id="f_${f.k}" class="${base} bg-white"><option value="">— none —</option>${opts}</select></div>`;}
+  if(f.t==='select'){const opts=f.opts.map(o=>`<option value="${o[0]}" ${v===o[0]?'selected':''}>${esc(o[1])}</option>`).join('');return `<div>${lab}<select id="f_${f.k}" class="${base} bg-white"><option value="">- select -</option>${opts}</select></div>`;}
+  if(f.t==='ref'){const opts=(REFCACHE[f.ref]||[]).map(o=>`<option value="${o.id}" ${v===o.id?'selected':''}>${esc(o.label)}</option>`).join('');return `<div>${lab}<select id="f_${f.k}" class="${base} bg-white"><option value="">- none -</option>${opts}</select></div>`;}
   if(f.t==='bool'){const on=!!v;return `<div class="flex items-center justify-between gap-4"><label class="text-sm font-semibold text-tnf-ink">${esc(label)}</label><div class="toggle ${on?'on':''}" id="f_${f.k}" data-val="${on?1:0}"><span></span></div></div>`;}
   if(f.t==='date')return `<div>${lab}<input type="date" id="f_${f.k}" value="${v?String(v).slice(0,10):''}" class="${base}"/></div>`;
   if(f.t==='datetime')return `<div>${lab}<input type="datetime-local" id="f_${f.k}" value="${toLocalInput(v)}" class="${base}"/></div>`;
@@ -509,7 +510,7 @@ async function editUser(u){
     <div><div class="font-bold text-tnf-ink text-lg">${esc(u.full_name||'(no name)')}</div><div class="text-gray-400 text-sm">${esc(u.email||'')}</div></div>
     <div><label class="block text-sm font-semibold text-tnf-ink mb-2">Role</label><select id="u_role" class="w-full border border-gray-200 rounded-xl px-4 py-3 bg-white">${ROLES.map(r=>`<option value="${r[0]}" ${u.role===r[0]?'selected':''}>${r[1]}</option>`).join('')}</select></div>
     <div><label class="block text-sm font-semibold text-tnf-ink mb-2">Title (job title)</label><input id="u_title" value="${esc(u.title||'')}" class="w-full border border-gray-200 rounded-xl px-4 py-3"/></div>
-    <div><label class="block text-sm font-semibold text-tnf-ink mb-2">Department</label><select id="u_dept" class="w-full border border-gray-200 rounded-xl px-4 py-3 bg-white"><option value="">— none —</option>${(REFCACHE['departments']||[]).map(d=>`<option value="${d.id}" ${u.department_id===d.id?'selected':''}>${esc(d.label)}</option>`).join('')}</select></div>
+    <div><label class="block text-sm font-semibold text-tnf-ink mb-2">Department</label><select id="u_dept" class="w-full border border-gray-200 rounded-xl px-4 py-3 bg-white"><option value="">- none -</option>${(REFCACHE['departments']||[]).map(d=>`<option value="${d.id}" ${u.department_id===d.id?'selected':''}>${esc(d.label)}</option>`).join('')}</select></div>
     <div><label class="block text-sm font-semibold text-tnf-ink mb-3">Permissions <span class="text-gray-400 font-normal">· what they can manage</span></label><div class="grid grid-cols-2 sm:grid-cols-3 gap-2">${PERM_TAGS.map(t=>`<label class="flex items-center gap-2 text-sm border border-gray-200 rounded-lg px-3 py-2 cursor-pointer"><input type="checkbox" value="${t}" class="uperm accent-tnf-green" ${(u.permissions||[]).includes(t)?'checked':''}/> ${t}</label>`).join('')}</div><p class="text-xs text-gray-400 mt-2">Administrators have every permission automatically.</p></div>
     <div class="flex items-center justify-between gap-4"><label class="text-sm font-semibold text-tnf-ink">Account active</label><div class="toggle ${u.is_active!==false?'on':''}" id="u_active" data-val="${u.is_active!==false?1:0}"><span></span></div></div>
     <div class="flex items-center gap-3 pt-4 border-t border-gray-100"><button type="submit" id="usave" class="bg-tnf-green hover:bg-tnf-greenDark text-white font-bold px-7 py-3 rounded-xl">Save user</button><button type="button" id="ucancel" class="text-gray-500 font-semibold px-4">Cancel</button></div>
@@ -614,7 +615,7 @@ async function loadMessages(scroll){
   let msgs=[];
   try{const{data,error}=await db.from('chat_messages').select('*').eq('channel_id',CHAT.channel.id).order('created_at',{ascending:true}).limit(200);if(error)throw error;msgs=data||[];}
   catch(e){box.innerHTML=`<p class="text-gray-400 text-sm text-center">Couldn't load messages.</p>`;return;}
-  if(!msgs.length){box.innerHTML=`<div class="text-center text-gray-400 text-sm py-8">No messages yet — say hello 👋</div>`;return;}
+  if(!msgs.length){box.innerHTML=`<div class="text-center text-gray-400 text-sm py-8">No messages yet, say hello 👋</div>`;return;}
   const ids=[...new Set(msgs.map(m=>m.sender_id))]; await loadRef('profiles');
   const nameOf=id=>(REFMAP.profiles&&REFMAP.profiles[id])||'Someone';
   const atBottom=box.scrollHeight-box.scrollTop-box.clientHeight<80;

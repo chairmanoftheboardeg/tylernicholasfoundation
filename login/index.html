@@ -23,6 +23,7 @@
     }}}
   </script>
   <style>
+    html{overflow-x:hidden}body{overflow-x:clip}
     body{background:#0E1A13;background-image:radial-gradient(circle at 15% 15%,rgba(46,158,68,.28),transparent 42%),linear-gradient(150deg,#0E1A13 0%,#152219 55%,#1d3a27 100%);min-height:100vh}
     .loader-spinner{border:3px solid rgba(46,158,68,.2);border-left-color:#2E9E44;border-radius:50%;width:40px;height:40px;animation:spin .9s linear infinite}
     .btn-spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;vertical-align:-2px}
@@ -186,7 +187,7 @@
           const email=$('si-email').value.trim(), password=$('si-pass').value;
           busy(btn,'Signing in…');
           const{data,error}=await db.auth.signInWithPassword({email,password});
-          if(error){ msg.textContent = /invalid/i.test(error.message)?'Incorrect email or password.':(/confirm/i.test(error.message)?'Please confirm your email first — check your inbox.':error.message); unbusy(btn); return; }
+          if(error){ msg.textContent = /invalid/i.test(error.message)?'Incorrect email or password.':(/confirm/i.test(error.message)?'Please confirm your email first, check your inbox.':error.message); unbusy(btn); return; }
           await showSignedIn(data.user); unbusy(btn);
         });
 
@@ -196,7 +197,7 @@
           if(password.length<8){ msg.textContent='Password must be at least 8 characters.'; return; }
           busy(btn,'Creating account…');
           const{data,error}=await db.auth.signUp({ email, password, options:{ data:{ full_name }, emailRedirectTo:REDIRECT } });
-          if(error){ msg.textContent = /registered|already/i.test(error.message)?'That email already has an account — try signing in.':error.message; unbusy(btn); return; }
+          if(error){ msg.textContent = /registered|already/i.test(error.message)?'That email already has an account, try signing in.':error.message; unbusy(btn); return; }
           if(data.session&&data.user){ await showSignedIn(data.user); }
           else { msg.className='text-sm font-semibold text-tnf-greenDark min-h-[1em]'; msg.textContent='Account created! Check your email to confirm, then sign in.'; }
           unbusy(btn);

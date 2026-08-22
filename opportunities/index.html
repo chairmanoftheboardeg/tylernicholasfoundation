@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Opportunities | Tyler Nicholas Foundation</title>
-  <meta name="description" content="Verified scholarships, internships, exchanges, competitions and more for young Seychellois — all in one place. Search and filter the Opportunity Hub." />
+  <meta name="description" content="Verified scholarships, internships, exchanges, competitions and more for young Seychellois, all in one place. Search and filter the Opportunity Hub." />
   <link rel="icon" href="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" />
 
   <script src="https://cdn.tailwindcss.com"></script>
@@ -23,6 +23,7 @@
     }}}
   </script>
   <style>
+    html{overflow-x:hidden}body{overflow-x:clip}
     body{background-color:#f8fafc}
     body.loading{overflow:hidden;height:100vh}
     #loading-screen{transition:opacity .6s ease-out,visibility .6s}
@@ -143,7 +144,7 @@
     <header class="page-hero w-full py-20 md:py-24 px-4">
       <div class="max-w-3xl mx-auto text-center text-white" data-aos="fade-up">
         <h1 class="text-4xl md:text-6xl font-extrabold mb-5 leading-tight">The Opportunity Hub</h1>
-        <p class="text-lg text-white/85 max-w-2xl mx-auto font-light leading-relaxed mb-9">Verified scholarships, internships, exchanges, competitions and more for young Seychellois — all in one place.</p>
+        <p class="text-lg text-white/85 max-w-2xl mx-auto font-light leading-relaxed mb-9">Verified scholarships, internships, exchanges, competitions and more for young Seychellois, all in one place.</p>
         <div class="flex items-center gap-3 bg-white rounded-xl px-5 shadow-lg max-w-2xl mx-auto">
           <i class="fa-solid fa-magnifying-glass text-tnf-green text-lg"></i>
           <input id="search" type="search" placeholder="Search by keyword, organisation or country…" class="flex-1 py-4 bg-transparent outline-none text-base text-gray-900" aria-label="Search opportunities" />
@@ -246,7 +247,7 @@
     </div>
     <div class="max-w-7xl mx-auto border-t border-white/10 pt-8 text-center text-xs text-gray-500">
       <p class="font-bold text-white text-sm mb-2">Tyler Nicholas Foundation</p>
-      <p>&copy; <span id="current-year"></span> Tyler Nicholas Foundation · Republic of Seychelles · <a href="/admin" class="text-tnf-green hover:underline">Admin</a></p>
+      <p>&copy; <span id="current-year"></span> Tyler Nicholas Foundation · Republic of Seychelles</p>
     </div>
   </footer>
 
@@ -303,7 +304,7 @@
       else list.sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0));
       list.sort((a,b)=>(b.is_featured?1:0)-(a.is_featured?1:0));
 
-      if(!ALL.length){ grid.innerHTML=''; empty.classList.remove('hidden'); document.getElementById('empty-title').innerText='No opportunities yet'; document.getElementById('empty-text').innerText='New opportunities are being verified — sign up below and we\u2019ll let you know as soon as they open.'; document.getElementById('empty-reset').style.display='none'; count.innerText=''; return; }
+      if(!ALL.length){ grid.innerHTML=''; empty.classList.remove('hidden'); document.getElementById('empty-title').innerText='No opportunities yet'; document.getElementById('empty-text').innerText='New opportunities are being verified, sign up below and we\u2019ll let you know as soon as they open.'; document.getElementById('empty-reset').style.display='none'; count.innerText=''; return; }
       if(!list.length){ grid.innerHTML=''; empty.classList.remove('hidden'); document.getElementById('empty-title').innerText='No opportunities found'; document.getElementById('empty-text').innerText='Try adjusting your search or filters.'; document.getElementById('empty-reset').style.display=''; count.innerText='0 opportunities'; return; }
       empty.classList.add('hidden');
       count.innerHTML=`<span class="text-tnf-ink font-extrabold">${list.length}</span> ${list.length===1?'opportunity':'opportunities'}`;
@@ -351,7 +352,7 @@
           apply();
         })();
 
-        document.getElementById('alert-form').addEventListener('submit',async e=>{e.preventDefault();const email=document.getElementById('alert-email').value.trim(),msg=document.getElementById('alert-msg');if(!email)return;msg.innerText='Signing you up…';try{const{error}=await db.from('opportunity_alerts').insert({email});if(error)throw error;document.getElementById('alert-form').reset();msg.innerText="You're on the list — we'll be in touch.";}catch(err){msg.innerText='Something went wrong. Please try again.';}});
+        document.getElementById('alert-form').addEventListener('submit',async e=>{e.preventDefault();const email=document.getElementById('alert-email').value.trim(),msg=document.getElementById('alert-msg');if(!email)return;msg.innerText='Signing you up…';try{const{error}=await db.from('opportunity_alerts').insert({email});if(error)throw error;document.getElementById('alert-form').reset();msg.innerText="You're on the list, we'll be in touch.";}catch(err){msg.innerText='Something went wrong. Please try again.';}});
 
       },80);
     });

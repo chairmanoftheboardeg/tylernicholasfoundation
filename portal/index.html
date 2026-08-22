@@ -14,6 +14,7 @@
 tailwind.config={theme:{extend:{fontFamily:{sans:['Plus Jakarta Sans','sans-serif']},colors:{tnf:{green:'#2E9E44',greenDark:'#26863A',greenLight:'#EEF7EF',ink:'#152219',charcoal:'#0E1A13'}}}}}
 </script>
 <style>
+    html{overflow-x:hidden}body{overflow-x:clip}
   body{background:#f1f5f4}
   .loader-spinner{border:3px solid rgba(46,158,68,.2);border-left-color:#2E9E44;border-radius:50%;width:44px;height:44px;animation:spin .9s linear infinite}
   .btn-spin{display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;vertical-align:-2px}
@@ -206,7 +207,7 @@ async function renderEvents(){
   catch(e){$('ev-body').innerHTML=`<p class="text-gray-400 text-sm italic">Could not load events.</p>`;return;}
   const now=new Date().toISOString();
   const up=rows.filter(e=>!e.starts_at||e.starts_at>=now);
-  if(!up.length){$('ev-body').innerHTML=`<div class="bg-white rounded-2xl border border-gray-100 p-10 text-center text-gray-400">No upcoming events right now — check back soon.</div>`;return;}
+  if(!up.length){$('ev-body').innerHTML=`<div class="bg-white rounded-2xl border border-gray-100 p-10 text-center text-gray-400">No upcoming events right now, check back soon.</div>`;return;}
   $('ev-body').innerHTML=`<p class="text-gray-500 mb-4">${up.length} upcoming ${up.length===1?'event':'events'}</p><div class="space-y-3">${up.map(e=>eventCard(e,false)).join('')}</div>`;
   wireRsvpButtons();
 }
@@ -265,7 +266,7 @@ async function renderProfile(){
   </form>`;
   let newAvatar=ME.avatar_url||null;
   $('p-photo').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;const st=$('p-photo-status');st.textContent='Uploading…';
-    try{const ext=(file.name.split('.').pop()||'jpg').toLowerCase();const path=`avatars/${ME.id}-${Date.now()}.${ext}`;const{error}=await db.storage.from('public').upload(path,file,{upsert:true});if(error)throw error;const{data:pub}=db.storage.from('public').getPublicUrl(path);newAvatar=pub.publicUrl;$('p-avatar').style.backgroundImage=`url('${newAvatar}')`;$('p-avatar').textContent='';st.textContent='Photo ready — save to keep it.';}catch(err){st.textContent='Upload failed: '+(err.message||'');}
+    try{const ext=(file.name.split('.').pop()||'jpg').toLowerCase();const path=`avatars/${ME.id}-${Date.now()}.${ext}`;const{error}=await db.storage.from('public').upload(path,file,{upsert:true});if(error)throw error;const{data:pub}=db.storage.from('public').getPublicUrl(path);newAvatar=pub.publicUrl;$('p-avatar').style.backgroundImage=`url('${newAvatar}')`;$('p-avatar').textContent='';st.textContent='Photo ready, save to keep it.';}catch(err){st.textContent='Upload failed: '+(err.message||'');}
   });
   $('pform').addEventListener('submit',async e=>{e.preventDefault();const btn=$('p-save');btn.disabled=true;const old=btn.innerHTML;btn.innerHTML='<span class="btn-spin"></span> Saving…';
     const payload={full_name:$('p-name').value.trim()||null,phone:$('p-phone').value.trim()||null,bio:$('p-bio').value.trim()||null,avatar_url:newAvatar};

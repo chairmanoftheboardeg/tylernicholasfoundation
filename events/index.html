@@ -23,6 +23,7 @@
     }}}
   </script>
   <style>
+    html{overflow-x:hidden}body{overflow-x:clip}
     body{background-color:#f8fafc}
     body.loading{overflow:hidden;height:100vh}
     #loading-screen{transition:opacity .6s ease-out,visibility .6s}
@@ -171,7 +172,7 @@
         <div id="events-empty" class="hidden">
           <div class="w-16 h-16 rounded-2xl bg-tnf-greenLight text-tnf-green grid place-items-center text-2xl mx-auto mb-5"><i class="fa-regular fa-calendar"></i></div>
           <h3 class="text-xl font-bold text-tnf-ink mb-2">No events scheduled right now</h3>
-          <p class="text-gray-500 mb-6">We're planning our next events — check back soon, or follow us to hear first.</p>
+          <p class="text-gray-500 mb-6">We're planning our next events, check back soon, or follow us to hear first.</p>
           <a href="/get-involved#interest" class="bg-tnf-green hover:bg-tnf-greenDark text-white font-bold py-3 px-7 rounded-lg transition-colors inline-block">Get involved</a>
         </div>
       </div>
@@ -236,7 +237,7 @@
     </div>
     <div class="max-w-7xl mx-auto border-t border-white/10 pt-8 text-center text-xs text-gray-500">
       <p class="font-bold text-white text-sm mb-2">Tyler Nicholas Foundation</p>
-      <p>&copy; <span id="current-year"></span> Tyler Nicholas Foundation · Republic of Seychelles · <a href="/admin" class="text-tnf-green hover:underline">Admin</a></p>
+      <p>&copy; <span id="current-year"></span> Tyler Nicholas Foundation · Republic of Seychelles</p>
     </div>
   </footer>
 
@@ -337,7 +338,7 @@
           if(!name||!email||!currentEventId) return;
           btn.disabled=true; const old=btn.innerHTML; btn.innerHTML='Sending…'; msg.textContent='';
           try{ const{error}=await db.from('event_rsvps').insert({event_id:currentEventId,name,email}); if(error)throw error;
-            msg.className='text-center font-semibold text-sm text-tnf-greenDark'; msg.textContent='You\u2019re registered — see you there!';
+            msg.className='text-center font-semibold text-sm text-tnf-greenDark'; msg.textContent='You\u2019re registered, see you there!';
             setTimeout(closeRsvp,1600);
           }catch(err){ msg.className='text-center font-semibold text-sm text-red-600'; msg.textContent='Something went wrong. Please try again.'; }
           btn.disabled=false; btn.innerHTML=old;

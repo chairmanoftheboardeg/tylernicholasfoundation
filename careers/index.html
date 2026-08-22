@@ -14,6 +14,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Plus Jakarta Sans','sans-serif']},colors:{tnf:{green:'#2E9E44',greenDark:'#26863A',greenLight:'#EEF7EF',ink:'#152219',charcoal:'#0E1A13'}}}}}</script>
   <style>
+    html{overflow-x:hidden}body{overflow-x:clip}
     body{background-color:#f8fafc}body.loading{overflow:hidden;height:100vh}
     #loading-screen{transition:opacity .6s ease-out,visibility .6s}
     .loader-spinner{border:4px solid rgba(46,158,68,.15);border-left-color:#2E9E44;border-radius:50%;width:52px;height:52px;animation:spin 1s linear infinite}
@@ -129,12 +130,21 @@
     </header>
 
     <section class="w-full py-20 md:py-24">
-      <div class="max-w-4xl mx-auto px-4">
-        <div class="mb-10" data-aos="fade-up">
-          <h2 class="text-3xl font-bold text-tnf-ink mb-2">Open roles</h2>
-          <p class="text-gray-500">Positions and opportunities to join the Foundation team.</p>
+      <div class="max-w-5xl mx-auto px-4">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8" data-aos="fade-up">
+          <div>
+            <h2 class="text-3xl font-bold text-tnf-ink mb-2">Open roles</h2>
+            <p class="text-gray-500" id="jobs-count">Positions and opportunities to join the Foundation team.</p>
+          </div>
+          <div id="search-wrap" class="w-full md:w-80">
+            <div class="flex items-center gap-3 bg-white border border-gray-200 rounded-xl px-4 shadow-sm focus-within:border-tnf-green focus-within:ring-4 focus-within:ring-tnf-green/10 transition-all">
+              <i class="fa-solid fa-magnifying-glass text-tnf-green"></i>
+              <input id="jobs-search" type="search" placeholder="Search roles…" class="flex-1 py-3 bg-transparent outline-none text-sm" aria-label="Search roles" />
+            </div>
+          </div>
         </div>
-        <div id="jobs-body" class="space-y-4" data-aos="fade-up"><div class="loader-spinner my-16 mx-auto"></div></div>
+        <div id="dept-filters" class="flex flex-wrap gap-2 mb-8 hidden" data-aos="fade-up"></div>
+        <div id="jobs-body" class="grid grid-cols-1 md:grid-cols-2 gap-5" data-aos="fade-up"><div class="loader-spinner my-16 mx-auto col-span-full"></div></div>
 
         <div class="mt-14 bg-white rounded-2xl border border-gray-100 shadow-sm p-8 text-center" data-aos="fade-up">
           <h3 class="text-xl font-bold text-tnf-ink mb-2">Don't see the right role?</h3>
@@ -158,7 +168,7 @@
       <div class="flex flex-col space-y-3 text-sm"><h4 class="font-bold text-base mb-2">Get Involved</h4><a href="/get-involved#interest" class="text-gray-400 hover:text-tnf-green transition-colors">Volunteer</a><a href="/get-involved#interest" class="text-gray-400 hover:text-tnf-green transition-colors">Mentor</a><a href="/donate" class="text-gray-400 hover:text-tnf-green transition-colors">Donate</a><a href="/get-involved#submit" class="text-gray-400 hover:text-tnf-green transition-colors">Submit an Opportunity</a></div>
       <div class="flex flex-col space-y-3 text-sm"><h4 class="font-bold text-base mb-2">Organisation</h4><a href="/about#board" class="text-gray-400 hover:text-tnf-green transition-colors">Our Board</a><a href="/careers" class="text-gray-400 hover:text-tnf-green transition-colors">Careers</a><a href="/resources" class="text-gray-400 hover:text-tnf-green transition-colors">Resources</a><a href="/faq" class="text-gray-400 hover:text-tnf-green transition-colors">FAQ</a><a href="/safeguarding" class="text-gray-400 hover:text-tnf-green transition-colors">Safeguarding</a><a href="/contact" class="text-gray-400 hover:text-tnf-green transition-colors">Contact</a><a href="/login" class="text-gray-400 hover:text-tnf-green transition-colors">Staff &amp; Volunteer Login</a></div>
     </div>
-    <div class="max-w-7xl mx-auto border-t border-white/10 pt-8 text-center text-xs text-gray-500"><p class="font-bold text-white text-sm mb-2">Tyler Nicholas Foundation</p><p>&copy; <span id="current-year"></span> Tyler Nicholas Foundation · Republic of Seychelles · <a href="/admin" class="text-tnf-green hover:underline">Admin</a></p></div>
+    <div class="max-w-7xl mx-auto border-t border-white/10 pt-8 text-center text-xs text-gray-500"><p class="font-bold text-white text-sm mb-2">Tyler Nicholas Foundation</p><p>&copy; <span id="current-year"></span> Tyler Nicholas Foundation · Republic of Seychelles</p></div>
   </footer>
 
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
@@ -175,12 +185,30 @@
           const links=s.social_links||{},fs=document.getElementById('footer-social');
           [['facebook','fa-facebook-f'],['instagram','fa-instagram'],['x','fa-x-twitter'],['linkedin','fa-linkedin-in'],['youtube','fa-youtube'],['tiktok','fa-tiktok'],['threads','fa-threads']].forEach(([k,ic])=>{if(links[k]){const a=document.createElement('a');a.href=links[k];a.target='_blank';a.rel='noopener';a.className='w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-tnf-green hover:scale-110 transition-all';a.setAttribute('aria-label',k);a.innerHTML=`<i class="fa-brands ${ic}"></i>`;fs.appendChild(a);}});
         }catch(e){}})();
-        (async()=>{const box=document.getElementById('jobs-body');
+        (async()=>{const box=document.getElementById('jobs-body'),countEl=document.getElementById('jobs-count'),search=document.getElementById('jobs-search'),deptWrap=document.getElementById('dept-filters');
           let depMap={}; try{const{data}=await db.from('departments').select('id,name');(data||[]).forEach(d=>depMap[d.id]=d.name);}catch(e){}
-          try{const{data,error}=await db.from('job_postings').select('*').eq('is_published',true).order('created_at',{ascending:false});if(error)throw error;const jobs=data||[];
-            if(!jobs.length){box.innerHTML=`<div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center"><div class="w-14 h-14 rounded-2xl bg-tnf-greenLight text-tnf-green grid place-items-center text-2xl mx-auto mb-4"><i class="fa-solid fa-briefcase"></i></div><h3 class="text-xl font-bold text-tnf-ink mb-2">No open roles right now</h3><p class="text-gray-500 max-w-md mx-auto">We're not actively hiring at the moment — but check back soon, or register your interest below.</p></div>`;return;}
-            box.innerHTML=jobs.map(j=>`<a href="/careers/job?slug=${encodeURIComponent(j.slug||'')}" class="block bg-white rounded-2xl border border-gray-100 shadow-sm p-6 hover:border-tnf-green hover:shadow-md transition-all"><div class="flex items-start justify-between gap-4"><div><h3 class="text-xl font-bold text-tnf-ink mb-1.5">${esc(j.title)}</h3><div class="text-sm text-gray-400 flex flex-wrap gap-x-4 gap-y-1">${j.department_id&&depMap[j.department_id]?`<span><i class="fa-solid fa-sitemap mr-1.5 text-tnf-green"></i>${esc(depMap[j.department_id])}</span>`:''}${j.location?`<span><i class="fa-solid fa-location-dot mr-1.5 text-tnf-green"></i>${esc(j.location)}</span>`:''}${j.type?`<span><i class="fa-solid fa-clock mr-1.5 text-tnf-green"></i>${esc(j.type)}</span>`:''}</div></div><span class="text-tnf-green font-bold text-sm whitespace-nowrap hidden sm:block">View role <i class="fa-solid fa-arrow-right ml-1"></i></span></div></a>`).join('');
-          }catch(e){box.innerHTML=`<p class="text-gray-400 italic text-center py-10">Couldn't load roles right now.</p>`;}
+          let ALL=[];
+          try{const{data,error}=await db.from('job_postings').select('*').eq('is_published',true).order('created_at',{ascending:false});if(error)throw error;
+            ALL=(data||[]).map(j=>({...j,dept:(j.department_id&&depMap[j.department_id])?depMap[j.department_id]:''}));
+          }catch(e){box.innerHTML=`<p class="text-gray-400 italic text-center py-10 col-span-full">Couldn't load roles right now.</p>`;countEl.textContent='';return;}
+          if(!ALL.length){box.innerHTML=`<div class="col-span-full bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center"><div class="w-14 h-14 rounded-2xl bg-tnf-greenLight text-tnf-green grid place-items-center text-2xl mx-auto mb-4"><i class="fa-solid fa-briefcase"></i></div><h3 class="text-xl font-bold text-tnf-ink mb-2">No open roles right now</h3><p class="text-gray-500 max-w-md mx-auto">We're not actively hiring at the moment, but check back soon, or register your interest below.</p></div>`;countEl.textContent='';const sw=document.getElementById('search-wrap');if(sw)sw.style.display='none';return;}
+          let activeDept='';
+          const depts=[...new Set(ALL.map(j=>j.dept).filter(Boolean))].sort();
+          if(depts.length>1){deptWrap.classList.remove('hidden');
+            const chip=(label,val)=>`<button data-dept="${esc(val)}" class="dept-chip px-4 py-1.5 rounded-full text-sm font-semibold border transition-colors ${activeDept===val?'bg-tnf-green text-white border-tnf-green':'bg-white text-gray-600 border-gray-200 hover:border-tnf-green'}">${esc(label)}</button>`;
+            const renderChips=()=>{deptWrap.innerHTML=chip('All roles','')+depts.map(d=>chip(d,d)).join('');deptWrap.querySelectorAll('.dept-chip').forEach(b=>b.addEventListener('click',()=>{activeDept=b.getAttribute('data-dept');renderChips();render();}));};
+            renderChips();
+          }
+          const card=j=>`<a href="/careers/job?slug=${encodeURIComponent(j.slug||'')}" class="block bg-white rounded-2xl border border-gray-100 shadow-sm p-6 hover:border-tnf-green hover:shadow-lg transition-all transform hover:-translate-y-1 border-t-4 border-t-tnf-green group"><div class="w-11 h-11 rounded-xl bg-tnf-greenLight text-tnf-green grid place-items-center mb-4"><i class="fa-solid fa-briefcase"></i></div><h3 class="text-lg font-bold text-tnf-ink mb-2 group-hover:text-tnf-green transition-colors leading-snug">${esc(j.title)}</h3><div class="text-sm text-gray-400 flex flex-wrap gap-x-4 gap-y-1 mb-4">${j.dept?`<span><i class="fa-solid fa-sitemap mr-1.5 text-tnf-green"></i>${esc(j.dept)}</span>`:''}${j.location?`<span><i class="fa-solid fa-location-dot mr-1.5 text-tnf-green"></i>${esc(j.location)}</span>`:''}${j.type?`<span><i class="fa-solid fa-clock mr-1.5 text-tnf-green"></i>${esc(j.type)}</span>`:''}</div><span class="text-tnf-green font-bold text-sm flex items-center">View role <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i></span></a>`;
+          function render(){const q=(search.value||'').trim().toLowerCase();
+            let rows=ALL.filter(j=>!activeDept||j.dept===activeDept);
+            if(q)rows=rows.filter(j=>[j.title,j.dept,j.location,j.type].filter(Boolean).join(' ').toLowerCase().includes(q));
+            countEl.textContent=`${rows.length} ${rows.length===1?'role':'roles'}${activeDept?' in '+activeDept:''}${q?' matching your search':''}`;
+            if(!rows.length){box.innerHTML=`<div class="col-span-full text-center py-14"><div class="w-12 h-12 rounded-xl bg-gray-100 text-gray-400 grid place-items-center text-xl mx-auto mb-4"><i class="fa-solid fa-magnifying-glass"></i></div><p class="text-tnf-ink font-semibold mb-1">No roles match your search</p><p class="text-gray-500 text-sm">Try a different keyword${depts.length>1?' or filter':''}.</p></div>`;return;}
+            box.innerHTML=rows.map(card).join('');
+          }
+          search.addEventListener('input',render);
+          render();
         })();
       },80);
     });

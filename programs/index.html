@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Our Programmes | Tyler Nicholas Foundation</title>
-  <meta name="description" content="The programmes the Tyler Nicholas Foundation builds for young Seychellois — leadership, education, exchanges, entrepreneurship and community service." />
+  <meta name="description" content="The programmes the Tyler Nicholas Foundation builds for young Seychellois, leadership, education, exchanges, entrepreneurship and community service." />
   <link rel="icon" href="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" />
 
   <script src="https://cdn.tailwindcss.com"></script>
@@ -23,6 +23,7 @@
     }}}
   </script>
   <style>
+    html{overflow-x:hidden}body{overflow-x:clip}
     body{background-color:#f8fafc}
     body.loading{overflow:hidden;height:100vh}
     #loading-screen{transition:opacity .6s ease-out,visibility .6s}
@@ -143,7 +144,7 @@
     <header class="page-hero w-full py-24 md:py-28 px-4">
       <div class="max-w-3xl mx-auto text-center text-white" data-aos="fade-up">
         <h1 class="text-4xl md:text-6xl font-extrabold mb-6 leading-tight">Our programmes</h1>
-        <p class="text-lg md:text-xl text-white/85 max-w-2xl mx-auto font-light leading-relaxed">We don't only share opportunities made by others — we build our own, so young Seychellois can do things that were out of reach before.</p>
+        <p class="text-lg md:text-xl text-white/85 max-w-2xl mx-auto font-light leading-relaxed">We don't only share opportunities made by others, we build our own, so young Seychellois can do things that were out of reach before.</p>
         <nav class="mt-8 text-sm text-white/60 font-medium"><a href="/" class="hover:text-white">Home</a> <span class="mx-2">/</span> <span class="text-white">Programmes</span></nav>
       </div>
     </header>
@@ -179,7 +180,7 @@
         <div id="programs-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <p class="text-gray-400 italic col-span-full text-center py-10" id="programs-status">Loading programmes…</p>
         </div>
-        <div id="filter-empty" class="hidden text-center py-16 text-gray-400 italic">No programmes in this area yet — check back soon.</div>
+        <div id="filter-empty" class="hidden text-center py-16 text-gray-400 italic">No programmes in this area yet, check back soon.</div>
       </div>
     </section>
 
@@ -232,7 +233,7 @@
     </div>
     <div class="max-w-7xl mx-auto border-t border-white/10 pt-8 text-center text-xs text-gray-500">
       <p class="font-bold text-white text-sm mb-2">Tyler Nicholas Foundation</p>
-      <p>&copy; <span id="current-year"></span> Tyler Nicholas Foundation · Republic of Seychelles · <a href="/admin" class="text-tnf-green hover:underline">Admin</a></p>
+      <p>&copy; <span id="current-year"></span> Tyler Nicholas Foundation · Republic of Seychelles</p>
     </div>
   </footer>
 
@@ -294,7 +295,7 @@
               document.getElementById('flagship-grid').innerHTML=flags.slice(0,4).map(p=>progCard(p,deptName[p.department_id])).join('');
             }
 
-            if(!progs.length){ status.innerText='Our programmes are being developed — check back soon.'; return; }
+            if(!progs.length){ status.innerText='Our programmes are being developed, check back soon.'; return; }
 
             // Grid (all published)
             grid.innerHTML=progs.map(p=>progCard(p,deptName[p.department_id])).join('');

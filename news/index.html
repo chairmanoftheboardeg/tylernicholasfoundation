@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>News &amp; Stories | Tyler Nicholas Foundation</title>
-  <meta name="description" content="The latest news, updates and stories from the Tyler Nicholas Foundation — programmes, opportunities and young people making a difference across Seychelles." />
+  <meta name="description" content="The latest news, updates and stories from the Tyler Nicholas Foundation, programmes, opportunities and young people making a difference across Seychelles." />
   <link rel="icon" href="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" />
 
   <script src="https://cdn.tailwindcss.com"></script>
@@ -23,6 +23,7 @@
     }}}
   </script>
   <style>
+    html{overflow-x:hidden}body{overflow-x:clip}
     body{background-color:#f8fafc}
     body.loading{overflow:hidden;height:100vh}
     #loading-screen{transition:opacity .6s ease-out,visibility .6s}
@@ -234,7 +235,7 @@
     </div>
     <div class="max-w-7xl mx-auto border-t border-white/10 pt-8 text-center text-xs text-gray-500">
       <p class="font-bold text-white text-sm mb-2">Tyler Nicholas Foundation</p>
-      <p>&copy; <span id="current-year"></span> Tyler Nicholas Foundation · Republic of Seychelles · <a href="/admin" class="text-tnf-green hover:underline">Admin</a></p>
+      <p>&copy; <span id="current-year"></span> Tyler Nicholas Foundation · Republic of Seychelles</p>
     </div>
   </footer>
 
@@ -338,7 +339,7 @@
           renderPills(); render();
         })();
 
-        document.getElementById('news-form').addEventListener('submit',async e=>{e.preventDefault();const email=document.getElementById('news-email').value.trim(),msg=document.getElementById('news-msg');if(!email)return;msg.innerText='Subscribing…';try{const{error}=await db.from('newsletter_subscribers').insert({email});if(error)throw error;document.getElementById('news-form').reset();msg.innerText="You're subscribed — thank you!";}catch(err){msg.innerText='Something went wrong. Please try again.';}});
+        document.getElementById('news-form').addEventListener('submit',async e=>{e.preventDefault();const email=document.getElementById('news-email').value.trim(),msg=document.getElementById('news-msg');if(!email)return;msg.innerText='Subscribing…';try{const{error}=await db.from('newsletter_subscribers').insert({email});if(error)throw error;document.getElementById('news-form').reset();msg.innerText="You're subscribed, thank you!";}catch(err){msg.innerText='Something went wrong. Please try again.';}});
 
       },80);
     });
