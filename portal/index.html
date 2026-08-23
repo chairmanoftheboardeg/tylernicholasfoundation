@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>My Portal | Tyler Nicholas Foundation</title>
+<title>Volunteer Portal | Tyler Nicholas Foundation</title>
 <meta name="robots" content="noindex" />
 <link rel="icon" href="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" />
 <script src="https://cdn.tailwindcss.com"></script>
@@ -14,13 +14,11 @@
 tailwind.config={theme:{extend:{fontFamily:{sans:['Plus Jakarta Sans','sans-serif']},colors:{tnf:{green:'#2E9E44',greenDark:'#26863A',greenLight:'#EEF7EF',ink:'#152219',charcoal:'#0E1A13'}}}}}
 </script>
 <style>
-    html{overflow-x:hidden}body{overflow-x:clip}
+  html{overflow-x:hidden}body{overflow-x:clip}
   body{background:#f1f5f4}
   .loader-spinner{border:3px solid rgba(46,158,68,.2);border-left-color:#2E9E44;border-radius:50%;width:44px;height:44px;animation:spin .9s linear infinite}
   .btn-spin{display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;vertical-align:-2px}
   @keyframes spin{to{transform:rotate(360deg)}}
-  .nav-item.active{background:rgba(46,158,68,.16);color:#fff}
-  .nav-item.active i{color:#2E9E44}
   input:focus,textarea:focus,select:focus{outline:none}
   ::-webkit-scrollbar{width:9px;height:9px}::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:5px}
 </style>
@@ -28,254 +26,369 @@ tailwind.config={theme:{extend:{fontFamily:{sans:['Plus Jakarta Sans','sans-seri
 <body class="font-sans text-gray-900">
 
 <div id="gate" class="fixed inset-0 z-50 flex items-center justify-center bg-white">
-  <div class="text-center"><div class="loader-spinner mx-auto mb-4"></div><p id="gate-text" class="text-gray-500 font-semibold text-sm">Loading your portal…</p></div>
+  <div class="text-center"><div class="loader-spinner mx-auto mb-4"></div><p id="gate-text" class="text-gray-500 font-semibold text-sm">Checking your access…</p></div>
 </div>
 
-<div id="app" class="hidden min-h-screen lg:flex">
-  <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 w-64 bg-tnf-charcoal text-white flex flex-col z-40 -translate-x-full lg:translate-x-0 transition-transform">
-    <div class="px-6 py-5 border-b border-white/10 flex items-center gap-3">
-      <img src="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" class="h-10 w-10 rounded-lg bg-white p-1 object-contain" alt="TNF" />
-      <div class="leading-tight"><div class="font-extrabold text-sm">Foundation</div><div class="text-tnf-green text-xs font-bold">My Portal</div></div>
-    </div>
-    <nav id="nav" class="flex-1 overflow-y-auto py-4 px-3 space-y-1 text-sm"></nav>
-    <div class="px-4 py-4 border-t border-white/10">
-      <div class="flex items-center gap-3 mb-3">
-        <div id="u-avatar" class="w-9 h-9 rounded-full bg-tnf-green grid place-items-center font-bold text-sm flex-none bg-cover bg-center"></div>
-        <div class="min-w-0"><div id="u-name" class="font-semibold text-sm truncate"></div><div id="u-role" class="text-white/50 text-xs"></div></div>
+<div id="app" class="hidden min-h-screen flex flex-col">
+  <div id="staff-banner" class="hidden bg-tnf-ink text-white text-sm">
+    <div class="max-w-6xl mx-auto px-4 py-2 flex items-center gap-2"><i class="fa-solid fa-circle-info text-tnf-green"></i><span>You're a staff member.</span><a href="/staff" class="font-bold underline underline-offset-2 ml-1">Go to the staff area</a></div>
+  </div>
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
+    <div class="max-w-6xl mx-auto px-4 h-16 flex items-center gap-2">
+      <a href="#" id="home-link" class="flex items-center gap-2.5 shrink-0 mr-1">
+        <img src="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" class="h-9 w-9 rounded-lg bg-white object-contain" alt="TNF" />
+        <div class="leading-tight hidden sm:block"><div class="font-extrabold text-sm text-tnf-ink">Foundation</div><div class="text-tnf-green text-[11px] font-bold">Volunteer Portal</div></div>
+      </a>
+      <nav id="nav" class="hidden lg:flex items-center gap-0.5 flex-1 text-sm font-semibold"></nav>
+      <div class="flex items-center gap-1 ml-auto shrink-0">
+        <div class="relative">
+          <button id="bell-btn" class="relative w-10 h-10 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-tnf-ink transition-colors" aria-label="Notifications"><i class="fa-solid fa-bell"></i><span id="bell-badge" class="hidden absolute top-1 right-1 min-w-[16px] h-4 px-1 rounded-full bg-red-500 text-white text-[10px] font-bold grid place-items-center"></span></button>
+          <div id="bell-panel" class="hidden absolute right-0 mt-2 w-80 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-gray-100 z-40 overflow-hidden">
+            <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100"><span class="font-bold text-tnf-ink text-sm">Notifications</span><button id="bell-readall" class="text-xs font-semibold text-tnf-green hover:text-tnf-greenDark">Mark all read</button></div>
+            <div id="bell-list" class="max-h-96 overflow-y-auto"></div>
+          </div>
+        </div>
+        <div class="relative">
+          <button id="user-btn" class="flex items-center gap-2 pl-1 pr-1.5 py-1 rounded-lg hover:bg-gray-100 transition-colors">
+            <span id="u-avatar" class="w-9 h-9 rounded-full bg-tnf-green grid place-items-center font-bold text-sm text-white flex-none overflow-hidden"></span>
+            <span class="hidden md:block text-left leading-tight"><span id="u-name" class="block font-semibold text-sm text-tnf-ink truncate max-w-[150px]"></span><span id="u-role" class="block text-gray-400 text-xs"></span></span>
+            <i class="fa-solid fa-chevron-down text-[10px] text-gray-400 hidden md:block"></i>
+          </button>
+          <div id="user-menu" class="hidden absolute right-0 mt-2 w-60 bg-white rounded-2xl shadow-2xl border border-gray-100 z-40 overflow-hidden py-1.5">
+            <div class="px-4 py-3 border-b border-gray-100"><div id="um-name" class="font-bold text-tnf-ink text-sm truncate"></div><div id="um-email" class="text-gray-400 text-xs truncate"></div></div>
+            <button id="um-home" class="w-full text-left px-4 py-2.5 hover:bg-gray-50 text-sm text-gray-700 flex items-center gap-3"><i class="fa-solid fa-house w-4 text-tnf-green"></i>Home</button>
+            <a href="/" class="px-4 py-2.5 hover:bg-gray-50 text-sm text-gray-700 flex items-center gap-3"><i class="fa-solid fa-arrow-up-right-from-square w-4 text-tnf-green"></i>View public site</a>
+            <button id="signout" class="w-full text-left px-4 py-2.5 hover:bg-red-50 text-sm text-red-600 flex items-center gap-3"><i class="fa-solid fa-right-from-bracket w-4"></i>Sign out</button>
+          </div>
+        </div>
+        <button id="menu-btn" class="lg:hidden w-10 h-10 rounded-lg hover:bg-gray-100 text-tnf-ink text-xl"><i class="fa-solid fa-bars"></i></button>
       </div>
-      <div class="flex gap-2">
-        <a href="/" class="flex-1 text-center text-xs font-semibold bg-white/10 hover:bg-white/20 rounded-lg py-2 transition-colors">View site</a>
-        <button id="signout" class="flex-1 text-center text-xs font-semibold bg-white/10 hover:bg-red-500/30 rounded-lg py-2 transition-colors">Sign out</button>
-      </div>
     </div>
-  </aside>
-  <div id="backdrop" class="fixed inset-0 bg-black/40 z-30 hidden lg:hidden"></div>
+  </header>
 
-  <main class="flex-1 min-w-0 lg:h-screen lg:overflow-y-auto">
-    <header class="bg-white border-b border-gray-200 px-5 py-3.5 flex items-center gap-3 sticky top-0 z-20">
-      <button id="menu-btn" class="lg:hidden text-tnf-ink text-xl"><i class="fa-solid fa-bars"></i></button>
+  <div id="backdrop" class="fixed inset-0 bg-black/40 z-40 hidden"></div>
+  <div id="mobile-drawer" class="fixed top-0 right-0 bottom-0 w-80 max-w-[85vw] bg-white z-50 shadow-2xl translate-x-full transition-transform overflow-y-auto">
+    <div class="flex items-center justify-between px-5 h-16 border-b border-gray-100"><span class="font-extrabold text-tnf-ink">Menu</span><button id="drawer-close" class="w-9 h-9 text-gray-500 text-2xl leading-none">&times;</button></div>
+    <nav id="mobile-nav" class="p-3 pb-10"></nav>
+  </div>
+
+  <div id="subbar" class="bg-white border-b border-gray-100">
+    <div class="max-w-6xl mx-auto px-4 h-14 flex items-center gap-3">
       <h1 id="page-title" class="text-lg font-bold text-tnf-ink flex-1">Home</h1>
-    </header>
-    <div id="content" class="p-5 md:p-8 max-w-5xl"></div>
+    </div>
+  </div>
+
+  <main class="flex-1">
+    <div id="content" class="max-w-6xl mx-auto px-4 py-6"></div>
   </main>
 </div>
 
-<!-- RSVP MODAL -->
-<div id="rsvp-modal" class="fixed inset-0 z-[55] hidden items-center justify-center bg-black/50 p-4">
-  <div class="bg-white rounded-2xl w-full max-w-md p-6 md:p-8">
-    <div class="flex justify-between items-start mb-4"><h3 class="text-xl font-bold text-tnf-ink">Reserve your spot</h3><button id="rsvp-close" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button></div>
-    <p id="rsvp-event" class="text-gray-500 text-sm mb-5"></p>
-    <form id="rsvp-form" class="space-y-4">
-      <div><label class="block text-sm font-semibold text-tnf-ink mb-2">Name</label><input id="rsvp-name" required class="w-full border border-gray-200 rounded-xl px-4 py-3 focus:border-tnf-green focus:ring-4 focus:ring-tnf-green/10"/></div>
-      <div><label class="block text-sm font-semibold text-tnf-ink mb-2">Email</label><input id="rsvp-email" type="email" required class="w-full border border-gray-200 rounded-xl px-4 py-3 focus:border-tnf-green focus:ring-4 focus:ring-tnf-green/10"/></div>
-      <p id="rsvp-msg" class="text-sm font-semibold text-red-600 min-h-[1em]"></p>
-      <button type="submit" id="rsvp-submit" class="w-full bg-tnf-green hover:bg-tnf-greenDark text-white font-bold py-3.5 rounded-xl transition-colors">Confirm RSVP</button>
-    </form>
-  </div>
-</div>
-
-<div id="toast" class="fixed bottom-6 right-6 z-[60] space-y-2"></div>
+<div id="toast" class="hidden fixed bottom-5 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-lg text-sm font-semibold shadow-lg"></div>
 
 <script>
+const SB_URL="https://mcnemlwalcgdlmclijxc.supabase.co";
+const SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jbmVtbHdhbGNnZGxtY2xpanhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5NDMzNTAsImV4cCI6MjEwMjUxOTM1MH0.jVPTsfz7Htho4EZKvHzlgr1vSkj41EuVpMBgaHzLm-Q";
 const $=id=>document.getElementById(id);
-const esc=s=>(s==null?'':String(s)).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
-const fmtDate=v=>v?new Intl.DateTimeFormat('en-GB',{day:'numeric',month:'short',year:'numeric'}).format(new Date(v)):'';
-const fmtDT=v=>v?new Intl.DateTimeFormat('en-GB',{weekday:'short',day:'numeric',month:'short',hour:'numeric',minute:'2-digit'}).format(new Date(v)):'';
-function toast(msg,ok=true){const t=document.createElement('div');t.className=`px-4 py-3 rounded-xl shadow-lg text-sm font-semibold text-white ${ok?'bg-tnf-green':'bg-red-600'}`;t.textContent=msg;$('toast').appendChild(t);setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .3s';setTimeout(()=>t.remove(),300);},2600);}
-const CATLABEL={scholarship:'Scholarship',exchange:'Exchange',international:'International',internship:'Internship',university:'University',conference:'Conference',competition:'Competition',fellowship:'Fellowship',training:'Training',volunteering:'Volunteering',entrepreneurship:'Entrepreneurship',mentorship:'Mentorship'};
-const ROLELABEL={member:'Member',volunteer:'Volunteer',staff:'Staff',board:'Board Member',admin:'Administrator',superadmin:'Administrator'};
-const STAFF_ROLES=['staff','board','admin','superadmin'];
+const esc=s=>(s==null?'':String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function el(html){const t=document.createElement('template');t.innerHTML=html.trim();return t.content.firstChild;}
+function toast(msg,ok=true){const t=$('toast');t.textContent=msg;t.className='fixed bottom-5 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-lg text-sm font-semibold shadow-lg '+(ok?'bg-tnf-ink text-white':'bg-red-600 text-white');t.classList.remove('hidden');setTimeout(()=>t.classList.add('hidden'),3200);}
+let db, ME={}, NOTIFS=[], notifChan=null;
+const ROLES=[['member','Member'],['volunteer','Volunteer'],['staff','Staff'],['board','Board'],['admin','Admin'],['superadmin','Super Admin']];
+function roleLabel(r){return (ROLES.find(x=>x[0]===r)||[])[1]||r||'';}
+function shortId(id){return (id||'').replace(/-/g,'').slice(0,6).toUpperCase();}
+function avatarHTML(p,cls){const url=p&&p.avatar_url;const ini=(((p&&(p.full_name||p.email))||'?').trim()[0]||'?').toUpperCase();if(url)return `<span class="${cls} rounded-full overflow-hidden inline-block flex-none bg-gray-100"><img src="${esc(url)}" class="w-full h-full object-cover" alt=""></span>`;return `<span class="${cls} rounded-full bg-tnf-green text-white grid place-items-center font-bold flex-none">${esc(ini)}</span>`;}
 
-let db, ME={};
-
-document.addEventListener('DOMContentLoaded',()=>{
-  const wait=setInterval(async()=>{
-    if(!window.supabase)return; clearInterval(wait);
-    db=window.supabase.createClient('https://mcnemlwalcgdlmclijxc.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jbmVtbHdhbGNnZGxtY2xpanhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5NDMzNTAsImV4cCI6MjEwMjUxOTM1MH0.jVPTsfz7Htho4EZKvHzlgr1vSkj41EuVpMBgaHzLm-Q');
-    const {data:{session}}=await db.auth.getSession();
-    if(!session){ location.replace('/login'); return; }
-    try{ const{data}=await db.from('profiles').select('*').eq('id',session.user.id).maybeSingle(); ME=data||{id:session.user.id,email:session.user.email,role:'member'}; }
-    catch(e){ ME={id:session.user.id,email:session.user.email,role:'member'}; }
-    if(ME.is_active===false){ await db.auth.signOut(); location.replace('/login'); return; }
-    const nm=ME.full_name||ME.email||'You';
-    $('u-name').textContent=nm; $('u-role').textContent=ROLELABEL[ME.role]||ME.role;
-    if(ME.avatar_url){ $('u-avatar').style.backgroundImage=`url('${ME.avatar_url}')`; $('u-avatar').textContent=''; }
-    else { $('u-avatar').textContent=(nm.trim()[0]||'?').toUpperCase(); }
-    buildNav(); route('home');
-    $('gate').classList.add('hidden'); $('app').classList.remove('hidden');
-    $('signout').addEventListener('click',async()=>{ await db.auth.signOut(); location.replace('/login'); });
-    $('menu-btn').addEventListener('click',()=>{ $('sidebar').classList.remove('-translate-x-full'); $('backdrop').classList.remove('hidden'); });
-    $('backdrop').addEventListener('click',closeNav);
-    $('rsvp-close').addEventListener('click',closeRsvp);
-    $('rsvp-modal').addEventListener('click',e=>{if(e.target.id==='rsvp-modal')closeRsvp();});
-  },80);
-});
-function closeNav(){ $('sidebar').classList.add('-translate-x-full'); $('backdrop').classList.add('hidden'); }
-
-const NAV=[['home','Home','fa-house'],['hours','My Hours','fa-clock'],['events','Events','fa-calendar-day'],['resources','Resources','fa-folder-open'],['opportunities','Opportunities','fa-compass'],['profile','My Profile','fa-user']];
+/* ---------- NAV ---------- */
+const NAV=[
+  ['home','Home','fa-house'],
+  ['hours','My hours','fa-clock'],
+  ['announcements','Announcements','fa-bullhorn'],
+  ['events','Events','fa-calendar-day'],
+  ['opportunities','Opportunities','fa-compass'],
+  ['resources','Resources','fa-folder-open'],
+  ['details','My details','fa-id-card'],
+];
 function buildNav(){
-  const nav=$('nav'); nav.innerHTML='';
-  NAV.forEach(([k,l,ic])=>{ const a=document.createElement('button'); a.className='nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/75 hover:bg-white/5 transition-colors text-left'; a.dataset.key=k; a.innerHTML=`<i class="fa-solid ${ic} w-5 text-center text-white/50"></i><span>${l}</span>`; a.onclick=()=>{route(k);closeNav();}; nav.appendChild(a); });
+  const d=$('nav'),m=$('mobile-nav');d.innerHTML='';m.innerHTML='';
+  NAV.forEach(([k,label,ic])=>{
+    const b=el(`<button data-key="${k}" class="nav-item flex items-center gap-1.5 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-tnf-ink transition-colors"><i class="fa-solid ${ic}"></i>${label}</button>`);
+    b.addEventListener('click',()=>route(k));d.appendChild(b);
+    const mb=el(`<button data-key="${k}" class="mnav-item w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 hover:bg-tnf-greenLight text-sm font-semibold"><i class="fa-solid ${ic} w-4 text-tnf-green"></i>${label}</button>`);
+    mb.addEventListener('click',()=>{route(k);closeDrawer();});m.appendChild(mb);
+  });
 }
-function setActive(k){ document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.key===k)); }
-function route(k){ setActive(k); const t={home:'Home',hours:'My Hours',events:'Events',resources:'Resources',opportunities:'Opportunities',profile:'My Profile'}[k]; $('page-title').textContent=t;
-  if(k==='home')return renderHome(); if(k==='hours')return renderHours(); if(k==='events')return renderEvents(); if(k==='resources')return renderResources(); if(k==='opportunities')return renderOpps(); if(k==='profile')return renderProfile();
+function setActive(key){document.querySelectorAll('.nav-item,.mnav-item').forEach(n=>{const on=n.dataset.key===key;n.classList.toggle('bg-tnf-greenLight',on);n.classList.toggle('text-tnf-greenDark',on);});}
+function openDrawer(){$('mobile-drawer').classList.remove('translate-x-full');$('backdrop').classList.remove('hidden');}
+function closeDrawer(){$('mobile-drawer').classList.add('translate-x-full');$('backdrop').classList.add('hidden');}
+const TITLES={home:'Home',hours:'My hours',announcements:'Announcements',events:'Events',opportunities:'Opportunities',resources:'Resources',details:'My details'};
+function route(key){
+  if(window.__homeClock){clearInterval(window.__homeClock);window.__homeClock=null;}
+  setActive(key);$('user-menu').classList.add('hidden');window.scrollTo(0,0);
+  if(key==='home'){$('subbar').classList.add('hidden');return renderHome();}
+  $('subbar').classList.remove('hidden');$('page-title').textContent=TITLES[key]||'';
+  if(key==='hours')return renderHours();
+  if(key==='announcements')return renderAnnouncements();
+  if(key==='events')return renderEvents();
+  if(key==='opportunities')return renderOpportunities();
+  if(key==='resources')return renderResources();
+  if(key==='details')return renderDetails();
 }
 
-// ---------- HOME ----------
+/* ---------- NOTIFICATIONS ---------- */
+const NIC={document:'fa-file-lines',task:'fa-list-check',announcement:'fa-bullhorn',event:'fa-calendar-day',hours:'fa-clock',general:'fa-bell'};
+function timeAgo(t){const s=(Date.now()-new Date(t).getTime())/1000;if(s<60)return 'just now';if(s<3600)return Math.floor(s/60)+'m ago';if(s<86400)return Math.floor(s/3600)+'h ago';return Math.floor(s/86400)+'d ago';}
+function renderBell(){
+  const n=NOTIFS.filter(x=>!x.is_read).length;const badge=$('bell-badge');
+  if(n>0){badge.textContent=n>9?'9+':n;badge.classList.remove('hidden');}else badge.classList.add('hidden');
+  const list=$('bell-list');
+  if(!NOTIFS.length){list.innerHTML='<div class="px-4 py-8 text-center text-gray-400 text-sm">No notifications yet.</div>';return;}
+  list.innerHTML=NOTIFS.map(x=>`<button data-nid="${x.id}" class="notif-item w-full text-left flex gap-3 px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors ${x.is_read?'':'bg-tnf-greenLight/40'}"><div class="w-8 h-8 rounded-lg bg-tnf-greenLight text-tnf-green grid place-items-center flex-none text-sm"><i class="fa-solid ${NIC[x.type]||NIC.general}"></i></div><div class="min-w-0 flex-1"><div class="text-sm font-semibold text-tnf-ink truncate">${esc(x.title)}</div>${x.body?`<div class="text-xs text-gray-500 line-clamp-2">${esc(x.body)}</div>`:''}<div class="text-[11px] text-gray-400 mt-0.5">${timeAgo(x.created_at)}</div></div>${x.is_read?'':'<span class="w-2 h-2 rounded-full bg-tnf-green flex-none mt-1.5"></span>'}</button>`).join('');
+  list.querySelectorAll('.notif-item').forEach(b=>b.addEventListener('click',async()=>{const id=b.dataset.nid;const it=NOTIFS.find(x=>x.id===id);if(it&&!it.is_read){it.is_read=true;renderBell();try{await db.from('notifications').update({is_read:true}).eq('id',id);}catch(e){}}
+    if(it&&it.type==='announcement'){$('bell-panel').classList.add('hidden');route('announcements');}
+    else if(it&&it.type==='event'){$('bell-panel').classList.add('hidden');route('events');}}));
+}
+async function loadNotifs(){try{const{data}=await db.from('notifications').select('*').eq('user_id',ME.id).order('created_at',{ascending:false}).limit(30);NOTIFS=data||[];}catch(e){NOTIFS=[];}renderBell();}
+async function markAllRead(){const un=NOTIFS.filter(x=>!x.is_read).map(x=>x.id);if(!un.length)return;NOTIFS.forEach(x=>x.is_read=true);renderBell();try{await db.from('notifications').update({is_read:true}).in('id',un);}catch(e){}}
+function initNotifications(){
+  loadNotifs();
+  $('bell-btn').addEventListener('click',e=>{e.stopPropagation();$('bell-panel').classList.toggle('hidden');$('user-menu').classList.add('hidden');});
+  $('bell-readall').addEventListener('click',markAllRead);
+  document.addEventListener('click',e=>{const p=$('bell-panel'),b=$('bell-btn');if(!p.classList.contains('hidden')&&!p.contains(e.target)&&!b.contains(e.target))p.classList.add('hidden');});
+  try{notifChan=db.channel('notif-'+ME.id).on('postgres_changes',{event:'INSERT',schema:'public',table:'notifications',filter:'user_id=eq.'+ME.id},payload=>{NOTIFS.unshift(payload.new);if(NOTIFS.length>30)NOTIFS.pop();renderBell();}).subscribe();}catch(e){}
+  setInterval(loadNotifs,45000);
+}
+
+/* ---------- HOME ---------- */
+const HERO_IMG={morning:'https://images.locationscout.net/2021/02/seychelles-sunrise-seychelles.webp?h=1400&q=80',afternoon:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfT_IbDRhDEhVV_B3NzJBVSd74oltCtjU3CYhKuG0AePGyG_OYho9fBi8&s=10',evening:'https://admin.seychelles.com/sites/default/files/2024-05/305747087_6125303884164604_8640059309883641732_n.jpg',night:'https://media-cdn.tripadvisor.com/media/photo-s/04/79/22/5a/anse-soleil-beachcomber.jpg'};
+const HERO_MSG={morning:['A fresh start for the islands.','Thanks for showing up today.','Small actions, big change.','The youth of Seychelles thank you.'],afternoon:['Keep the good work going.','Every hour you give counts.','You are making a difference.','Building Seychelles together.'],evening:['Winding down, finishing strong.','A good evening to you.','Reflect on what you gave today.','The islands look lovely right now.'],night:['Thanks for all you do.','Rest well when you are done.','Quiet hours, big hearts.','We appreciate you.']};
+function periodNow(){const h=new Date().getHours();if(h>=5&&h<12)return{p:'morning',g:'Good morning'};if(h>=12&&h<17)return{p:'afternoon',g:'Good afternoon'};if(h>=17&&h<21)return{p:'evening',g:'Good evening'};return{p:'night',g:'Good evening'};}
+function homeStat(label,id,ic){return `<div class="bg-white rounded-2xl border border-gray-100 p-4"><div class="w-9 h-9 rounded-lg bg-tnf-greenLight text-tnf-green grid place-items-center mb-2"><i class="fa-solid ${ic}"></i></div><div id="${id}" class="text-2xl font-extrabold text-tnf-ink leading-none">–</div><div class="text-gray-400 text-[11px] font-semibold mt-1">${label}</div></div>`;}
+function startClock(){const upd=()=>{const d=new Date(),cl=$('home-clock'),dt=$('home-date');if(!cl)return;cl.textContent=d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});if(dt)dt.textContent=d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});};upd();window.__homeClock=setInterval(upd,20000);}
+const WMO={0:'Clear',1:'Mainly clear',2:'Partly cloudy',3:'Overcast',45:'Fog',48:'Fog',51:'Light drizzle',53:'Drizzle',55:'Drizzle',61:'Light rain',63:'Rain',65:'Heavy rain',71:'Snow',80:'Showers',81:'Showers',82:'Heavy showers',95:'Thunderstorm',96:'Thunderstorm',99:'Thunderstorm'};
+async function loadWeather(){
+  const set=h=>{const w=$('home-weather');if(w)w.innerHTML=h;};
+  const go=async(lat,lon,label)=>{try{const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&timezone=auto`);const j=await r.json();const t=Math.round(j.current.temperature_2m);const desc=WMO[j.current.weather_code]||'';let loc=label;if(!loc){try{const gg=await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`);const gj=await gg.json();loc=gj.city||gj.locality||gj.principalSubdivision||gj.countryName||'';}catch(e){}}set(`<i class="fa-solid fa-temperature-half text-xs opacity-70"></i><span>${t}&deg;C${desc?' · '+esc(desc):''}${loc?' · '+esc(loc):''}</span>`);}catch(e){set('<i class="fa-solid fa-cloud text-xs opacity-70"></i><span>Weather unavailable</span>');}};
+  if(navigator.geolocation){navigator.geolocation.getCurrentPosition(p=>go(p.coords.latitude,p.coords.longitude,null),()=>go(-4.6167,55.45,'Victoria, Seychelles'),{timeout:8000,maximumAge:600000});}
+  else go(-4.6167,55.45,'Victoria, Seychelles');
+}
 async function renderHome(){
-  const c=$('content'); const first=(ME.full_name||'').trim().split(' ')[0]||'there';
-  const staffBanner=STAFF_ROLES.includes(ME.role)?`<a href="/staff" class="flex items-center justify-between gap-3 bg-tnf-ink text-white rounded-2xl p-5 mb-6 hover:bg-black transition-colors"><div><div class="font-bold">You have staff access</div><div class="text-white/60 text-sm">Open the staff portal to manage the Foundation.</div></div><i class="fa-solid fa-arrow-right"></i></a>`:'';
-  c.innerHTML=`${staffBanner}
-    <div class="bg-gradient-to-br from-tnf-green to-tnf-charcoal rounded-3xl p-7 md:p-9 text-white mb-6">
-      <h2 class="text-2xl md:text-3xl font-extrabold mb-1">Hi ${esc(first)} 👋</h2>
-      <p class="text-white/80">Welcome to your portal. Here's everything in one place.</p>
+  const c=$('content');const{p,g}=periodNow();
+  const sub=HERO_MSG[p][Math.floor(Math.random()*HERO_MSG[p].length)];
+  const first=((ME.full_name||'').trim().split(/\s+/)[0])||'there';
+  let deptName='';if(ME.department_id){try{const{data}=await db.from('departments').select('name').eq('id',ME.department_id).maybeSingle();if(data)deptName=data.name;}catch(e){}}
+  const statusTxt=ME.is_active===false?'Inactive':'Active';
+  c.innerHTML=`
+    <div class="relative rounded-3xl overflow-hidden mb-6 min-h-[230px] flex items-end bg-tnf-charcoal">
+      <img src="${HERO_IMG[p]}" class="absolute inset-0 w-full h-full object-cover" alt="" onerror="this.style.display='none'">
+      <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/10"></div>
+      <div class="relative p-6 md:p-8 w-full text-white">
+        <div class="flex flex-wrap items-end justify-between gap-5">
+          <div class="min-w-0">
+            <div class="text-white/85 text-sm font-semibold mb-1">${g}</div>
+            <h2 class="text-3xl md:text-4xl font-extrabold leading-tight">${esc(first)}</h2>
+            <p class="text-white/85 mt-2 max-w-md text-sm md:text-base">${esc(sub)}</p>
+          </div>
+          <div class="text-right shrink-0">
+            <div id="home-clock" class="text-3xl md:text-4xl font-extrabold tabular-nums leading-none">--:--</div>
+            <div id="home-date" class="text-white/80 text-xs md:text-sm mt-1"></div>
+            <div id="home-weather" class="mt-2 inline-flex items-center gap-2 bg-white/15 backdrop-blur px-3 py-1.5 rounded-full text-sm font-semibold"><i class="fa-solid fa-location-crosshairs text-xs opacity-70"></i><span>Locating…</span></div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div id="home-stats" class="grid grid-cols-3 gap-3 md:gap-4 mb-6"></div>
-    <div class="grid sm:grid-cols-2 gap-3 mb-8">
-      <button onclick="route('hours')" class="bg-white border border-gray-100 rounded-2xl p-5 text-left hover:border-tnf-green transition-colors flex items-center gap-4"><div class="w-11 h-11 rounded-xl bg-tnf-greenLight text-tnf-green grid place-items-center"><i class="fa-solid fa-clock"></i></div><div><div class="font-bold text-tnf-ink">Log volunteer hours</div><div class="text-gray-400 text-sm">Record time you've given</div></div></button>
-      <button onclick="route('opportunities')" class="bg-white border border-gray-100 rounded-2xl p-5 text-left hover:border-tnf-green transition-colors flex items-center gap-4"><div class="w-11 h-11 rounded-xl bg-tnf-greenLight text-tnf-green grid place-items-center"><i class="fa-solid fa-compass"></i></div><div><div class="font-bold text-tnf-ink">Find opportunities</div><div class="text-gray-400 text-sm">Scholarships, programmes & more</div></div></button>
+
+    <div class="grid lg:grid-cols-3 gap-5 mb-6">
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 flex items-center gap-4">
+        ${avatarHTML(ME,'w-16 h-16 text-2xl')}
+        <div class="min-w-0">
+          <div class="font-bold text-tnf-ink text-lg truncate">${esc(ME.full_name||'')}</div>
+          <div class="text-sm text-gray-500 truncate">${esc(roleLabel(ME.role))}${ME.title?' · '+esc(ME.title):''}</div>
+          <div class="text-xs text-gray-400 mt-1.5 flex flex-wrap gap-x-3 gap-y-0.5"><span>ID ${esc(shortId(ME.id))}</span>${deptName?`<span>${esc(deptName)}</span>`:''}<span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full ${statusTxt==='Active'?'bg-tnf-green':'bg-gray-300'}"></span>${statusTxt}</span></div>
+        </div>
+      </div>
+      <div class="lg:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-4">
+        ${homeStat('Hours this month','h-month','fa-clock')}
+        ${homeStat('Approved hours','h-total','fa-circle-check')}
+        ${homeStat('Upcoming events','h-events','fa-calendar-day')}
+        ${homeStat('Unread alerts','h-alerts','fa-bell')}
+      </div>
     </div>
-    <div id="home-events"></div>`;
-  // stats
-  let approved=0,pending=0,ev=0;
-  try{const{data}=await db.from('volunteer_hours').select('hours,is_approved').eq('volunteer_id',ME.id);(data||[]).forEach(h=>{if(h.is_approved)approved+=Number(h.hours)||0;else pending+=Number(h.hours)||0;});}catch(e){}
-  try{const now=new Date().toISOString();const{data}=await db.from('events').select('id,starts_at,is_published').eq('is_published',true);ev=(data||[]).filter(e=>!e.starts_at||e.starts_at>=now).length;}catch(e){}
-  $('home-stats').innerHTML=[['Approved hours',approved%1?approved.toFixed(1):approved,'fa-circle-check'],['Pending hours',pending%1?pending.toFixed(1):pending,'fa-hourglass-half'],['Upcoming events',ev,'fa-calendar-day']].map(([l,v,ic])=>`<div class="bg-white rounded-2xl border border-gray-100 p-4 md:p-5 text-center"><div class="text-2xl md:text-3xl font-extrabold text-tnf-ink">${v}</div><div class="text-gray-400 text-xs font-semibold mt-1">${l}</div></div>`).join('');
-  // upcoming events preview
-  try{const now=new Date().toISOString();const{data}=await db.from('events').select('*').eq('is_published',true).order('starts_at',{ascending:true});const up=(data||[]).filter(e=>!e.starts_at||e.starts_at>=now).slice(0,2);
-    if(up.length)$('home-events').innerHTML=`<h3 class="font-bold text-tnf-ink mb-3">Coming up</h3><div class="space-y-3">${up.map(evc=>eventCard(evc,true)).join('')}</div>`;
-    wireRsvpButtons();
+
+    <div class="bg-white rounded-2xl border border-gray-100 p-5 mb-6">
+      <div class="text-sm font-bold text-tnf-ink mb-3">Quick actions</div>
+      <div class="flex flex-wrap gap-2" id="home-actions"></div>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-6">
+      <div><h3 class="font-bold text-tnf-ink mb-3">Announcements</h3><div id="home-anns" class="space-y-2"><div class="text-gray-400 text-sm">Loading…</div></div></div>
+      <div><h3 class="font-bold text-tnf-ink mb-3">Upcoming events</h3><div id="home-events" class="space-y-2"><div class="text-gray-400 text-sm">Loading…</div></div></div>
+    </div>`;
+  const qa=[['Log hours','hours','fa-clock'],['Opportunities','opportunities','fa-compass'],['Events','events','fa-calendar-day'],['My details','details','fa-id-card']];
+  $('home-actions').innerHTML=qa.map(([l,k,ic])=>`<button data-k="${k}" class="qa inline-flex items-center gap-2 bg-tnf-greenLight text-tnf-greenDark hover:bg-tnf-green hover:text-white font-semibold text-sm px-4 py-2.5 rounded-lg transition-colors"><i class="fa-solid ${ic}"></i>${l}</button>`).join('');
+  $('home-actions').querySelectorAll('.qa').forEach(b=>b.addEventListener('click',()=>route(b.dataset.k)));
+  startClock();loadWeather();loadHomeData();
+}
+async function loadHomeData(){
+  try{const start=new Date();start.setDate(1);const iso=start.toISOString().slice(0,10);const{data}=await db.from('volunteer_hours').select('hours,logged_on,is_approved').eq('volunteer_id',ME.id);
+    const rows=data||[];const month=rows.filter(r=>r.logged_on>=iso).reduce((a,b)=>a+(parseFloat(b.hours)||0),0);const appr=rows.filter(r=>r.is_approved).reduce((a,b)=>a+(parseFloat(b.hours)||0),0);
+    if($('h-month'))$('h-month').textContent=Math.round(month*10)/10||0;if($('h-total'))$('h-total').textContent=Math.round(appr*10)/10||0;
+  }catch(e){}
+  try{const{count}=await db.from('notifications').select('*',{count:'exact',head:true}).eq('user_id',ME.id).eq('is_read',false);if($('h-alerts'))$('h-alerts').textContent=count||0;}catch(e){}
+  try{const nowISO=new Date().toISOString();const{data}=await db.from('events').select('title,starts_at,location').eq('is_published',true).gte('starts_at',nowISO).order('starts_at',{ascending:true}).limit(5);
+    if($('h-events'))$('h-events').textContent=(data||[]).length;
+    const box=$('home-events');if(box){if(!data||!data.length)box.innerHTML='<div class="bg-white rounded-xl border border-gray-100 p-4 text-sm text-gray-400">No upcoming events.</div>';
+      else box.innerHTML=data.slice(0,4).map(ev=>`<div class="bg-white rounded-xl border border-gray-100 p-3.5"><div class="text-tnf-green text-xs font-bold mb-0.5">${new Date(ev.starts_at).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})}</div><div class="font-semibold text-sm text-tnf-ink">${esc(ev.title||'')}</div>${ev.location?`<div class="text-xs text-gray-400 mt-0.5"><i class="fa-solid fa-location-dot mr-1"></i>${esc(ev.location)}</div>`:''}</div>`).join('');}
+  }catch(e){}
+  try{const{data}=await db.from('announcements').select('title,body,created_at,is_pinned').order('is_pinned',{ascending:false}).order('created_at',{ascending:false}).limit(4);
+    const box=$('home-anns');if(box){if(!data||!data.length)box.innerHTML='<div class="bg-white rounded-xl border border-gray-100 p-4 text-sm text-gray-400">No announcements yet.</div>';
+      else box.innerHTML=data.map(a=>`<div class="bg-white rounded-xl border border-gray-100 p-3.5"><div class="flex items-center gap-2 mb-0.5">${a.is_pinned?'<i class="fa-solid fa-thumbtack text-tnf-green text-xs"></i>':''}<div class="font-semibold text-sm text-tnf-ink">${esc(a.title||'')}</div></div>${a.body?`<div class="text-xs text-gray-500 line-clamp-2">${esc(a.body)}</div>`:''}</div>`).join('');}
   }catch(e){}
 }
 
-// ---------- HOURS ----------
+/* ---------- MY HOURS ---------- */
 async function renderHours(){
   const c=$('content');
-  c.innerHTML=`<div class="grid lg:grid-cols-5 gap-6">
-    <div class="lg:col-span-2">
-      <div class="bg-white rounded-2xl border border-gray-100 p-6 sticky top-24">
-        <h3 class="font-bold text-tnf-ink mb-4">Log hours</h3>
-        <form id="hform" class="space-y-4">
-          <div><label class="block text-sm font-semibold text-tnf-ink mb-2">What did you do?</label><input id="h-activity" required placeholder="e.g. Beach clean-up" class="w-full border border-gray-200 rounded-xl px-4 py-3 focus:border-tnf-green focus:ring-4 focus:ring-tnf-green/10"/></div>
-          <div class="grid grid-cols-2 gap-3">
-            <div><label class="block text-sm font-semibold text-tnf-ink mb-2">Hours</label><input id="h-hours" type="number" step="0.5" min="0" required placeholder="2.5" class="w-full border border-gray-200 rounded-xl px-4 py-3 focus:border-tnf-green focus:ring-4 focus:ring-tnf-green/10"/></div>
-            <div><label class="block text-sm font-semibold text-tnf-ink mb-2">Date</label><input id="h-date" type="date" class="w-full border border-gray-200 rounded-xl px-4 py-3 focus:border-tnf-green focus:ring-4 focus:ring-tnf-green/10"/></div>
+  c.innerHTML=`
+    <div class="grid lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-1">
+        <div class="bg-white rounded-2xl border border-gray-100 p-6">
+          <h3 class="font-bold text-tnf-ink mb-4">Log hours</h3>
+          <label class="block text-sm font-semibold text-tnf-ink mb-1.5">Activity</label>
+          <input id="vh-act" placeholder="e.g. Beach clean-up" class="w-full border border-gray-200 rounded-lg px-3 py-2.5 mb-3">
+          <div class="grid grid-cols-2 gap-3 mb-3">
+            <div><label class="block text-sm font-semibold text-tnf-ink mb-1.5">Hours</label><input id="vh-hrs" type="number" step="0.5" min="0" placeholder="0" class="w-full border border-gray-200 rounded-lg px-3 py-2.5"></div>
+            <div><label class="block text-sm font-semibold text-tnf-ink mb-1.5">Date</label><input id="vh-date" type="date" class="w-full border border-gray-200 rounded-lg px-3 py-2.5"></div>
           </div>
-          <p id="h-msg" class="text-sm font-semibold text-red-600 min-h-[1em]"></p>
-          <button type="submit" id="h-submit" class="w-full bg-tnf-green hover:bg-tnf-greenDark text-white font-bold py-3 rounded-xl transition-colors">Add entry</button>
-        </form>
-        <p class="text-xs text-gray-400 mt-4">Logged hours are reviewed by a coordinator before being approved.</p>
+          <button id="vh-save" class="w-full bg-tnf-green hover:bg-tnf-greenDark text-white font-bold py-2.5 rounded-lg text-sm">Add hours</button>
+          <p id="vh-msg" class="text-sm font-semibold mt-2 min-h-[1em]"></p>
+          <p class="text-xs text-gray-400 mt-2">Hours are reviewed by the Foundation before they count as approved.</p>
+        </div>
       </div>
-    </div>
-    <div class="lg:col-span-3" id="h-list"><div class="loader-spinner my-10"></div></div>
-  </div>`;
-  $('h-date').value=new Date().toISOString().slice(0,10);
-  $('hform').addEventListener('submit',async e=>{e.preventDefault();const btn=$('h-submit'),msg=$('h-msg');msg.textContent='';
-    const activity=$('h-activity').value.trim(),hours=parseFloat($('h-hours').value),logged_on=$('h-date').value;
-    if(!activity||!hours||hours<=0){msg.textContent='Add an activity and a number of hours.';return;}
-    btn.disabled=true;const old=btn.innerHTML;btn.innerHTML='<span class="btn-spin"></span> Adding…';
-    try{const{error}=await db.from('volunteer_hours').insert({volunteer_id:ME.id,activity,hours,logged_on});if(error)throw error;toast('Hours logged');$('h-activity').value='';$('h-hours').value='';loadHours();}catch(err){msg.textContent=err.message||'Could not save.';}
-    btn.disabled=false;btn.innerHTML=old;
+      <div class="lg:col-span-2">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="bg-white rounded-2xl border border-gray-100 px-5 py-4 flex-1"><div class="text-2xl font-extrabold text-tnf-ink" id="vh-sum-appr">–</div><div class="text-xs text-gray-400 font-semibold">Approved hours</div></div>
+          <div class="bg-white rounded-2xl border border-gray-100 px-5 py-4 flex-1"><div class="text-2xl font-extrabold text-tnf-ink" id="vh-sum-pend">–</div><div class="text-xs text-gray-400 font-semibold">Awaiting review</div></div>
+        </div>
+        <div id="vh-list"><div class="text-gray-400 text-sm py-8 text-center">Loading…</div></div>
+      </div>
+    </div>`;
+  $('vh-date').value=new Date().toISOString().slice(0,10);
+  const load=async()=>{
+    let rows=[];try{const{data}=await db.from('volunteer_hours').select('*').eq('volunteer_id',ME.id).order('logged_on',{ascending:false});rows=data||[];}catch(e){}
+    const appr=rows.filter(r=>r.is_approved).reduce((a,b)=>a+(parseFloat(b.hours)||0),0);
+    const pend=rows.filter(r=>!r.is_approved).reduce((a,b)=>a+(parseFloat(b.hours)||0),0);
+    $('vh-sum-appr').textContent=Math.round(appr*10)/10||0;$('vh-sum-pend').textContent=Math.round(pend*10)/10||0;
+    const box=$('vh-list');
+    if(!rows.length){box.innerHTML='<div class="bg-white rounded-2xl border border-gray-100 p-8 text-center text-gray-400 text-sm">No hours logged yet. Add your first above.</div>';return;}
+    box.innerHTML=`<div class="bg-white rounded-2xl border border-gray-100 divide-y divide-gray-100">${rows.map(r=>`<div class="flex items-center gap-4 p-4"><div class="w-10 h-10 rounded-lg bg-tnf-greenLight text-tnf-green grid place-items-center flex-none"><i class="fa-solid fa-clock"></i></div><div class="flex-1 min-w-0"><div class="font-semibold text-tnf-ink truncate">${esc(r.activity||'Volunteering')}</div><div class="text-xs text-gray-400">${new Date(r.logged_on).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</div></div><div class="text-right"><div class="font-bold text-tnf-ink">${parseFloat(r.hours)||0}h</div><div class="text-[11px] font-semibold ${r.is_approved?'text-tnf-greenDark':'text-gray-400'}">${r.is_approved?'Approved':'Pending'}</div></div></div>`).join('')}</div>`;
+  };
+  $('vh-save').addEventListener('click',async()=>{
+    const msg=$('vh-msg'),btn=$('vh-save');const activity=$('vh-act').value.trim();const hours=parseFloat($('vh-hrs').value);const logged_on=$('vh-date').value;
+    if(!activity||!hours||hours<=0){msg.className='text-sm font-semibold mt-2 text-red-600';msg.textContent='Add an activity and a number of hours.';return;}
+    btn.disabled=true;btn.textContent='Saving…';msg.textContent='';
+    try{const{error}=await db.from('volunteer_hours').insert({volunteer_id:ME.id,activity,hours,logged_on});if(error)throw error;$('vh-act').value='';$('vh-hrs').value='';msg.className='text-sm font-semibold mt-2 text-tnf-greenDark';msg.textContent='Hours added.';load();}
+    catch(e){msg.className='text-sm font-semibold mt-2 text-red-600';msg.textContent='Could not save: '+(e.message||'error');}
+    btn.disabled=false;btn.textContent='Add hours';
   });
-  loadHours();
-}
-async function loadHours(){
-  let rows=[];
-  try{const{data,error}=await db.from('volunteer_hours').select('*').eq('volunteer_id',ME.id).order('logged_on',{ascending:false});if(error)throw error;rows=data||[];}
-  catch(e){$('h-list').innerHTML=`<p class="text-red-600 text-sm">${esc(e.message)}</p>`;return;}
-  const approved=rows.filter(r=>r.is_approved).reduce((s,r)=>s+(Number(r.hours)||0),0);
-  const pending=rows.filter(r=>!r.is_approved).reduce((s,r)=>s+(Number(r.hours)||0),0);
-  const fmt=n=>n%1?n.toFixed(1):n;
-  const head=`<div class="grid grid-cols-2 gap-3 mb-4"><div class="bg-tnf-greenLight rounded-2xl p-4"><div class="text-2xl font-extrabold text-tnf-greenDark">${fmt(approved)}</div><div class="text-tnf-greenDark/70 text-xs font-semibold">Approved hours</div></div><div class="bg-amber-50 rounded-2xl p-4"><div class="text-2xl font-extrabold text-amber-700">${fmt(pending)}</div><div class="text-amber-700/70 text-xs font-semibold">Pending approval</div></div></div>`;
-  if(!rows.length){$('h-list').innerHTML=head+`<div class="bg-white rounded-2xl border border-gray-100 p-10 text-center text-gray-400">No hours logged yet. Add your first entry.</div>`;return;}
-  $('h-list').innerHTML=head+`<div class="bg-white rounded-2xl border border-gray-100 divide-y divide-gray-100">${rows.map(r=>`<div class="flex items-center gap-3 p-4"><div class="flex-1 min-w-0"><div class="font-semibold text-tnf-ink truncate">${esc(r.activity||'Volunteering')}</div><div class="text-xs text-gray-400">${fmtDate(r.logged_on)}</div></div><div class="font-bold text-tnf-ink whitespace-nowrap">${fmt(Number(r.hours)||0)}h</div>${r.is_approved?'<span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-tnf-greenLight text-tnf-greenDark">Approved</span>':`<span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-700">Pending</span><button class="hdel text-gray-300 hover:text-red-600 px-1" data-id="${r.id}"><i class="fa-solid fa-trash text-sm"></i></button>`}</div>`).join('')}</div>`;
-  $('h-list').querySelectorAll('.hdel').forEach(b=>b.onclick=async()=>{if(!confirm('Remove this entry?'))return;try{const{error}=await db.from('volunteer_hours').delete().eq('id',b.dataset.id);if(error)throw error;toast('Removed');loadHours();}catch(e){toast(e.message||'Failed',false);}});
+  load();
 }
 
-// ---------- EVENTS ----------
-function eventCard(e,compact){
-  const d=e.starts_at?new Date(e.starts_at):null;
-  const badge=d?`<div class="flex-none w-14 text-center bg-tnf-greenLight rounded-xl py-2"><div class="text-tnf-greenDark font-extrabold text-lg leading-none">${d.getDate()}</div><div class="text-tnf-greenDark/70 text-[11px] font-bold uppercase">${d.toLocaleString('en',{month:'short'})}</div></div>`:'';
-  const act=e.registration_url?`<a href="${esc(e.registration_url)}" target="_blank" rel="noopener" class="text-sm font-bold text-tnf-green hover:text-tnf-greenDark whitespace-nowrap">Register <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i></a>`:`<button class="rsvp-btn text-sm font-bold text-tnf-green hover:text-tnf-greenDark whitespace-nowrap" data-id="${e.id}" data-title="${esc(e.title)}" data-when="${esc(fmtDT(e.starts_at))}">RSVP</button>`;
-  return `<div class="bg-white rounded-2xl border border-gray-100 p-4 flex items-center gap-4">${badge}<div class="flex-1 min-w-0"><div class="font-bold text-tnf-ink truncate">${esc(e.title)}</div><div class="text-xs text-gray-400">${e.starts_at?esc(fmtDT(e.starts_at)):'Date TBC'}${e.location?' · '+esc(e.location):''}</div>${!compact&&e.description?`<p class="text-sm text-gray-500 mt-1 line-clamp-2">${esc(e.description)}</p>`:''}</div>${act}</div>`;
+/* ---------- ANNOUNCEMENTS ---------- */
+async function renderAnnouncements(){
+  const c=$('content');c.innerHTML='<div class="text-gray-400 text-sm py-10 text-center">Loading…</div>';
+  let rows=[];try{const{data}=await db.from('announcements').select('*').order('is_pinned',{ascending:false}).order('created_at',{ascending:false});rows=data||[];}catch(e){}
+  if(!rows.length){c.innerHTML='<div class="bg-white rounded-2xl border border-gray-100 p-10 text-center text-gray-400">No announcements yet.</div>';return;}
+  c.innerHTML=`<div class="space-y-3 max-w-3xl">${rows.map(a=>`<div class="bg-white rounded-2xl border border-gray-100 p-5"><div class="flex items-center gap-2 mb-1">${a.is_pinned?'<i class="fa-solid fa-thumbtack text-tnf-green text-sm"></i>':''}<h3 class="font-bold text-tnf-ink">${esc(a.title||'')}</h3></div><div class="text-xs text-gray-400 mb-2">${new Date(a.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}</div>${a.body?`<div class="text-gray-700 text-sm leading-relaxed whitespace-pre-wrap">${esc(a.body)}</div>`:''}</div>`).join('')}</div>`;
 }
+
+/* ---------- EVENTS ---------- */
 async function renderEvents(){
-  const c=$('content'); c.innerHTML=`<div id="ev-body"><div class="loader-spinner my-10"></div></div>`;
-  let rows=[];
-  try{const{data,error}=await db.from('events').select('*').eq('is_published',true).order('starts_at',{ascending:true});if(error)throw error;rows=data||[];}
-  catch(e){$('ev-body').innerHTML=`<p class="text-gray-400 text-sm italic">Could not load events.</p>`;return;}
-  const now=new Date().toISOString();
-  const up=rows.filter(e=>!e.starts_at||e.starts_at>=now);
-  if(!up.length){$('ev-body').innerHTML=`<div class="bg-white rounded-2xl border border-gray-100 p-10 text-center text-gray-400">No upcoming events right now, check back soon.</div>`;return;}
-  $('ev-body').innerHTML=`<p class="text-gray-500 mb-4">${up.length} upcoming ${up.length===1?'event':'events'}</p><div class="space-y-3">${up.map(e=>eventCard(e,false)).join('')}</div>`;
-  wireRsvpButtons();
+  const c=$('content');c.innerHTML='<div class="text-gray-400 text-sm py-10 text-center">Loading…</div>';
+  let rows=[];try{const nowISO=new Date().toISOString();const{data}=await db.from('events').select('*').eq('is_published',true).gte('starts_at',nowISO).order('starts_at',{ascending:true});rows=data||[];}catch(e){}
+  if(!rows.length){c.innerHTML='<div class="bg-white rounded-2xl border border-gray-100 p-10 text-center text-gray-400">No upcoming events right now.</div>';return;}
+  c.innerHTML=`<div class="grid sm:grid-cols-2 gap-5">${rows.map(ev=>{const d=new Date(ev.starts_at);return `<div class="bg-white rounded-2xl border border-gray-100 overflow-hidden flex flex-col">${ev.cover_url?`<img src="${esc(ev.cover_url)}" class="h-36 w-full object-cover" alt="" onerror="this.style.display='none'">`:'<div class="h-2 bg-tnf-green"></div>'}<div class="p-5 flex-1 flex flex-col"><div class="text-tnf-green text-xs font-bold mb-1">${d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})} · ${d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</div><h3 class="font-bold text-tnf-ink mb-1">${esc(ev.title||'')}</h3>${ev.location?`<div class="text-xs text-gray-400 mb-2"><i class="fa-solid fa-location-dot mr-1"></i>${esc(ev.location)}</div>`:''}${ev.description?`<div class="text-sm text-gray-600 line-clamp-3 mb-3">${esc(ev.description)}</div>`:''}<button data-ev="${ev.id}" data-t="${esc(ev.title||'')}" class="rsvp mt-auto bg-tnf-greenLight text-tnf-greenDark hover:bg-tnf-green hover:text-white font-semibold text-sm px-4 py-2.5 rounded-lg transition-colors">I'll be there</button></div></div>`;}).join('')}</div>`;
+  c.querySelectorAll('.rsvp').forEach(b=>b.addEventListener('click',async()=>{
+    b.disabled=true;const old=b.textContent;b.textContent='Saving…';
+    try{const{error}=await db.from('event_rsvps').insert({event_id:b.dataset.ev,name:ME.full_name||'Volunteer',email:ME.email||''});if(error)throw error;b.textContent="You're going";b.classList.remove('bg-tnf-greenLight','text-tnf-greenDark');b.classList.add('bg-tnf-green','text-white');toast('See you there!');}
+    catch(e){b.disabled=false;b.textContent=old;toast(e.message||'Could not RSVP',false);}
+  }));
 }
-let RSVP_EVENT=null;
-function wireRsvpButtons(){ document.querySelectorAll('.rsvp-btn').forEach(b=>b.onclick=()=>openRsvp(b.dataset.id,b.dataset.title,b.dataset.when)); }
-function openRsvp(id,title,when){ RSVP_EVENT=id; $('rsvp-event').textContent=title+(when?' · '+when:''); $('rsvp-name').value=ME.full_name||''; $('rsvp-email').value=ME.email||''; $('rsvp-msg').textContent=''; $('rsvp-modal').classList.remove('hidden'); $('rsvp-modal').classList.add('flex'); }
-function closeRsvp(){ $('rsvp-modal').classList.add('hidden'); $('rsvp-modal').classList.remove('flex'); }
-document.addEventListener('DOMContentLoaded',()=>{ const iv=setInterval(()=>{ if(!$('rsvp-form'))return; clearInterval(iv);
-  $('rsvp-form').addEventListener('submit',async e=>{e.preventDefault();const btn=$('rsvp-submit'),msg=$('rsvp-msg');msg.textContent='';
-    const name=$('rsvp-name').value.trim(),email=$('rsvp-email').value.trim();
-    if(!name||!email){msg.textContent='Please add your name and email.';return;}
-    btn.disabled=true;const old=btn.innerHTML;btn.innerHTML='<span class="btn-spin"></span> Confirming…';
-    try{const{error}=await db.from('event_rsvps').insert({event_id:RSVP_EVENT,name,email});if(error)throw error;closeRsvp();toast("You're on the list!");}catch(err){msg.textContent=err.message||'Could not RSVP.';}
-    btn.disabled=false;btn.innerHTML=old;
-  });
-},80); });
 
-// ---------- RESOURCES ----------
+/* ---------- OPPORTUNITIES ---------- */
+async function renderOpportunities(){
+  const c=$('content');c.innerHTML='<div class="text-gray-400 text-sm py-10 text-center">Loading…</div>';
+  let rows=[];try{const{data}=await db.from('opportunities').select('*').eq('is_published',true).order('is_featured',{ascending:false}).order('created_at',{ascending:false}).limit(60);rows=data||[];}catch(e){}
+  if(!rows.length){c.innerHTML='<div class="bg-white rounded-2xl border border-gray-100 p-10 text-center text-gray-400">No opportunities published yet.</div>';return;}
+  const badge={open:'bg-tnf-greenLight text-tnf-greenDark',closing_soon:'bg-amber-100 text-amber-700',closed:'bg-gray-100 text-gray-400'};
+  c.innerHTML=`<p class="text-gray-500 text-sm mb-4">Opportunities shared by the Foundation. Open one to read more and apply.</p><div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">${rows.map(o=>`<a href="/opportunities/opportunity?slug=${encodeURIComponent(o.slug)}" class="bg-white rounded-2xl border border-gray-100 p-5 hover:border-tnf-green hover:shadow-sm transition-all flex flex-col"><div class="flex items-center justify-between mb-2"><span class="text-[11px] font-bold px-2 py-0.5 rounded-full ${badge[o.status]||badge.open}">${esc((o.status||'open').replace('_',' '))}</span>${o.deadline?`<span class="text-[11px] text-gray-400">by ${new Date(o.deadline).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</span>`:''}</div><h3 class="font-bold text-tnf-ink mb-1 leading-snug">${esc(o.title||'')}</h3>${o.organization?`<div class="text-xs text-gray-400 mb-2">${esc(o.organization)}${o.location?' · '+esc(o.location):''}</div>`:''}${o.summary?`<div class="text-sm text-gray-600 line-clamp-3">${esc(o.summary)}</div>`:''}<div class="mt-auto pt-3 text-tnf-green text-sm font-semibold">Read more <i class="fa-solid fa-arrow-right text-xs ml-0.5"></i></div></a>`).join('')}</div>`;
+}
+
+/* ---------- RESOURCES ---------- */
 async function renderResources(){
-  const c=$('content'); c.innerHTML=`<div id="rc-body"><div class="loader-spinner my-10"></div></div>`;
-  let rows=[];
-  try{const{data,error}=await db.from('resources').select('*').eq('is_published',true).order('sort_order',{ascending:true});if(error)throw error;rows=data||[];}
-  catch(e){$('rc-body').innerHTML=`<p class="text-gray-400 text-sm italic">Could not load resources.</p>`;return;}
-  if(!rows.length){$('rc-body').innerHTML=`<div class="bg-white rounded-2xl border border-gray-100 p-10 text-center text-gray-400">No resources yet.</div>`;return;}
-  $('rc-body').innerHTML=`<div class="grid sm:grid-cols-2 gap-4">${rows.map(r=>{const link=r.file_url||r.link_url;const dl=!!r.file_url;return `<div class="bg-white rounded-2xl border border-gray-100 p-5 flex flex-col"><div class="w-11 h-11 rounded-xl bg-tnf-greenLight text-tnf-green grid place-items-center mb-3"><i class="fa-solid ${dl?'fa-file-arrow-down':'fa-link'}"></i></div><div class="font-bold text-tnf-ink">${esc(r.title)}</div>${r.category?`<div class="text-xs text-gray-400 mt-0.5">${esc(r.category)}</div>`:''}${r.description?`<p class="text-sm text-gray-500 mt-2 flex-1">${esc(r.description)}</p>`:'<div class="flex-1"></div>'}${link?`<a href="${esc(link)}" target="_blank" rel="noopener" class="mt-4 inline-flex items-center gap-2 text-sm font-bold text-tnf-green hover:text-tnf-greenDark">${dl?'Download':'Open'} <i class="fa-solid fa-arrow-right text-xs"></i></a>`:''}</div>`;}).join('')}</div>`;
+  const c=$('content');c.innerHTML='<div class="text-gray-400 text-sm py-10 text-center">Loading…</div>';
+  let rows=[];try{const{data}=await db.from('resources').select('*').eq('is_published',true).order('sort_order',{ascending:true});rows=data||[];}catch(e){}
+  if(!rows.length){c.innerHTML='<div class="bg-white rounded-2xl border border-gray-100 p-10 text-center text-gray-400">No resources yet.</div>';return;}
+  c.innerHTML=`<div class="grid sm:grid-cols-2 gap-4 max-w-4xl">${rows.map(r=>{const link=r.file_url||r.link_url;return `<div class="bg-white rounded-2xl border border-gray-100 p-5 flex items-start gap-4"><div class="w-11 h-11 rounded-xl bg-tnf-greenLight text-tnf-green grid place-items-center flex-none"><i class="fa-solid fa-folder-open"></i></div><div class="min-w-0 flex-1"><h3 class="font-bold text-tnf-ink">${esc(r.title||'')}</h3>${r.category?`<div class="text-[11px] text-gray-400 font-semibold mb-1">${esc(r.category)}</div>`:''}${r.description?`<div class="text-sm text-gray-600 mb-2">${esc(r.description)}</div>`:''}${link?`<a href="${esc(link)}" target="_blank" rel="noopener" class="text-tnf-green text-sm font-semibold">Open <i class="fa-solid fa-arrow-up-right-from-square text-xs ml-0.5"></i></a>`:''}</div></div>`;}).join('')}</div>`;
 }
 
-// ---------- OPPORTUNITIES ----------
-async function renderOpps(){
+/* ---------- MY DETAILS (read-only) ---------- */
+async function renderDetails(){
   const c=$('content');
-  c.innerHTML=`<div class="flex items-center justify-between mb-4"><p class="text-gray-500">A few opportunities open now.</p><a href="/opportunities" class="text-sm font-bold text-tnf-green hover:text-tnf-greenDark whitespace-nowrap">Browse all <i class="fa-solid fa-arrow-right text-xs"></i></a></div><div id="op-body"><div class="loader-spinner my-10"></div></div>`;
-  let rows=[];
-  try{const{data,error}=await db.from('opportunities').select('*').eq('is_published',true).neq('status','closed').order('created_at',{ascending:false}).limit(6);if(error)throw error;rows=data||[];}
-  catch(e){$('op-body').innerHTML=`<p class="text-gray-400 text-sm italic">Could not load opportunities.</p>`;return;}
-  if(!rows.length){$('op-body').innerHTML=`<div class="bg-white rounded-2xl border border-gray-100 p-10 text-center text-gray-400">No open opportunities right now. <a href="/opportunities" class="text-tnf-green font-bold">See the full hub</a>.</div>`;return;}
-  const daysLeft=d=>{if(!d)return null;const n=Math.ceil((new Date(d)-new Date())/86400000);return n;};
-  $('op-body').innerHTML=`<div class="space-y-3">${rows.map(o=>{const dl=daysLeft(o.deadline);const soon=dl!=null&&dl>=0&&dl<=14;return `<a href="/opportunities/opportunity?slug=${encodeURIComponent(o.slug||'')}" class="block bg-white rounded-2xl border border-gray-100 p-5 hover:border-tnf-green transition-colors"><div class="flex items-start justify-between gap-3"><div class="min-w-0"><div class="text-xs font-bold text-tnf-green uppercase tracking-wide mb-1">${esc(CATLABEL[o.category]||o.category||'Opportunity')}</div><div class="font-bold text-tnf-ink">${esc(o.title)}</div>${o.organization?`<div class="text-sm text-gray-400 mt-0.5">${esc(o.organization)}${o.location?' · '+esc(o.location):''}</div>`:''}</div><i class="fa-solid fa-arrow-right text-gray-300 mt-1"></i></div>${dl!=null&&dl>=0?`<div class="mt-3 text-xs font-bold ${soon?'text-amber-600':'text-gray-400'}">${dl===0?'Closes today':dl+' day'+(dl===1?'':'s')+' left'}</div>`:''}</a>`;}).join('')}</div>`;
+  let deptName='';if(ME.department_id){try{const{data}=await db.from('departments').select('name').eq('id',ME.department_id).maybeSingle();if(data)deptName=data.name;}catch(e){}}
+  const row=(label,val)=>`<div class="flex justify-between gap-4 py-3 border-b border-gray-50 last:border-0"><span class="text-sm text-gray-400 font-semibold">${label}</span><span class="text-sm text-tnf-ink font-semibold text-right">${val?esc(val):'<span class=\"text-gray-300\">—</span>'}</span></div>`;
+  c.innerHTML=`
+    <div class="max-w-2xl">
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-5 flex items-center gap-5">
+        ${avatarHTML(ME,'w-20 h-20 text-3xl')}
+        <div class="min-w-0">
+          <div class="font-extrabold text-xl text-tnf-ink truncate">${esc(ME.full_name||'')}</div>
+          <div class="text-sm text-gray-500">${esc(roleLabel(ME.role))}${ME.title?' · '+esc(ME.title):''}</div>
+          <div class="text-xs text-gray-400 mt-1">Member ID ${esc(shortId(ME.id))}</div>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl border border-gray-100 p-6">
+        ${row('Full name',ME.full_name)}
+        ${row('Email',ME.email)}
+        ${row('Phone',ME.phone)}
+        ${row('Role',roleLabel(ME.role))}
+        ${row('Department',deptName)}
+        ${row('Status',ME.is_active===false?'Inactive':'Active')}
+        ${ME.bio?`<div class="pt-3"><div class="text-sm text-gray-400 font-semibold mb-1">About</div><div class="text-sm text-tnf-ink whitespace-pre-wrap">${esc(ME.bio)}</div></div>`:''}
+      </div>
+      <div class="mt-4 text-sm text-gray-500 bg-gray-50 border border-gray-100 rounded-xl p-4 flex items-start gap-3">
+        <i class="fa-solid fa-lock text-tnf-green mt-0.5"></i>
+        <div>These details are managed by the Foundation. To update anything here, please <a href="/contact" class="text-tnf-green font-semibold underline underline-offset-2">contact us</a>.</div>
+      </div>
+    </div>`;
 }
 
-// ---------- PROFILE ----------
-async function renderProfile(){
-  const c=$('content');
-  c.innerHTML=`<form id="pform" class="bg-white rounded-2xl border border-gray-100 p-6 md:p-8 space-y-6 max-w-2xl">
-    <div class="flex items-center gap-5">
-      <div id="p-avatar" class="w-20 h-20 rounded-full bg-tnf-greenLight text-tnf-greenDark grid place-items-center text-2xl font-extrabold bg-cover bg-center flex-none">${ME.avatar_url?'':esc((ME.full_name||ME.email||'?').trim()[0].toUpperCase())}</div>
-      <div><label class="cursor-pointer inline-flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-tnf-ink font-semibold text-sm px-4 py-2.5 rounded-xl transition-colors"><i class="fa-solid fa-camera"></i>Change photo<input type="file" id="p-photo" accept="image/*" class="hidden"/></label><p id="p-photo-status" class="text-xs text-gray-400 mt-1"></p></div>
-    </div>
-    <div><label class="block text-sm font-semibold text-tnf-ink mb-2">Full name</label><input id="p-name" value="${esc(ME.full_name||'')}" class="w-full border border-gray-200 rounded-xl px-4 py-3 focus:border-tnf-green focus:ring-4 focus:ring-tnf-green/10"/></div>
-    <div class="grid sm:grid-cols-2 gap-4">
-      <div><label class="block text-sm font-semibold text-tnf-ink mb-2">Email</label><input value="${esc(ME.email||'')}" disabled class="w-full border border-gray-100 bg-gray-50 text-gray-400 rounded-xl px-4 py-3"/></div>
-      <div><label class="block text-sm font-semibold text-tnf-ink mb-2">Phone</label><input id="p-phone" value="${esc(ME.phone||'')}" class="w-full border border-gray-200 rounded-xl px-4 py-3 focus:border-tnf-green focus:ring-4 focus:ring-tnf-green/10"/></div>
-    </div>
-    <div><label class="block text-sm font-semibold text-tnf-ink mb-2">About you</label><textarea id="p-bio" rows="3" class="w-full border border-gray-200 rounded-xl px-4 py-3 resize-y focus:border-tnf-green focus:ring-4 focus:ring-tnf-green/10">${esc(ME.bio||'')}</textarea></div>
-    <div class="flex items-center gap-2 text-sm"><span class="text-gray-400">Your role:</span><span class="font-bold px-2.5 py-1 rounded-full bg-tnf-greenLight text-tnf-greenDark text-xs">${esc(ROLELABEL[ME.role]||ME.role)}</span></div>
-    <div class="flex items-center gap-3 pt-4 border-t border-gray-100"><button type="submit" id="p-save" class="bg-tnf-green hover:bg-tnf-greenDark text-white font-bold px-7 py-3 rounded-xl transition-colors">Save changes</button></div>
-  </form>`;
-  let newAvatar=ME.avatar_url||null;
-  $('p-photo').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;const st=$('p-photo-status');st.textContent='Uploading…';
-    try{const ext=(file.name.split('.').pop()||'jpg').toLowerCase();const path=`avatars/${ME.id}-${Date.now()}.${ext}`;const{error}=await db.storage.from('public').upload(path,file,{upsert:true});if(error)throw error;const{data:pub}=db.storage.from('public').getPublicUrl(path);newAvatar=pub.publicUrl;$('p-avatar').style.backgroundImage=`url('${newAvatar}')`;$('p-avatar').textContent='';st.textContent='Photo ready, save to keep it.';}catch(err){st.textContent='Upload failed: '+(err.message||'');}
-  });
-  $('pform').addEventListener('submit',async e=>{e.preventDefault();const btn=$('p-save');btn.disabled=true;const old=btn.innerHTML;btn.innerHTML='<span class="btn-spin"></span> Saving…';
-    const payload={full_name:$('p-name').value.trim()||null,phone:$('p-phone').value.trim()||null,bio:$('p-bio').value.trim()||null,avatar_url:newAvatar};
-    try{const{error}=await db.from('profiles').update(payload).eq('id',ME.id);if(error)throw error;Object.assign(ME,payload);toast('Profile saved');
-      const nm=ME.full_name||ME.email||'You';$('u-name').textContent=nm;if(newAvatar){$('u-avatar').style.backgroundImage=`url('${newAvatar}')`;$('u-avatar').textContent='';}else{$('u-avatar').textContent=(nm.trim()[0]||'?').toUpperCase();}
-    }catch(err){toast(err.message||'Could not save.',false);}
-    btn.disabled=false;btn.innerHTML=old;
-  });
+/* ---------- INIT ---------- */
+async function init(){
+  db=supabase.createClient(SB_URL,SB_KEY);
+  const{data:{session}}=await db.auth.getSession();
+  if(!session){location.replace('/login');return;}
+  let prof=null;
+  try{const{data}=await db.from('profiles').select('*').eq('id',session.user.id).maybeSingle();prof=data;}catch(e){}
+  if(!prof){ $('gate-text').textContent='Setting up your account… please contact the Foundation if this persists.'; return; }
+  if(prof.is_active===false){ await db.auth.signOut(); location.replace('/login'); return; }
+  ME=prof;
+  const nm=prof.full_name||prof.email||'You';
+  $('u-name').textContent=nm;$('u-role').textContent=roleLabel(prof.role);
+  const av=$('u-avatar');if(prof.avatar_url){av.innerHTML=`<img src="${esc(prof.avatar_url)}" class="w-full h-full object-cover" alt="">`;av.classList.remove('bg-tnf-green');}else av.textContent=(nm.trim()[0]||'?').toUpperCase();
+  $('um-name').textContent=nm;$('um-email').textContent=prof.email||'';
+  if(['staff','board','admin','superadmin'].includes(prof.role))$('staff-banner').classList.remove('hidden');
+  buildNav();route('home');initNotifications();
+  $('gate').classList.add('hidden');$('app').classList.remove('hidden');
+  $('signout').addEventListener('click',async()=>{await db.auth.signOut();location.replace('/login');});
+  $('menu-btn').addEventListener('click',openDrawer);
+  $('drawer-close').addEventListener('click',closeDrawer);
+  $('backdrop').addEventListener('click',closeDrawer);
+  $('home-link').addEventListener('click',e=>{e.preventDefault();route('home');});
+  $('user-btn').addEventListener('click',e=>{e.stopPropagation();$('user-menu').classList.toggle('hidden');});
+  $('um-home').addEventListener('click',()=>route('home'));
+  document.addEventListener('click',e=>{const m=$('user-menu'),b=$('user-btn');if(m&&!m.classList.contains('hidden')&&!m.contains(e.target)&&!b.contains(e.target))m.classList.add('hidden');});
 }
+window.addEventListener('DOMContentLoaded',()=>{ if(window.supabase){init();} else { const s=document.querySelector('script[src*="supabase-js"]'); s&&s.addEventListener('load',init); } });
 </script>
 </body>
 </html>

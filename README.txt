@@ -50,3 +50,35 @@ Before the site works with real data, in that project you must:
 
 Until content is added through /staff, public pages show tasteful empty
 states - that is expected on a fresh database.
+
+
+UPDATE - INTERNAL PLATFORM (staff + volunteer)
+----------------------------------------------
+STAFF back office (yoursite.com/staff)
+- Redesigned with a top navigation bar (mobile shows a slide-in menu).
+- New Home dashboard: time-of-day photo, live clock, local weather + place,
+  greeting, your profile card and live stats.
+- Team chat: delete your own messages (admins can delete anyone's).
+- Data cleanup (admins) under Settings > Data cleanup: wipe old chat messages
+  and read notifications to keep the database small.
+- Staff accounts (admins + anyone with HR permission) under People & HR:
+  edit a person's role, department, permissions, photo, and switch their
+  account on/off. To ADD a new login, create the user in Supabase
+  (Authentication > Users); they then appear here automatically. To remove
+  access, just switch their account to inactive.
+
+VOLUNTEER portal (yoursite.com/portal) - rebuilt
+- Same clean look as staff. Sections: Home, My hours (log your own), 
+  Announcements, Events (with RSVP), Opportunities, Resources, My details.
+- My details is READ-ONLY (managed by the Foundation).
+- Notification bell included. No documents section (staff-only by design).
+
+NO serverless functions and NO email service are required anywhere.
+
+BACKEND SQL TO RUN (in Supabase SQL editor, in order)
+-----------------------------------------------------
+1. tnf-backend-schema.sql        (base - already done)
+2. tnf-backend-v3-upgrade.sql    (notifications, documents, etc. - already done)
+3. tnf-backend-v3_1-hr-accounts.sql   (lets HR edit profiles) <-- run this
+That's everything. All account management, cleanup, chat delete, hours and
+notifications work with plain tables + row-level security. No functions.
