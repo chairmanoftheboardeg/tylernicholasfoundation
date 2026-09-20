@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Board Console | Tyler Nicholas Foundation</title>
+<meta name="robots" content="noindex" />
+<link rel="icon" href="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" />
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<script>
+tailwind.config={theme:{extend:{
+  fontFamily:{sans:['Plus Jakarta Sans','sans-serif'],display:['Sora','sans-serif']},
+  colors:{ink:'#071310',panel:'#0E1F19',panel2:'#12271F',brand:'#2E9E44',brandDark:'#26863A',bright:'#40D368',aqua:'#35D0C0',gold:'#F2C14E',mist:'#9BB0A4',faint:'#5E7268'}
+}}}
+</script>
+<style>
+  :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0);padding-bottom:env(safe-area-inset-bottom,0)}
+  html{overflow-x:hidden}body{overflow-x:clip;background:#071310;color:#E9F2EC}
+  ::-webkit-scrollbar{width:9px;height:9px}::-webkit-scrollbar-thumb{background:#1d3a2e;border-radius:6px}::-webkit-scrollbar-track{background:transparent}
+  input,textarea,select{outline:none}
+  .glass{background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.09);backdrop-filter:blur(14px)}
+  .glass-strong{background:rgba(9,22,17,.72);border:1px solid rgba(255,255,255,.10);backdrop-filter:blur(18px)}
+  .ring-glow{box-shadow:0 0 0 1px rgba(64,211,104,.25),0 18px 50px -12px rgba(0,0,0,.7)}
+  .loader{width:46px;height:46px;border-radius:50%;border:3px solid rgba(64,211,104,.18);border-top-color:#40D368;animation:spin .85s linear infinite}
+  .btn-spin{display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;vertical-align:-2px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
+  @keyframes drift1{0%{transform:translate(0,0)}33%{transform:translate(46px,-34px)}66%{transform:translate(-28px,26px)}100%{transform:translate(0,0)}}
+  @keyframes drift2{0%{transform:translate(0,0)}50%{transform:translate(-54px,30px)}100%{transform:translate(0,0)}}
+  @keyframes glowP{0%,100%{opacity:.45}50%{opacity:.95}}
+  @keyframes ring{0%{transform:scale(.7);opacity:.6}100%{transform:scale(2.4);opacity:0}}
+  @keyframes shimmer{0%{transform:translateX(-140%) skewX(-18deg)}100%{transform:translateX(160%) skewX(-18deg)}}
+  @keyframes sheen{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  .anim{opacity:0;animation:fadeUp .7s cubic-bezier(.2,.7,.2,1) forwards}
+  .orb{position:fixed;border-radius:50%;filter:blur(70px);opacity:.5;pointer-events:none;z-index:0}
+  .live::before{content:'';position:absolute;inset:-6px;border-radius:9999px;border:2px solid #40D368;animation:ring 2.2s ease-out infinite}
+  .tile{position:relative;overflow:hidden;transition:transform .35s cubic-bezier(.2,.7,.2,1),box-shadow .35s,border-color .35s}
+  .tile::after{content:'';position:absolute;top:0;left:0;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.14),transparent);transform:translateX(-140%) skewX(-18deg)}
+  .tile:hover{transform:translateY(-6px) scale(1.015);border-color:rgba(64,211,104,.55);box-shadow:0 22px 50px -18px rgba(0,0,0,.8),0 0 34px -8px rgba(64,211,104,.35)}
+  .tile:hover::after{animation:shimmer 1s forwards}
+  .tile:hover .tIcon{transform:scale(1.08) translateY(-2px);box-shadow:0 0 26px -4px rgba(64,211,104,.6)}
+  .tIcon{transition:transform .35s,box-shadow .35s}
+  .sheen{background:linear-gradient(100deg,#40D368,#35D0C0,#40D368);background-size:200% 100%;animation:sheen 6s ease infinite;-webkit-background-clip:text;background-clip:text;color:transparent}
+  .navpill{transition:all .2s}
+  .navpill.on{background:rgba(64,211,104,.16);color:#bff5cf}
+  .card{background:#0E1F19;border:1px solid rgba(255,255,255,.07);border-radius:1rem}
+  .fld{width:100%;background:#0b1a14;border:1px solid rgba(255,255,255,.12);border-radius:.6rem;padding:.6rem .75rem;color:#E9F2EC;font-size:.9rem}
+  .fld:focus{border-color:#40D368}
+  .btn{background:#2E9E44;color:#fff;font-weight:700;border-radius:.6rem;transition:background .2s}
+  .btn:hover{background:#26863A}
+  .btn-ghost{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#cfe0d6;border-radius:.6rem}
+  .btn-ghost:hover{background:rgba(255,255,255,.12)}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.anim{opacity:1}}
+</style>
+</head>
+<body class="font-sans min-h-screen">
+
+<!-- ===== LOGIN GATE ===== -->
+<div id="gate" class="fixed inset-0 z-[100] grid place-items-center">
+  <img src="https://media-cdn.tripadvisor.com/media/photo-s/04/79/22/5a/anse-soleil-beachcomber.jpg" class="absolute inset-0 w-full h-full object-cover opacity-40" alt="" onerror="this.style.display='none'">
+  <div class="absolute inset-0" style="background:radial-gradient(120% 90% at 50% 0%,rgba(7,19,16,.55),rgba(7,19,16,.96))"></div>
+  <div id="gate-load" class="relative text-center">
+    <div class="loader mx-auto mb-4"></div><p class="text-mist text-sm font-semibold">Securing your console…</p>
+  </div>
+  <div id="gate-form" class="relative hidden w-[92%] max-w-sm glass-strong rounded-3xl p-8 ring-glow anim">
+    <div class="flex items-center gap-3 mb-6">
+      <img src="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" class="h-11 w-11 rounded-xl" alt="TNF" />
+      <div><div class="font-display font-extrabold text-lg leading-none">Board Console</div><div class="text-bright text-xs font-bold mt-1">Tyler Nicholas Foundation</div></div>
+    </div>
+    <label class="block text-xs font-semibold text-mist mb-1.5">Email</label>
+    <input id="li-email" type="email" autocomplete="username" class="fld mb-3" placeholder="you@tyler-nicholas-foundation.online">
+    <label class="block text-xs font-semibold text-mist mb-1.5">Password</label>
+    <input id="li-pass" type="password" autocomplete="current-password" class="fld mb-2" placeholder="••••••••">
+    <p id="li-msg" class="text-sm font-semibold text-red-400 min-h-[1.1em] mb-2"></p>
+    <button id="li-go" class="btn w-full py-3">Sign in</button>
+    <p class="text-faint text-xs text-center mt-4">Access is limited to the Board of Directors.</p>
+  </div>
+</div>
+
+<!-- ===== BACKGROUND (time-of-day) ===== -->
+<img id="bg" class="fixed inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000" alt="" style="z-index:0" onerror="this.style.display='none'">
+<div class="fixed inset-0" style="z-index:0;background:linear-gradient(180deg,rgba(7,19,16,.72),rgba(7,19,16,.82) 45%,rgba(7,19,16,.96))"></div>
+<div class="orb" style="width:340px;height:340px;background:#2E9E44;top:-60px;left:-40px;animation:drift1 26s ease-in-out infinite"></div>
+<div class="orb" style="width:300px;height:300px;background:#35D0C0;bottom:-80px;right:-40px;animation:drift2 30s ease-in-out infinite"></div>
+
+<!-- ===== APP ===== -->
+<div id="app" class="hidden relative" style="z-index:1">
+
+  <!-- HOME (game menu) -->
+  <section id="home" class="min-h-screen px-4 sm:px-6 md:px-10 pt-5 pb-16 max-w-7xl mx-auto">
+    <!-- top bar -->
+    <div class="flex items-center gap-3 anim">
+      <img src="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" class="h-10 w-10 rounded-xl" alt="TNF" />
+      <div class="leading-tight"><div class="font-display font-extrabold">Board Console</div><div class="text-bright text-[11px] font-bold">Tyler Nicholas Foundation</div></div>
+      <div class="ml-auto flex items-center gap-2">
+        <button id="h-bell" class="relative w-11 h-11 rounded-xl glass grid place-items-center text-mist hover:text-white transition-colors"><i class="fa-solid fa-bell"></i><span id="h-bell-dot" class="hidden absolute top-2 right-2 min-w-[16px] h-4 px-1 rounded-full bg-bright text-ink text-[10px] font-extrabold grid place-items-center"></span></button>
+        <button id="h-profile" class="flex items-center gap-2.5 pl-1.5 pr-3 py-1.5 rounded-xl glass hover:bg-white/10 transition-colors">
+          <span id="h-av" class="w-8 h-8 rounded-lg bg-brand grid place-items-center font-bold text-sm overflow-hidden"></span>
+          <span class="text-left leading-tight hidden sm:block"><span id="h-name" class="block text-sm font-semibold"></span><span id="h-role" class="block text-[11px] text-mist"></span></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- hero -->
+    <div class="mt-10 sm:mt-14 grid lg:grid-cols-[1.4fr_1fr] gap-8 items-end">
+      <div>
+        <div id="greet" class="anim text-mist font-semibold tracking-wide" style="animation-delay:.05s">Good evening,</div>
+        <h1 id="firstname" class="anim font-display text-5xl sm:text-6xl md:text-7xl font-extrabold leading-[0.95] mt-1" style="animation-delay:.12s">—</h1>
+        <p id="subtitle" class="anim text-mist mt-4 max-w-md" style="animation-delay:.2s"></p>
+        <div id="latest" class="anim hidden mt-6 glass rounded-2xl px-4 py-3 max-w-md flex items-center gap-3" style="animation-delay:.28s">
+          <span class="w-8 h-8 rounded-lg bg-bright/20 text-bright grid place-items-center flex-none"><i class="fa-solid fa-bolt text-sm"></i></span>
+          <div class="min-w-0"><div class="text-[11px] uppercase tracking-wider text-faint font-bold">Latest</div><div id="latest-txt" class="text-sm font-semibold truncate"></div></div>
+        </div>
+      </div>
+      <div class="anim glass-strong rounded-3xl p-6 ring-glow" style="animation-delay:.16s">
+        <div class="flex items-start justify-between">
+          <div>
+            <div id="clock" class="font-display text-5xl sm:text-6xl font-extrabold tabular-nums leading-none">--:--</div>
+            <div id="date" class="text-mist text-sm mt-2"></div>
+          </div>
+          <span class="relative"><span class="live relative block w-2.5 h-2.5 rounded-full bg-bright"></span></span>
+        </div>
+        <div id="wx" class="mt-5 pt-5 border-t border-white/10 grid grid-cols-2 gap-4 text-sm">
+          <div class="col-span-2 flex items-center gap-3">
+            <i id="wx-ic" class="fa-solid fa-location-crosshairs text-bright text-xl w-6 text-center"></i>
+            <div><div id="wx-temp" class="font-display text-2xl font-bold leading-none">--°</div><div id="wx-loc" class="text-mist text-xs mt-0.5">Locating…</div></div>
+          </div>
+          <div><div class="text-faint text-[11px] font-bold">FEELS LIKE</div><div id="wx-feels" class="font-semibold">—</div></div>
+          <div><div class="text-faint text-[11px] font-bold">AIR QUALITY</div><div id="wx-aqi" class="font-semibold">—</div></div>
+          <div><div class="text-faint text-[11px] font-bold">SUNRISE / SUNSET</div><div id="wx-sun" class="font-semibold">—</div></div>
+          <div><div class="text-faint text-[11px] font-bold">MOON</div><div id="wx-moon" class="font-semibold">—</div></div>
+          <div class="col-span-2 flex items-center gap-4 pt-1">
+            <span class="text-mist text-xs"><i id="dev-ic" class="fa-solid fa-desktop mr-1.5 text-bright"></i><span id="dev">Device</span></span>
+            <span id="bat-wrap" class="hidden text-mist text-xs"><i id="bat-ic" class="fa-solid fa-battery-half mr-1.5 text-bright"></i><span id="bat">—</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- stats ribbon -->
+    <div class="mt-9 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+      <div class="anim glass rounded-2xl p-4" style="animation-delay:.3s"><div class="text-bright text-2xl"><i class="fa-solid fa-list-check"></i></div><div class="stat font-display text-2xl font-extrabold mt-1" data-k="tasks">0</div><div class="text-faint text-[11px] font-bold mt-0.5">MY OPEN TASKS</div></div>
+      <div class="anim glass rounded-2xl p-4" style="animation-delay:.35s"><div class="text-bright text-2xl"><i class="fa-solid fa-bell"></i></div><div class="stat font-display text-2xl font-extrabold mt-1" data-k="unread">0</div><div class="text-faint text-[11px] font-bold mt-0.5">UNREAD ALERTS</div></div>
+      <div class="anim glass rounded-2xl p-4" style="animation-delay:.4s"><div class="text-bright text-2xl"><i class="fa-solid fa-handshake"></i></div><div class="stat font-display text-2xl font-extrabold mt-1" data-k="meetings">0</div><div class="text-faint text-[11px] font-bold mt-0.5">UPCOMING MEETINGS</div></div>
+      <div class="anim glass rounded-2xl p-4" style="animation-delay:.45s"><div class="text-aqua text-2xl"><i class="fa-solid fa-users"></i></div><div class="stat font-display text-2xl font-extrabold mt-1" data-k="board">0</div><div class="text-faint text-[11px] font-bold mt-0.5">BOARD MEMBERS</div></div>
+      <div class="anim glass rounded-2xl p-4" style="animation-delay:.5s"><div class="text-aqua text-2xl"><i class="fa-solid fa-compass"></i></div><div class="stat font-display text-2xl font-extrabold mt-1" data-k="opps">0</div><div class="text-faint text-[11px] font-bold mt-0.5">LIVE OPPORTUNITIES</div></div>
+      <div class="anim glass rounded-2xl p-4" style="animation-delay:.55s"><div class="text-aqua text-2xl"><i class="fa-solid fa-calendar-day"></i></div><div class="stat font-display text-2xl font-extrabold mt-1" data-k="events">0</div><div class="text-faint text-[11px] font-bold mt-0.5">UPCOMING EVENTS</div></div>
+    </div>
+
+    <!-- the menu -->
+    <div class="mt-11 flex items-center gap-3">
+      <h2 class="font-display text-xl font-bold sheen">Choose where to go</h2>
+      <div class="flex-1 h-px bg-white/10"></div>
+    </div>
+    <div id="menu" class="mt-5 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+  </section>
+
+  <!-- MODULE SHELL -->
+  <section id="mod" class="hidden min-h-screen">
+    <header class="sticky top-0 z-30 glass-strong border-b border-white/10">
+      <div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-3">
+        <button id="m-home" class="flex items-center gap-2.5 shrink-0 hover:opacity-80 transition-opacity">
+          <img src="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" class="h-9 w-9 rounded-lg" alt="TNF" />
+          <span class="font-display font-extrabold text-sm hidden sm:block">Console</span>
+        </button>
+        <div id="m-nav" class="flex items-center gap-1 overflow-x-auto no-scrollbar flex-1 px-1"></div>
+        <button id="m-bell" class="relative w-10 h-10 rounded-lg glass grid place-items-center text-mist hover:text-white shrink-0"><i class="fa-solid fa-bell"></i><span id="m-bell-dot" class="hidden absolute top-1.5 right-1.5 min-w-[15px] h-3.5 px-1 rounded-full bg-bright text-ink text-[9px] font-extrabold grid place-items-center"></span></button>
+        <button id="m-menu" class="w-10 h-10 rounded-lg glass grid place-items-center text-mist hover:text-white shrink-0" title="Back to menu"><i class="fa-solid fa-grip"></i></button>
+      </div>
+    </header>
+    <div class="max-w-7xl mx-auto px-4 py-6">
+      <div class="flex items-center justify-between gap-3 mb-5">
+        <div><h1 id="m-title" class="font-display text-2xl font-extrabold"></h1><p id="m-sub" class="text-mist text-sm"></p></div>
+        <button id="m-new" class="hidden btn px-4 py-2.5 text-sm"><i class="fa-solid fa-plus mr-1.5"></i>New</button>
+      </div>
+      <div id="content"></div>
+    </div>
+  </section>
+</div>
+
+<!-- notifications drawer -->
+<div id="notif-back" class="hidden fixed inset-0 bg-black/50 z-[60]"></div>
+<div id="notif-panel" class="fixed top-0 right-0 bottom-0 w-96 max-w-[88vw] glass-strong border-l border-white/10 z-[61] translate-x-full transition-transform overflow-y-auto">
+  <div class="flex items-center justify-between px-5 h-16 border-b border-white/10"><span class="font-display font-bold">Notifications</span><div class="flex items-center gap-2"><button id="notif-read" class="text-xs font-semibold text-bright">Mark all read</button><button id="notif-x" class="w-8 h-8 text-mist text-xl">&times;</button></div></div>
+  <div id="notif-list" class="p-3"></div>
+</div>
+
+<!-- modal -->
+<div id="modal" class="hidden fixed inset-0 z-[70] grid place-items-center p-4">
+  <div class="absolute inset-0 bg-black/60" id="modal-back"></div>
+  <div class="relative w-full max-w-lg glass-strong rounded-3xl ring-glow max-h-[88vh] overflow-y-auto" id="modal-box"></div>
+</div>
+
+<div id="toast" class="hidden fixed bottom-5 left-1/2 -translate-x-1/2 z-[90] px-4 py-2.5 rounded-xl text-sm font-semibold shadow-2xl"></div>
+
+<script>
+const SB_URL="https://mcnemlwalcgdlmclijxc.supabase.co";
+const SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jbmVtbHdhbGNnZGxtY2xpanhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5NDMzNTAsImV4cCI6MjEwMjUxOTM1MH0.jVPTsfz7Htho4EZKvHzlgr1vSkj41EuVpMBgaHzLm-Q";
+const $=id=>document.getElementById(id);
+const esc=s=>(s==null?'':String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const el=h=>{const t=document.createElement('template');t.innerHTML=h.trim();return t.content.firstChild;};
+function toast(m,ok=true){const t=$('toast');t.textContent=m;t.className='fixed bottom-5 left-1/2 -translate-x-1/2 z-[90] px-4 py-2.5 rounded-xl text-sm font-semibold shadow-2xl '+(ok?'bg-brand text-white':'bg-red-600 text-white');t.classList.remove('hidden');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.add('hidden'),3200);}
+let db, ME={}, CAPS=[], NOTIFS=[], LISTCTX=null;
+const POSTLABEL={chairman:'Chairman',vice_chairman:'Vice Chairman',secretary_general:'Secretary General',treasurer:'Treasurer',director_general:'Director General'};
+function roleLabel(p){ let base=POSTLABEL[p.post]||p.title||'Board member'; if(p.post==='director_general'&&p.portfolio) base+=' — '+p.portfolio; return base; }
+function can(cap){ if(!cap) return true; if(cap.indexOf('safeguarding')===0) return CAPS.includes(cap); return CAPS.includes('board.admin')||CAPS.includes(cap); }
+function initials(p){ return (((p&&(p.full_name||p.email))||'?').trim()[0]||'?').toUpperCase(); }
+function avatarInner(p){ return p&&p.avatar_url?`<img src="${esc(p.avatar_url)}" class="w-full h-full object-cover" alt="">`:esc(initials(p)); }
+
+/* ============ TIME OF DAY ============ */
+const IMG={morning:'https://images.locationscout.net/2021/02/seychelles-sunrise-seychelles.webp?h=1400&q=80',afternoon:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfT_IbDRhDEhVV_B3NzJBVSd74oltCtjU3CYhKuG0AePGyG_OYho9fBi8&s=10',evening:'https://admin.seychelles.com/sites/default/files/2024-05/305747087_6125303884164604_8640059309883641732_n.jpg',night:'https://media-cdn.tripadvisor.com/media/photo-s/04/79/22/5a/anse-soleil-beachcomber.jpg'};
+const SUB={morning:['A fresh start for the islands.','Set the tone for today.','Lead with intention.'],afternoon:['Keep the momentum going.','The work of the day is in full swing.','Steady hands, clear vision.'],evening:['Wind down and review the day.','A good evening to reflect.','The islands look beautiful right now.'],night:['Burning the midnight oil.','Quiet hours, big decisions.','Thank you for your service.']};
+function band(){ const h=new Date().getHours(); if(h>=5&&h<12)return['morning','Good morning,']; if(h>=12&&h<18)return['afternoon','Good afternoon,']; if(h>=18&&h<22)return['evening','Good evening,']; return['night','Good night,']; }
+
+/* ============ AUTH ============ */
+async function boot(){
+  db=supabase.createClient(SB_URL,SB_KEY);
+  const {data:{session}}=await db.auth.getSession();
+  if(session){ return afterAuth(session); }
+  $('gate-load').classList.add('hidden'); $('gate-form').classList.remove('hidden');
+  const go=async()=>{
+    const email=$('li-email').value.trim(), pass=$('li-pass').value, msg=$('li-msg'), b=$('li-go');
+    if(!email||!pass){ msg.textContent='Enter your email and password.'; return; }
+    b.disabled=true; b.innerHTML='<span class="btn-spin"></span>'; msg.textContent='';
+    const {data,error}=await db.auth.signInWithPassword({email,password:pass});
+    if(error){ msg.textContent=error.message||'Could not sign in.'; b.disabled=false; b.textContent='Sign in'; return; }
+    afterAuth(data.session);
+  };
+  $('li-go').addEventListener('click',go);
+  $('li-pass').addEventListener('keydown',e=>{if(e.key==='Enter')go();});
+}
+async function afterAuth(session){
+  let prof=null;
+  try{ const {data}=await db.from('profiles').select('*').eq('id',session.user.id).maybeSingle(); prof=data; }catch(e){}
+  if(!prof){ $('gate-load').classList.add('hidden'); $('gate-form').classList.remove('hidden'); $('li-msg').textContent='No profile found. Contact the Chairman.'; return; }
+  if(prof.is_active===false){ await db.auth.signOut(); $('li-msg').textContent='This account is inactive.'; $('gate-load').classList.add('hidden'); $('gate-form').classList.remove('hidden'); return; }
+  if(!prof.post){ await db.auth.signOut(); $('gate-load').classList.add('hidden'); $('gate-form').classList.remove('hidden'); $('li-msg').textContent='This console is for board members only.'; return; }
+  ME=prof; CAPS=prof.capabilities||[];
+  $('gate').classList.add('hidden'); $('app').classList.remove('hidden');
+  const av=$('h-av'); av.innerHTML=avatarInner(prof); if(prof.avatar_url)av.classList.remove('bg-brand');
+  $('h-name').textContent=(prof.full_name||'').split(' ')[0]||'You';
+  $('h-role').textContent=roleLabel(prof);
+  buildMenu(); buildModNav(); showHome();
+  wireChrome(); loadNotifs(); initNotifRealtime();
+}
+
+/* ============ MODULES ============ */
+const MODULES=[
+  {key:'directory',label:'Directory',desc:'Board contacts',icon:'fa-address-book'},
+  {key:'tasks',label:'My Tasks',desc:'Your action items',icon:'fa-list-check'},
+  {key:'meetings',label:'Meetings',desc:'Agendas & minutes',icon:'fa-handshake'},
+  {key:'calendar',label:'Calendar',desc:"What's coming up",icon:'fa-calendar-day'},
+  {key:'notices',label:'Notices',desc:'Board announcements',icon:'fa-bullhorn'},
+  {key:'documents',label:'Documents',desc:'Board library',icon:'fa-folder-open'},
+  {key:'reports',label:'Portfolio Reports',desc:'Director updates',icon:'fa-chart-line'},
+  {key:'content',label:'Website',desc:'Manage the site',icon:'fa-layer-group',cap:'content.manage'},
+  {key:'hr',label:'People / HR',desc:'Staff & applications',icon:'fa-users-gear',cap:'hr.manage'},
+  {key:'finance',label:'Finance',desc:'Budgets & expenses',icon:'fa-coins',cap:'finance.manage'},
+  {key:'talent',label:'Talent',desc:'Recruitment pipeline',icon:'fa-user-plus',cap:'talent.manage'},
+  {key:'profile',label:'My Profile',desc:'Your details',icon:'fa-id-card'},
+];
+const allowed=()=>MODULES.filter(m=>can(m.cap));
+
+function buildMenu(){
+  const wrap=$('menu'); wrap.innerHTML='';
+  allowed().forEach((m,i)=>{
+    const t=el(`<button data-k="${m.key}" class="tile group text-left glass rounded-2xl p-5 anim" style="animation-delay:${(.5+i*.06).toFixed(2)}s">
+      <div class="tIcon w-12 h-12 rounded-xl grid place-items-center text-xl mb-4" style="background:rgba(64,211,104,.14);color:#8df0a6"><i class="fa-solid ${m.icon}"></i></div>
+      <div class="font-display font-bold text-lg leading-tight">${m.label}</div>
+      <div class="text-mist text-xs mt-1">${m.desc}</div>
+      <div class="mt-4 text-bright text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity">Open <i class="fa-solid fa-arrow-right-long ml-1"></i></div>
+    </button>`);
+    t.addEventListener('click',()=>openModule(m.key));
+    wrap.appendChild(t);
+  });
+}
+function buildModNav(){
+  const nav=$('m-nav'); nav.innerHTML='';
+  allowed().forEach(m=>{
+    const b=el(`<button data-k="${m.key}" class="navpill shrink-0 flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold text-mist hover:text-white"><i class="fa-solid ${m.icon}"></i><span class="hidden md:inline">${m.label}</span></button>`);
+    b.addEventListener('click',()=>openModule(m.key));
+    nav.appendChild(b);
+  });
+}
+
+/* ============ HOME LIVE DATA ============ */
+let clockTimer=null;
+function showHome(){
+  $('mod').classList.add('hidden'); $('home').classList.remove('hidden');
+  const [b,g]=band();
+  const bg=$('bg'); bg.src=IMG[b]; bg.style.opacity=.5;
+  $('greet').textContent=g;
+  $('firstname').textContent=(ME.full_name||'').split(' ')[0]||'there';
+  $('subtitle').textContent=SUB[b][Math.floor(Math.random()*SUB[b].length)];
+  startClock(); loadWeather(); loadDevice(); loadHomeStats(); paintLatest();
+}
+function startClock(){ if(clockTimer)clearInterval(clockTimer);
+  const t=()=>{ const d=new Date(); $('clock').textContent=d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); $('date').textContent=d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'}); };
+  t(); clockTimer=setInterval(t,15000);
+}
+function countTo(node,val){ const start=+node.textContent||0, dur=800, t0=performance.now();
+  const step=t=>{ const p=Math.min(1,(t-t0)/dur); node.textContent=Math.round(start+(val-start)*(1-Math.pow(1-p,3))); if(p<1)requestAnimationFrame(step); }; requestAnimationFrame(step);
+}
+async function loadHomeStats(){
+  const set=(k,v)=>{ const n=document.querySelector(`.stat[data-k="${k}"]`); if(n)countTo(n,v||0); };
+  try{ const {data}=await db.from('tasks').select('status,assignee_id,created_by'); const open=(data||[]).filter(t=>!['done','completed','cancelled'].includes((t.status||'').toLowerCase())); set('tasks',open.length); }catch(e){}
+  try{ const {count}=await db.from('notifications').select('*',{count:'exact',head:true}).eq('user_id',ME.id).eq('is_read',false); set('unread',count||0); }catch(e){}
+  const nowISO=new Date().toISOString();
+  try{ const {count}=await db.from('meetings').select('*',{count:'exact',head:true}).gte('scheduled_at',nowISO); set('meetings',count||0); }catch(e){}
+  try{ const {count}=await db.from('profiles').select('*',{count:'exact',head:true}).not('post','is',null); set('board',count||0); }catch(e){}
+  try{ const {count}=await db.from('opportunities').select('*',{count:'exact',head:true}).eq('is_published',true); set('opps',count||0); }catch(e){}
+  try{ const {count}=await db.from('events').select('*',{count:'exact',head:true}).eq('is_published',true).gte('starts_at',nowISO); set('events',count||0); }catch(e){}
+}
+function paintLatest(){ const n=NOTIFS[0]; if(n){ $('latest').classList.remove('hidden'); $('latest-txt').textContent=n.title; } else $('latest').classList.add('hidden'); }
+
+const WMO={0:['Clear','fa-sun'],1:['Mainly clear','fa-sun'],2:['Partly cloudy','fa-cloud-sun'],3:['Overcast','fa-cloud'],45:['Fog','fa-smog'],48:['Fog','fa-smog'],51:['Drizzle','fa-cloud-rain'],53:['Drizzle','fa-cloud-rain'],55:['Drizzle','fa-cloud-rain'],61:['Rain','fa-cloud-showers-heavy'],63:['Rain','fa-cloud-showers-heavy'],65:['Heavy rain','fa-cloud-showers-heavy'],71:['Snow','fa-snowflake'],80:['Showers','fa-cloud-rain'],81:['Showers','fa-cloud-rain'],82:['Showers','fa-cloud-showers-heavy'],95:['Storm','fa-cloud-bolt'],96:['Storm','fa-cloud-bolt'],99:['Storm','fa-cloud-bolt']};
+function aqiLabel(v){ if(v==null)return['—','']; if(v<=20)return['Good','#40D368']; if(v<=40)return['Fair','#8ED44B']; if(v<=60)return['Moderate','#F2C14E']; if(v<=80)return['Poor','#F09A4E']; if(v<=100)return['Very poor','#EF6B6B']; return['Hazardous','#D14D6B']; }
+function moonPhase(date){ const lp=2551443, newRef=Date.UTC(1970,0,7,20,35,0)/1000, now=date.getTime()/1000; let ph=((now-newRef)%lp)/lp; if(ph<0)ph+=1; const i=Math.round(ph*8)%8; return ['New moon','Waxing crescent','First quarter','Waxing gibbous','Full moon','Waning gibbous','Last quarter','Waning crescent'][i]; }
+async function loadWeather(){
+  const run=async(lat,lon,label)=>{
+    try{
+      const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,weather_code&daily=sunrise,sunset&timezone=auto`);
+      const j=await r.json(); const c=j.current, w=WMO[c.weather_code]||['',''];
+      $('wx-temp').innerHTML=Math.round(c.temperature_2m)+'&deg;'; $('wx-feels').innerHTML=Math.round(c.apparent_temperature)+'&deg;'+(w[0]?' · '+w[0]:'');
+      if(w[1])$('wx-ic').className='fa-solid '+w[1]+' text-bright text-xl w-6 text-center';
+      let loc=label; if(!loc){ try{ const g=await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`); const gj=await g.json(); loc=gj.city||gj.locality||gj.principalSubdivision||gj.countryName||''; }catch(e){} }
+      $('wx-loc').textContent=loc||'Your location';
+      if(j.daily&&j.daily.sunrise){ const sr=new Date(j.daily.sunrise[0]).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); const ss=new Date(j.daily.sunset[0]).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); $('wx-sun').textContent=sr+' / '+ss; }
+      $('wx-moon').textContent=moonPhase(new Date());
+    }catch(e){ $('wx-loc').textContent='Weather unavailable'; }
+    try{
+      const a=await fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=european_aqi`);
+      const aj=await a.json(); const v=aj.current&&aj.current.european_aqi; const [lab,col]=aqiLabel(v);
+      $('wx-aqi').innerHTML=v!=null?`${v} <span style="color:${col}">${lab}</span>`:'—';
+    }catch(e){}
+  };
+  if(navigator.geolocation){ navigator.geolocation.getCurrentPosition(p=>run(p.coords.latitude,p.coords.longitude,null),()=>run(-4.6167,55.45,'Victoria, Seychelles'),{timeout:8000,maximumAge:600000}); }
+  else run(-4.6167,55.45,'Victoria, Seychelles');
+}
+function loadDevice(){
+  const ua=navigator.userAgent; let type='Desktop',ic='fa-desktop';
+  if(/iPad|Tablet|PlayBook|Silk/i.test(ua)||(/Android/i.test(ua)&&!/Mobile/i.test(ua))){type='Tablet';ic='fa-tablet-screen-button';}
+  else if(/Mobi|iPhone|Android|iPod/i.test(ua)){type='Phone';ic='fa-mobile-screen-button';}
+  $('dev').textContent=type; $('dev-ic').className='fa-solid '+ic+' mr-1.5 text-bright';
+  if(navigator.getBattery){ navigator.getBattery().then(b=>{ const upd=()=>{ $('bat-wrap').classList.remove('hidden'); const pct=Math.round(b.level*100); $('bat').textContent=pct+'%'+(b.charging?' · charging':''); const lvl=b.level; $('bat-ic').className='fa-solid '+(b.charging?'fa-battery-bolt':lvl>.66?'fa-battery-full':lvl>.33?'fa-battery-half':'fa-battery-quarter')+' mr-1.5 text-bright'; }; upd(); b.addEventListener('levelchange',upd); b.addEventListener('chargingchange',upd); }).catch(()=>{}); }
+}
+
+/* ============ NOTIFICATIONS ============ */
+const NIC={task:'fa-list-check',meeting:'fa-handshake',announcement:'fa-bullhorn',general:'fa-bell'};
+function timeAgo(t){ const s=(Date.now()-new Date(t))/1000; if(s<60)return'just now'; if(s<3600)return Math.floor(s/60)+'m ago'; if(s<86400)return Math.floor(s/3600)+'h ago'; return Math.floor(s/86400)+'d ago'; }
+async function loadNotifs(){ try{ const {data}=await db.from('notifications').select('*').eq('user_id',ME.id).order('created_at',{ascending:false}).limit(30); NOTIFS=data||[]; }catch(e){ NOTIFS=[]; } paintNotif(); paintLatest(); }
+function paintNotif(){
+  const n=NOTIFS.filter(x=>!x.is_read).length;
+  [['h-bell-dot'],['m-bell-dot']].forEach(([id])=>{ const d=$(id); if(!d)return; if(n>0){d.textContent=n>9?'9+':n;d.classList.remove('hidden');}else d.classList.add('hidden'); });
+  const list=$('notif-list');
+  if(!NOTIFS.length){ list.innerHTML='<div class="text-center text-faint text-sm py-10">No notifications yet.</div>'; return; }
+  list.innerHTML=NOTIFS.map(x=>`<button data-id="${x.id}" class="ni w-full text-left flex gap-3 p-3 rounded-xl mb-1 ${x.is_read?'':'bg-white/5'} hover:bg-white/10 transition-colors">
+    <span class="w-8 h-8 rounded-lg bg-bright/15 text-bright grid place-items-center flex-none text-sm"><i class="fa-solid ${NIC[x.type]||NIC.general}"></i></span>
+    <span class="min-w-0 flex-1"><span class="block text-sm font-semibold truncate">${esc(x.title)}</span>${x.body?`<span class="block text-xs text-mist line-clamp-2">${esc(x.body)}</span>`:''}<span class="block text-[11px] text-faint mt-0.5">${timeAgo(x.created_at)}</span></span>
+    ${x.is_read?'':'<span class="w-2 h-2 rounded-full bg-bright flex-none mt-1.5"></span>'}</button>`).join('');
+  list.querySelectorAll('.ni').forEach(b=>b.addEventListener('click',async()=>{ const it=NOTIFS.find(x=>x.id===b.dataset.id); if(it&&!it.is_read){ it.is_read=true; paintNotif(); try{await db.from('notifications').update({is_read:true}).eq('id',it.id);}catch(e){} } }));
+}
+async function markAllRead(){ const un=NOTIFS.filter(x=>!x.is_read).map(x=>x.id); if(!un.length)return; NOTIFS.forEach(x=>x.is_read=true); paintNotif(); paintLatest(); try{await db.from('notifications').update({is_read:true}).in('id',un);}catch(e){} }
+function openNotif(){ $('notif-back').classList.remove('hidden'); $('notif-panel').classList.remove('translate-x-full'); }
+function closeNotif(){ $('notif-back').classList.add('hidden'); $('notif-panel').classList.add('translate-x-full'); }
+function initNotifRealtime(){ try{ db.channel('n-'+ME.id).on('postgres_changes',{event:'INSERT',schema:'public',table:'notifications',filter:'user_id=eq.'+ME.id},p=>{ NOTIFS.unshift(p.new); if(NOTIFS.length>30)NOTIFS.pop(); paintNotif(); paintLatest(); toast(p.new.title); }).subscribe(); }catch(e){} setInterval(loadNotifs,45000); }
+
+function wireChrome(){
+  $('h-bell').addEventListener('click',openNotif); $('m-bell').addEventListener('click',openNotif);
+  $('notif-x').addEventListener('click',closeNotif); $('notif-back').addEventListener('click',closeNotif);
+  $('notif-read').addEventListener('click',markAllRead);
+  $('h-profile').addEventListener('click',()=>openModule('profile'));
+  $('m-home').addEventListener('click',showHome); $('m-menu').addEventListener('click',showHome);
+  $('modal-back').addEventListener('click',closeModal);
+}
+
+/* ============ MODAL ============ */
+function openModal(html){ $('modal-box').innerHTML=html; $('modal').classList.remove('hidden'); }
+function closeModal(){ $('modal').classList.add('hidden'); $('modal-box').innerHTML=''; }
+
+/* ============ ROUTER ============ */
+function openModule(key){
+  if(clockTimer){clearInterval(clockTimer);clockTimer=null;}
+  $('home').classList.add('hidden'); $('mod').classList.remove('hidden'); window.scrollTo(0,0);
+  document.querySelectorAll('#m-nav .navpill').forEach(n=>n.classList.toggle('on',n.dataset.k===key));
+  const m=MODULES.find(x=>x.key===key)||{}; $('m-title').textContent=m.label||''; $('m-sub').textContent=m.desc||'';
+  const nb=$('m-new'); nb.classList.add('hidden'); nb.onclick=null;
+  const c=$('content'); c.innerHTML='<div class="text-center text-faint py-16"><div class="loader mx-auto"></div></div>';
+  if(key==='directory')return renderDirectory(c);
+  if(key==='tasks')return renderTasks(c,nb);
+  if(key==='meetings')return renderMeetings(c,nb);
+  if(key==='calendar')return renderCalendar(c);
+  if(key==='reports')return renderReports(c,nb);
+  if(key==='profile')return renderProfile(c);
+  if(key==='content')return renderTabs(c,nb,['ct_opportunities','ct_programs','ct_news','ct_events','ct_partners','ct_resources','ct_faqs','ct_impact','ct_team','ct_departments','notices']);
+  if(key==='hr')return renderTabs(c,nb,['staff','vol_apps','job_posts','job_apps','leave']);
+  if(key==='finance')return renderTabs(c,nb,['budgets','expenses','donations']);
+  if(key==='talent')return renderTabs(c,nb,['candidates','positions']);
+  if(RES[key])return renderList(key,c,nb);
+}
+
+/* ============ DIRECTORY ============ */
+async function renderDirectory(c){
+  let rows=[]; try{ const {data}=await db.from('profiles').select('*').not('post','is',null); rows=data||[]; }catch(e){}
+  const order=['chairman','vice_chairman','secretary_general','treasurer','director_general'];
+  rows.sort((a,b)=>order.indexOf(a.post)-order.indexOf(b.post));
+  if(!rows.length){ c.innerHTML='<div class="card p-10 text-center text-faint">No board members yet.</div>'; return; }
+  const wa=p=>p.phone?('https://wa.me/'+p.phone.replace(/[^0-9]/g,'')):null;
+  c.innerHTML='<div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">'+rows.map(p=>`
+    <div class="card p-5">
+      <div class="flex items-center gap-4">
+        <span class="w-14 h-14 rounded-xl ${p.avatar_url?'':'bg-brand'} grid place-items-center font-bold text-lg overflow-hidden flex-none">${avatarInner(p)}</span>
+        <div class="min-w-0"><div class="font-display font-bold truncate">${esc(p.full_name||'')}</div><div class="text-bright text-xs font-semibold">${esc(roleLabel(p))}</div>${p.email?`<div class="text-mist text-xs truncate mt-0.5">${esc(p.email)}</div>`:''}</div>
+      </div>
+      <div class="grid grid-cols-3 gap-2 mt-4">
+        ${p.email?`<a href="mailto:${esc(p.email)}" class="btn-ghost text-xs font-semibold py-2 text-center"><i class="fa-solid fa-envelope"></i><div class="mt-0.5">Email</div></a>`:'<span></span>'}
+        ${p.phone?`<a href="tel:${esc(p.phone)}" class="btn-ghost text-xs font-semibold py-2 text-center"><i class="fa-solid fa-phone"></i><div class="mt-0.5">Call</div></a>`:'<span></span>'}
+        ${wa(p)?`<a href="${wa(p)}" target="_blank" rel="noopener" class="btn-ghost text-xs font-semibold py-2 text-center"><i class="fa-brands fa-whatsapp"></i><div class="mt-0.5">WhatsApp</div></a>`:'<span></span>'}
+      </div>
+    </div>`).join('')+'</div>';
+}
+
+/* ============ MY TASKS ============ */
+async function renderTasks(c,nb){
+  nb.classList.remove('hidden'); nb.onclick=()=>taskForm();
+  let rows=[]; try{ const {data}=await db.from('tasks').select('*').order('due_date',{ascending:true,nullsFirst:false}); rows=data||[]; }catch(e){}
+  const open=rows.filter(t=>!['done','completed','cancelled'].includes((t.status||'').toLowerCase()));
+  const done=rows.filter(t=>['done','completed','cancelled'].includes((t.status||'').toLowerCase()));
+  const row=t=>{ const isDone=['done','completed','cancelled'].includes((t.status||'').toLowerCase());
+    return `<div class="card p-4 flex items-center gap-3">
+      <button class="tg w-6 h-6 rounded-md border-2 ${isDone?'bg-bright border-bright text-ink':'border-white/25'} grid place-items-center flex-none" data-id="${t.id}" data-done="${isDone}">${isDone?'<i class="fa-solid fa-check text-xs"></i>':''}</button>
+      <div class="flex-1 min-w-0"><div class="font-semibold ${isDone?'line-through text-faint':''} truncate">${esc(t.title)}</div>${t.description?`<div class="text-mist text-xs truncate">${esc(t.description)}</div>`:''}</div>
+      ${t.due_date?`<span class="text-xs ${!isDone&&new Date(t.due_date)<new Date()?'text-red-400':'text-mist'} font-semibold">${new Date(t.due_date).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</span>`:''}
+      <button class="del text-faint hover:text-red-400 px-1" data-id="${t.id}"><i class="fa-solid fa-trash-can text-sm"></i></button>
+    </div>`; };
+  c.innerHTML=(open.length?`<div class="space-y-2">${open.map(row).join('')}</div>`:'<div class="card p-10 text-center text-faint">No open tasks. Enjoy the calm, or add one.</div>')
+    +(done.length?`<div class="text-faint text-xs font-bold mt-6 mb-2">DONE</div><div class="space-y-2 opacity-70">${done.map(row).join('')}</div>`:'');
+  c.querySelectorAll('.tg').forEach(b=>b.addEventListener('click',async()=>{ const nd=b.dataset.done==='true'?'todo':'done'; try{await db.from('tasks').update({status:nd}).eq('id',b.dataset.id); renderTasks(c,nb);}catch(e){toast(e.message,false);} }));
+  c.querySelectorAll('.del').forEach(b=>b.addEventListener('click',async()=>{ if(!confirm('Delete this task?'))return; try{await db.from('tasks').delete().eq('id',b.dataset.id); renderTasks(c,nb);}catch(e){toast(e.message,false);} }));
+}
+async function taskForm(){
+  let people=[]; try{ const {data}=await db.from('profiles').select('id,full_name,post').not('post','is',null); people=data||[]; }catch(e){}
+  openModal(`<div class="p-6"><h3 class="font-display font-bold text-lg mb-4">New task</h3>
+    <label class="block text-xs font-semibold text-mist mb-1.5">Task</label><input id="t-title" class="fld mb-3" placeholder="What needs doing?">
+    <label class="block text-xs font-semibold text-mist mb-1.5">Details</label><textarea id="t-desc" rows="2" class="fld mb-3"></textarea>
+    <div class="grid grid-cols-2 gap-3 mb-3">
+      <div><label class="block text-xs font-semibold text-mist mb-1.5">Assign to</label><select id="t-who" class="fld"><option value="${ME.id}">Myself</option>${people.filter(p=>p.id!==ME.id).map(p=>`<option value="${p.id}">${esc(p.full_name||'')}</option>`).join('')}</select></div>
+      <div><label class="block text-xs font-semibold text-mist mb-1.5">Due date</label><input id="t-due" type="date" class="fld"></div>
+    </div>
+    <div class="flex justify-end gap-2 mt-2"><button class="btn-ghost px-4 py-2.5 text-sm" onclick="closeModal()">Cancel</button><button id="t-save" class="btn px-5 py-2.5 text-sm">Add task</button></div></div>`);
+  $('t-save').addEventListener('click',async()=>{ const title=$('t-title').value.trim(); if(!title){toast('Give the task a title',false);return;}
+    const b=$('t-save'); b.disabled=true; b.innerHTML='<span class="btn-spin"></span>';
+    try{ await db.from('tasks').insert({title,description:$('t-desc').value.trim()||null,assignee_id:$('t-who').value,due_date:$('t-due').value||null,created_by:ME.id,status:'todo'}); closeModal(); openModule('tasks'); }
+    catch(e){ toast(e.message||'Could not save',false); b.disabled=false; b.textContent='Add task'; } });
+}
+
+/* ============ MEETINGS ============ */
+async function renderMeetings(c,nb){
+  if(can('meetings.manage')){ nb.classList.remove('hidden'); nb.onclick=()=>meetingForm(); }
+  let rows=[]; try{ const {data}=await db.from('meetings').select('*').order('scheduled_at',{ascending:false}); rows=data||[]; }catch(e){}
+  if(!rows.length){ c.innerHTML='<div class="card p-10 text-center text-faint">No meetings scheduled.</div>'; return; }
+  const now=new Date();
+  c.innerHTML='<div class="space-y-3">'+rows.map(m=>{ const dt=m.scheduled_at?new Date(m.scheduled_at):null, up=dt&&dt>=now;
+    return `<button class="mtg w-full text-left card p-5 hover:border-white/20 transition-colors" data-id="${m.id}">
+      <div class="flex items-center gap-3">
+        <span class="w-12 h-12 rounded-xl ${up?'bg-bright/15 text-bright':'bg-white/5 text-mist'} grid place-items-center flex-none"><i class="fa-solid fa-handshake"></i></span>
+        <div class="flex-1 min-w-0"><div class="font-display font-bold truncate">${esc(m.title)}</div><div class="text-mist text-xs">${dt?dt.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'})+' · '+dt.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}):'Date TBC'}${m.location?' · '+esc(m.location):''}</div></div>
+        <span class="text-xs font-bold px-2.5 py-1 rounded-full ${up?'bg-bright/15 text-bright':'bg-white/5 text-faint'}">${up?'Upcoming':'Past'}</span>
+      </div></button>`; }).join('')+'</div>';
+  c.querySelectorAll('.mtg').forEach(b=>b.addEventListener('click',()=>meetingDetail(rows.find(m=>m.id===b.dataset.id))));
+}
+function gcalLink(m){ const s=m.scheduled_at?new Date(m.scheduled_at):null; if(!s)return null; const e=m.ends_at?new Date(m.ends_at):new Date(s.getTime()+3600000); const f=d=>d.toISOString().replace(/[-:]/g,'').split('.')[0]+'Z'; return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(m.title||'')}&dates=${f(s)}/${f(e)}&details=${encodeURIComponent(m.agenda||'')}&location=${encodeURIComponent(m.location||'')}`; }
+async function meetingDetail(m){
+  const g=gcalLink(m); const dt=m.scheduled_at?new Date(m.scheduled_at):null;
+  openModal(`<div class="p-6">
+    <div class="text-bright text-xs font-bold">${dt?dt.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})+' · '+dt.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}):'Date TBC'}</div>
+    <h3 class="font-display font-extrabold text-xl mt-1">${esc(m.title)}</h3>
+    ${m.location?`<div class="text-mist text-sm mt-1"><i class="fa-solid fa-location-dot mr-1.5"></i>${esc(m.location)}</div>`:''}
+    ${m.agenda?`<div class="mt-4"><div class="text-faint text-xs font-bold mb-1">AGENDA</div><div class="text-sm whitespace-pre-wrap text-mist">${esc(m.agenda)}</div></div>`:''}
+    ${m.minutes?`<div class="mt-4"><div class="text-faint text-xs font-bold mb-1">MINUTES</div><div class="text-sm whitespace-pre-wrap text-mist">${esc(m.minutes)}</div></div>`:''}
+    <div class="flex gap-2 mt-6">${g?`<a href="${g}" target="_blank" rel="noopener" class="btn-ghost px-4 py-2.5 text-sm font-semibold"><i class="fa-brands fa-google mr-1.5"></i>Add to Google Calendar</a>`:''}<button class="btn-ghost px-4 py-2.5 text-sm ml-auto" onclick="closeModal()">Close</button></div>
+  </div>`);
+}
+async function meetingForm(){
+  let people=[]; try{ const {data}=await db.from('profiles').select('id,full_name').not('post','is',null); people=data||[]; }catch(e){}
+  openModal(`<div class="p-6"><h3 class="font-display font-bold text-lg mb-4">Schedule a meeting</h3>
+    <label class="block text-xs font-semibold text-mist mb-1.5">Title</label><input id="mt-title" class="fld mb-3" placeholder="Board meeting">
+    <div class="grid grid-cols-2 gap-3 mb-3"><div><label class="block text-xs font-semibold text-mist mb-1.5">Date & time</label><input id="mt-when" type="datetime-local" class="fld"></div><div><label class="block text-xs font-semibold text-mist mb-1.5">Location</label><input id="mt-loc" class="fld" placeholder="Boardroom / online link"></div></div>
+    <label class="block text-xs font-semibold text-mist mb-1.5">Agenda</label><textarea id="mt-agenda" rows="3" class="fld mb-3"></textarea>
+    <label class="block text-xs font-semibold text-mist mb-1.5">Invite</label><div class="grid grid-cols-2 gap-1.5 mb-3 max-h-32 overflow-y-auto">${people.map(p=>`<label class="flex items-center gap-2 text-sm"><input type="checkbox" class="mt-inv accent-bright" value="${p.id}" ${p.id===ME.id?'checked':''}>${esc(p.full_name||'')}</label>`).join('')}</div>
+    <div class="flex justify-end gap-2"><button class="btn-ghost px-4 py-2.5 text-sm" onclick="closeModal()">Cancel</button><button id="mt-save" class="btn px-5 py-2.5 text-sm">Schedule</button></div></div>`);
+  $('mt-save').addEventListener('click',async()=>{ const title=$('mt-title').value.trim(); if(!title){toast('Add a title',false);return;}
+    const b=$('mt-save'); b.disabled=true; b.innerHTML='<span class="btn-spin"></span>';
+    try{ const {data,error}=await db.from('meetings').insert({title,scheduled_at:$('mt-when').value||null,location:$('mt-loc').value.trim()||null,agenda:$('mt-agenda').value.trim()||null,created_by:ME.id}).select('id').single(); if(error)throw error;
+      const inv=[...document.querySelectorAll('.mt-inv:checked')].map(x=>({meeting_id:data.id,profile_id:x.value})); if(inv.length){ await db.from('meeting_attendees').insert(inv); }
+      closeModal(); openModule('meetings'); }
+    catch(e){ toast(e.message||'Could not save',false); b.disabled=false; b.textContent='Schedule'; } });
+}
+
+/* ============ CALENDAR ============ */
+let calRef=new Date();
+async function renderCalendar(c){
+  const y=calRef.getFullYear(), mo=calRef.getMonth();
+  const first=new Date(y,mo,1), start=new Date(first); start.setDate(1-((first.getDay()+6)%7));
+  const items={};
+  const add=(d,label,type)=>{ const k=d.toISOString().slice(0,10); (items[k]=items[k]||[]).push({label,type}); };
+  try{ const {data}=await db.from('meetings').select('title,scheduled_at').not('scheduled_at','is',null); (data||[]).forEach(m=>add(new Date(m.scheduled_at),m.title,'m')); }catch(e){}
+  try{ const {data}=await db.from('events').select('title,starts_at').eq('is_published',true).not('starts_at','is',null); (data||[]).forEach(ev=>add(new Date(ev.starts_at),ev.title,'e')); }catch(e){}
+  let cells=''; const today=new Date().toISOString().slice(0,10);
+  for(let i=0;i<42;i++){ const d=new Date(start); d.setDate(start.getDate()+i); const k=d.toISOString().slice(0,10); const out=d.getMonth()!==mo; const its=items[k]||[];
+    cells+=`<div class="min-h-[84px] rounded-lg border border-white/6 p-1.5 ${out?'opacity-35':''} ${k===today?'ring-1 ring-bright':''}">
+      <div class="text-xs font-semibold ${k===today?'text-bright':'text-mist'}">${d.getDate()}</div>
+      ${its.slice(0,3).map(it=>`<div class="mt-1 text-[10px] font-semibold px-1.5 py-0.5 rounded ${it.type==='m'?'bg-bright/15 text-bright':'bg-aqua/15 text-aqua'} truncate">${esc(it.label)}</div>`).join('')}
+      ${its.length>3?`<div class="text-[10px] text-faint mt-0.5">+${its.length-3}</div>`:''}
+    </div>`; }
+  c.innerHTML=`<div class="card p-4">
+    <div class="flex items-center justify-between mb-4"><button id="cal-prev" class="btn-ghost w-9 h-9"><i class="fa-solid fa-chevron-left"></i></button>
+      <div class="font-display font-bold text-lg">${calRef.toLocaleDateString('en-GB',{month:'long',year:'numeric'})}</div>
+      <button id="cal-next" class="btn-ghost w-9 h-9"><i class="fa-solid fa-chevron-right"></i></button></div>
+    <div class="grid grid-cols-7 gap-1.5 mb-1.5 text-center text-[11px] font-bold text-faint">${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d=>`<div>${d}</div>`).join('')}</div>
+    <div class="grid grid-cols-7 gap-1.5">${cells}</div>
+    <div class="flex gap-4 mt-4 text-xs text-mist"><span><span class="inline-block w-3 h-3 rounded bg-bright/40 mr-1.5 align-middle"></span>Meetings</span><span><span class="inline-block w-3 h-3 rounded bg-aqua/40 mr-1.5 align-middle"></span>Events</span></div>
+  </div>`;
+  $('cal-prev').addEventListener('click',()=>{calRef=new Date(y,mo-1,1);renderCalendar(c);});
+  $('cal-next').addEventListener('click',()=>{calRef=new Date(y,mo+1,1);renderCalendar(c);});
+}
+
+/* ============ PORTFOLIO REPORTS ============ */
+async function renderReports(c,nb){
+  nb.classList.remove('hidden'); nb.onclick=()=>reportForm();
+  let rows=[]; try{ const {data}=await db.from('portfolio_reports').select('*').order('created_at',{ascending:false}); rows=data||[]; }catch(e){}
+  let names={}; try{ const {data}=await db.from('profiles').select('id,full_name'); (data||[]).forEach(p=>names[p.id]=p.full_name); }catch(e){}
+  if(!rows.length){ c.innerHTML='<div class="card p-10 text-center text-faint">No reports yet. Directors can post an update.</div>'; return; }
+  c.innerHTML='<div class="space-y-3">'+rows.map(r=>`<div class="card p-5">
+    <div class="flex items-center justify-between gap-3"><div><div class="font-display font-bold">${esc(r.title)}</div><div class="text-mist text-xs">${esc(r.portfolio||'')}${r.period?' · '+esc(r.period):''} · ${esc(names[r.author_id]||'')}</div></div>${r.author_id===ME.id?`<button class="rdel text-faint hover:text-red-400 px-1" data-id="${r.id}"><i class="fa-solid fa-trash-can text-sm"></i></button>`:''}</div>
+    ${r.highlights?`<div class="mt-3 text-sm"><span class="text-bright font-semibold">Highlights: </span><span class="text-mist">${esc(r.highlights)}</span></div>`:''}
+    ${r.challenges?`<div class="mt-1 text-sm"><span class="text-gold font-semibold">Challenges: </span><span class="text-mist">${esc(r.challenges)}</span></div>`:''}
+    ${r.needs?`<div class="mt-1 text-sm"><span class="text-aqua font-semibold">Needs: </span><span class="text-mist">${esc(r.needs)}</span></div>`:''}
+    ${r.figures?`<div class="mt-1 text-sm text-mist">${esc(r.figures)}</div>`:''}
+  </div>`).join('')+'</div>';
+  c.querySelectorAll('.rdel').forEach(b=>b.addEventListener('click',async()=>{ if(!confirm('Delete this report?'))return; try{await db.from('portfolio_reports').delete().eq('id',b.dataset.id);renderReports(c,nb);}catch(e){toast(e.message,false);} }));
+}
+function reportForm(){
+  openModal(`<div class="p-6"><h3 class="font-display font-bold text-lg mb-4">Post a portfolio update</h3>
+    <div class="grid grid-cols-2 gap-3 mb-3"><div><label class="block text-xs font-semibold text-mist mb-1.5">Title</label><input id="r-title" class="fld" placeholder="September update"></div><div><label class="block text-xs font-semibold text-mist mb-1.5">Period</label><input id="r-period" class="fld" placeholder="September 2026"></div></div>
+    <label class="block text-xs font-semibold text-mist mb-1.5">Portfolio</label><input id="r-portfolio" class="fld mb-3" value="${esc(ME.portfolio||'')}" placeholder="Your area">
+    <label class="block text-xs font-semibold text-mist mb-1.5">Highlights</label><textarea id="r-high" rows="2" class="fld mb-3"></textarea>
+    <label class="block text-xs font-semibold text-mist mb-1.5">Challenges</label><textarea id="r-chal" rows="2" class="fld mb-3"></textarea>
+    <label class="block text-xs font-semibold text-mist mb-1.5">What you need</label><textarea id="r-needs" rows="2" class="fld mb-3"></textarea>
+    <label class="block text-xs font-semibold text-mist mb-1.5">Key figures</label><input id="r-fig" class="fld mb-4" placeholder="e.g. 3 events, 120 youth reached">
+    <div class="flex justify-end gap-2"><button class="btn-ghost px-4 py-2.5 text-sm" onclick="closeModal()">Cancel</button><button id="r-save" class="btn px-5 py-2.5 text-sm">Post update</button></div></div>`);
+  $('r-save').addEventListener('click',async()=>{ const title=$('r-title').value.trim(); if(!title){toast('Add a title',false);return;}
+    const b=$('r-save'); b.disabled=true; b.innerHTML='<span class="btn-spin"></span>';
+    try{ await db.from('portfolio_reports').insert({title,period:$('r-period').value.trim()||null,portfolio:$('r-portfolio').value.trim()||null,highlights:$('r-high').value.trim()||null,challenges:$('r-chal').value.trim()||null,needs:$('r-needs').value.trim()||null,figures:$('r-fig').value.trim()||null,author_id:ME.id}); closeModal(); openModule('reports'); }
+    catch(e){ toast(e.message||'Could not save',false); b.disabled=false; b.textContent='Post update'; } });
+}
+
+/* ============ MY PROFILE ============ */
+async function renderProfile(c){
+  const row=(l,v)=>`<div class="flex justify-between gap-4 py-3 border-b border-white/6 last:border-0"><span class="text-mist text-sm">${l}</span><span class="text-sm font-semibold text-right ${v?'':'text-faint'}">${v?esc(v):'—'}</span></div>`;
+  c.innerHTML=`<div class="max-w-2xl grid gap-5">
+    <div class="card p-6 flex items-center gap-5">
+      <span class="w-20 h-20 rounded-2xl ${ME.avatar_url?'':'bg-brand'} grid place-items-center font-bold text-3xl overflow-hidden flex-none">${avatarInner(ME)}</span>
+      <div><div class="font-display font-extrabold text-xl">${esc(ME.full_name||'')}</div><div class="text-bright text-sm font-semibold">${esc(roleLabel(ME))}</div><div class="text-faint text-xs mt-1">${esc(ME.email||'')}</div></div>
+    </div>
+    <div class="card p-6">${row('Full name',ME.full_name)}${row('Role',roleLabel(ME))}${row('Email',ME.email)}${row('Phone',ME.phone)}${ME.bio?`<div class="pt-3 text-sm text-mist whitespace-pre-wrap">${esc(ME.bio)}</div>`:''}</div>
+    <div class="flex gap-3"><button id="pf-edit" class="btn px-5 py-2.5 text-sm"><i class="fa-solid fa-pen mr-1.5"></i>Edit details</button><button id="pf-pass" class="btn-ghost px-5 py-2.5 text-sm"><i class="fa-solid fa-key mr-1.5"></i>Change password</button><button id="pf-out" class="btn-ghost px-5 py-2.5 text-sm ml-auto text-red-300"><i class="fa-solid fa-right-from-bracket mr-1.5"></i>Sign out</button></div>
+  </div>`;
+  $('pf-out').addEventListener('click',async()=>{ await db.auth.signOut(); location.reload(); });
+  $('pf-edit').addEventListener('click',()=>{ openModal(`<div class="p-6"><h3 class="font-display font-bold text-lg mb-4">Edit your details</h3>
+    <label class="block text-xs font-semibold text-mist mb-1.5">Full name</label><input id="e-name" class="fld mb-3" value="${esc(ME.full_name||'')}">
+    <label class="block text-xs font-semibold text-mist mb-1.5">Phone</label><input id="e-phone" class="fld mb-3" value="${esc(ME.phone||'')}">
+    <label class="block text-xs font-semibold text-mist mb-1.5">Photo URL</label><input id="e-av" class="fld mb-3" value="${esc(ME.avatar_url||'')}" placeholder="https://…">
+    <label class="block text-xs font-semibold text-mist mb-1.5">Short bio</label><textarea id="e-bio" rows="3" class="fld mb-4">${esc(ME.bio||'')}</textarea>
+    <div class="flex justify-end gap-2"><button class="btn-ghost px-4 py-2.5 text-sm" onclick="closeModal()">Cancel</button><button id="e-save" class="btn px-5 py-2.5 text-sm">Save</button></div></div>`);
+    $('e-save').addEventListener('click',async()=>{ const b=$('e-save'); b.disabled=true; b.innerHTML='<span class="btn-spin"></span>';
+      const upd={full_name:$('e-name').value.trim(),phone:$('e-phone').value.trim()||null,avatar_url:$('e-av').value.trim()||null,bio:$('e-bio').value.trim()||null};
+      try{ await db.from('profiles').update(upd).eq('id',ME.id); Object.assign(ME,upd); closeModal(); renderProfile(c); const av=$('h-av'); av.innerHTML=avatarInner(ME); toast('Details saved'); }
+      catch(e){ toast(e.message||'Could not save',false); b.disabled=false; b.textContent='Save'; } }); });
+  $('pf-pass').addEventListener('click',()=>{ openModal(`<div class="p-6"><h3 class="font-display font-bold text-lg mb-4">Change password</h3>
+    <label class="block text-xs font-semibold text-mist mb-1.5">New password</label><input id="pw" type="password" class="fld mb-2" placeholder="At least 8 characters">
+    <p id="pw-msg" class="text-sm font-semibold min-h-[1em] mb-2"></p>
+    <div class="flex justify-end gap-2"><button class="btn-ghost px-4 py-2.5 text-sm" onclick="closeModal()">Cancel</button><button id="pw-save" class="btn px-5 py-2.5 text-sm">Update</button></div></div>`);
+    $('pw-save').addEventListener('click',async()=>{ const p=$('pw').value, m=$('pw-msg'); if(p.length<8){m.className='text-sm font-semibold text-red-400 mb-2';m.textContent='Use at least 8 characters.';return;}
+      const b=$('pw-save'); b.disabled=true; b.innerHTML='<span class="btn-spin"></span>';
+      try{ const {error}=await db.auth.updateUser({password:p}); if(error)throw error; closeModal(); toast('Password updated'); }
+      catch(e){ m.className='text-sm font-semibold text-red-400 mb-2'; m.textContent=e.message||'Could not update'; b.disabled=false; b.textContent='Update'; } }); });
+}
+
+/* ============ GENERIC CRUD ENGINE ============ */
+const F=(name,label,type,extra)=>Object.assign({name,label,type},extra||{});
+const RES={
+  notices:{table:'announcements',label:'Notices',icon:'fa-bullhorn',order:['is_pinned',false,'created_at'],primary:'title',fields:[F('title','Title','text'),F('body','Message','area'),F('audience','Audience','sel',{options:['all','board']}),F('is_pinned','Pin to top','bool')]},
+  documents:{table:'board_documents',label:'Documents',icon:'fa-folder-open',cap:'documents.manage',order:['created_at'],primary:'title',writeCap:'documents.manage',fields:[F('title','Title','text'),F('category','Category','text'),F('file_url','File / link URL','text')]},
+  // finance
+  budgets:{table:'budgets',label:'Budgets',icon:'fa-wallet',cap:'finance.manage',order:['created_at'],primary:'name',fields:[F('name','Name','text'),F('amount','Amount (SCR)','num'),F('period','Period','text'),F('notes','Notes','area')]},
+  expenses:{table:'expenses',label:'Expenses',icon:'fa-receipt',cap:'finance.manage',order:['created_at'],primary:'description',stampBy:'submitted_by',fields:[F('description','Description','text'),F('amount','Amount (SCR)','num'),F('category','Category','text'),F('status','Status','sel',{options:['pending','approved','rejected','paid']}),F('receipt_url','Receipt URL','text')]},
+  donations:{table:'donations',label:'Donations',icon:'fa-hand-holding-heart',cap:'finance.manage',order:['created_at'],primary:'donor_name',fields:[F('donor_name','Donor','text'),F('amount','Amount','num'),F('currency','Currency','text'),F('method','Method','text'),F('note','Note','text'),F('is_anonymous','Anonymous','bool')]},
+  // talent
+  positions:{table:'open_positions',label:'Open positions',icon:'fa-briefcase',cap:'talent.manage',order:['created_at'],primary:'title',stampBy:'created_by',fields:[F('title','Title','text'),F('kind','Kind','sel',{options:['staff','volunteer','internship']}),F('description','Description','area'),F('status','Status','sel',{options:['open','filled','closed']})]},
+  candidates:{table:'candidates',label:'Candidates',icon:'fa-user-tie',cap:'talent.manage',order:['created_at'],primary:'full_name',stampBy:'added_by',fields:[F('full_name','Name','text'),F('email','Email','text'),F('phone','Phone','text'),F('position_applied','Applying for','text'),F('stage','Stage','sel',{options:['contacted','interviewing','offer','joined','declined']}),F('notes','Notes','area')]},
+  // hr
+  staff:{table:'staff_records',label:'Staff records',icon:'fa-id-badge',cap:'hr.manage',order:['full_name'],asc:true,primary:'full_name',stampBy:'created_by',fields:[F('full_name','Name','text'),F('role_title','Role / title','text'),F('department','Department','text'),F('email','Email','text'),F('phone','Phone','text'),F('status','Status','sel',{options:['active','inactive']}),F('notes','Notes','area')]},
+  vol_apps:{table:'volunteer_applications',label:'Volunteer applications',icon:'fa-hand-holding-hand',cap:'hr.manage',order:['created_at'],primary:'name',readonly:true,fields:[F('name','Name','text'),F('email','Email','text'),F('phone','Phone','text'),F('district','District','text'),F('availability','Availability','text'),F('motivation','Motivation','area'),F('status','Status','sel',{options:['new','reviewing','accepted','declined']})]},
+  job_posts:{table:'job_postings',label:'Job postings',icon:'fa-briefcase',cap:'hr.manage',order:['created_at'],primary:'title',fields:[F('title','Title','text'),F('slug','Slug','text'),F('location','Location','text'),F('type','Type','text'),F('description','Description','area'),F('status','Status','sel',{options:['open','closed']}),F('is_published','Published','bool')]},
+  job_apps:{table:'job_applications',label:'Job applications',icon:'fa-file-lines',cap:'hr.manage',order:['created_at'],primary:'name',readonly:true,fields:[F('name','Name','text'),F('email','Email','text'),F('phone','Phone','text'),F('cover_note','Cover note','area'),F('resume_url','Resume URL','text'),F('status','Status','sel',{options:['new','shortlisted','rejected','hired']})]},
+  leave:{table:'hr_leave_requests',label:'Leave requests',icon:'fa-plane-departure',cap:'hr.manage',order:['created_at'],primary:'type',readonly:true,fields:[F('type','Type','text'),F('start_date','From','date'),F('end_date','To','date'),F('reason','Reason','area'),F('status','Status','sel',{options:['pending','approved','rejected']})]},
+  // website content
+  ct_opportunities:{table:'opportunities',label:'Opportunities',icon:'fa-compass',cap:'content.manage',order:['created_at'],primary:'title',fields:[F('title','Title','text'),F('slug','Slug','text'),F('category','Category','text'),F('organization','Organisation','text'),F('location','Location','text'),F('summary','Summary','area'),F('description','Description','area'),F('eligibility','Eligibility','area'),F('benefits','Benefits','area'),F('application_url','Apply URL','text'),F('deadline','Deadline','date'),F('status','Status','sel',{options:['open','closing_soon','closed']}),F('funding','Funding','sel',{options:['fully_funded','partially_funded','self_funded','not_applicable']}),F('level','Level','text'),F('cover_url','Cover URL','text'),F('tags','Tags (comma sep)','tags'),F('is_featured','Featured','bool'),F('is_published','Published','bool')]},
+  ct_programs:{table:'programs',label:'Programmes',icon:'fa-diagram-project',cap:'content.manage',order:['sort_order'],asc:true,primary:'title',fields:[F('title','Title','text'),F('slug','Slug','text'),F('summary','Summary','area'),F('description','Description','area'),F('category','Category','text'),F('cover_url','Cover URL','text'),F('tags','Tags (comma sep)','tags'),F('is_flagship','Flagship','bool'),F('is_published','Published','bool'),F('sort_order','Order','num')]},
+  ct_news:{table:'news_posts',label:'News',icon:'fa-newspaper',cap:'content.manage',order:['published_at'],primary:'title',fields:[F('title','Title','text'),F('slug','Slug','text'),F('excerpt','Excerpt','area'),F('body','Body','area'),F('category','Category','text'),F('cover_url','Cover URL','text'),F('status','Status','sel',{options:['draft','published','archived']}),F('published_at','Publish date','datetime'),F('tags','Tags (comma sep)','tags')]},
+  ct_events:{table:'events',label:'Events',icon:'fa-calendar-day',cap:'content.manage',order:['starts_at'],primary:'title',fields:[F('title','Title','text'),F('slug','Slug','text'),F('description','Description','area'),F('starts_at','Starts','datetime'),F('ends_at','Ends','datetime'),F('location','Location','text'),F('cover_url','Cover URL','text'),F('registration_url','Registration URL','text'),F('is_featured','Featured','bool'),F('is_published','Published','bool')]},
+  ct_partners:{table:'partners',label:'Partners',icon:'fa-handshake-angle',cap:'content.manage',order:['sort_order'],asc:true,primary:'name',fields:[F('name','Name','text'),F('logo_url','Logo URL','text'),F('url','Website','text'),F('description','Description','area'),F('tier','Tier','text'),F('sort_order','Order','num'),F('is_published','Published','bool')]},
+  ct_resources:{table:'resources',label:'Resources',icon:'fa-folder-open',cap:'content.manage',order:['sort_order'],asc:true,primary:'title',fields:[F('title','Title','text'),F('description','Description','area'),F('category','Category','text'),F('file_url','File URL','text'),F('link_url','Link URL','text'),F('sort_order','Order','num'),F('is_published','Published','bool')]},
+  ct_faqs:{table:'faqs',label:'FAQs',icon:'fa-circle-question',cap:'content.manage',order:['sort_order'],asc:true,primary:'question',fields:[F('question','Question','text'),F('answer','Answer','area'),F('category','Category','text'),F('sort_order','Order','num'),F('is_published','Published','bool')]},
+  ct_impact:{table:'impact_stats',label:'Impact stats',icon:'fa-chart-simple',cap:'content.manage',order:['sort_order'],asc:true,primary:'label',fields:[F('label','Label','text'),F('value','Value','text'),F('icon','Icon','text'),F('sort_order','Order','num'),F('is_published','Published','bool')]},
+  ct_team:{table:'about_team',label:'Board & Team',icon:'fa-people-group',cap:'content.manage',order:['sort_order'],asc:true,primary:'name',fields:[F('name','Name','text'),F('role','Role','text'),F('portfolio','Portfolio','text'),F('bio','Bio','area'),F('photo_url','Photo URL','text'),F('email','Email','text'),F('sort_order','Order','num'),F('is_published','Published','bool')]},
+  ct_departments:{table:'departments',label:'Pillars / Departments',icon:'fa-sitemap',cap:'content.manage',order:['sort_order'],asc:true,primary:'name',fields:[F('name','Name','text'),F('slug','Slug','text'),F('description','Area','area'),F('icon','Icon','text'),F('sort_order','Order','num'),F('is_published','Published','bool')]},
+};
+async function renderList(key,c,nb){
+  const R=RES[key]; const readonly=R.readonly||(R.writeCap&&!can(R.writeCap));
+  LISTCTX={key,c,nb};
+  if(nb){ nb.classList.add('hidden'); nb.onclick=null; if(!readonly){ nb.classList.remove('hidden'); nb.onclick=()=>openForm(key); } }
+  let q=db.from(R.table).select('*');
+  const [ocol,,ocol2]=Array.isArray(R.order)?R.order:[R.order]; q=q.order(ocol,{ascending:!!R.asc,nullsFirst:false}); if(ocol2)q=q.order(ocol2,{ascending:false});
+  let rows=[]; try{ const {data,error}=await q; if(error)throw error; rows=data||[]; }catch(e){ c.innerHTML=`<div class="card p-8 text-center text-red-300">Could not load: ${esc(e.message)}</div>`; return; }
+  if(!rows.length){ c.innerHTML=`<div class="card p-10 text-center text-faint">Nothing here yet.${readonly?'':' Use New to add the first one.'}</div>`; return; }
+  const sub=R.fields.find(f=>f.name!==R.primary&&['text','sel','num'].includes(f.type));
+  const pub=R.fields.find(f=>f.name==='is_published'); const pin=R.fields.find(f=>f.name==='is_pinned');
+  c.innerHTML='<div class="space-y-2">'+rows.map(r=>`<div class="card p-4 flex items-center gap-3">
+      <span class="w-10 h-10 rounded-lg bg-white/5 text-bright grid place-items-center flex-none"><i class="fa-solid ${R.icon}"></i></span>
+      <div class="flex-1 min-w-0"><div class="font-semibold truncate">${esc(r[R.primary]||'(untitled)')}</div>${sub&&r[sub.name]?`<div class="text-mist text-xs truncate">${esc(String(r[sub.name]))}</div>`:''}</div>
+      ${pin&&r.is_pinned?'<i class="fa-solid fa-thumbtack text-bright text-xs"></i>':''}
+      ${r.status?`<span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-white/5 text-mist">${esc(r.status)}</span>`:''}
+      ${pub?`<span class="text-[11px] font-bold px-2 py-0.5 rounded-full ${r.is_published?'bg-bright/15 text-bright':'bg-white/5 text-faint'}">${r.is_published?'Live':'Draft'}</span>`:''}
+      <button class="ed text-faint hover:text-white px-1.5" data-id="${r.id}"><i class="fa-solid ${readonly?'fa-eye':'fa-pen'} text-sm"></i></button>
+      ${readonly?'':`<button class="rm text-faint hover:text-red-400 px-1.5" data-id="${r.id}"><i class="fa-solid fa-trash-can text-sm"></i></button>`}
+    </div>`).join('')+'</div>';
+  c.querySelectorAll('.ed').forEach(b=>b.addEventListener('click',()=>openForm(key,rows.find(r=>r.id===b.dataset.id),readonly)));
+  c.querySelectorAll('.rm').forEach(b=>b.addEventListener('click',async()=>{ if(!confirm('Delete this item?'))return; try{await db.from(R.table).delete().eq('id',b.dataset.id); renderList(key,c,nb);}catch(e){toast(e.message,false);} }));
+}
+function fieldInput(f,v){
+  const val=v==null?'':v; const id='f-'+f.name;
+  if(f.type==='area')return `<textarea id="${id}" rows="3" class="fld">${esc(val)}</textarea>`;
+  if(f.type==='bool')return `<label class="flex items-center gap-2.5 text-sm"><input type="checkbox" id="${id}" class="accent-bright w-4 h-4" ${v?'checked':''}>${esc(f.label)}</label>`;
+  if(f.type==='sel')return `<select id="${id}" class="fld">${f.options.map(o=>`<option value="${o}" ${val===o?'selected':''}>${o}</option>`).join('')}</select>`;
+  if(f.type==='tags')return `<input id="${id}" class="fld" value="${esc(Array.isArray(v)?v.join(', '):val)}">`;
+  if(f.type==='num')return `<input id="${id}" type="number" step="any" class="fld" value="${esc(val)}">`;
+  if(f.type==='date')return `<input id="${id}" type="date" class="fld" value="${val?String(val).slice(0,10):''}">`;
+  if(f.type==='datetime')return `<input id="${id}" type="datetime-local" class="fld" value="${val?String(val).slice(0,16):''}">`;
+  return `<input id="${id}" class="fld" value="${esc(val)}">`;
+}
+function openForm(key,row,readonly){
+  const R=RES[key]; const editing=!!row; row=row||{};
+  const body=R.fields.map(f=>f.type==='bool'?`<div class="mb-3">${fieldInput(f,row[f.name])}</div>`:`<div class="mb-3"><label class="block text-xs font-semibold text-mist mb-1.5">${esc(f.label)}</label>${fieldInput(f,row[f.name])}</div>`).join('');
+  openModal(`<div class="p-6"><h3 class="font-display font-bold text-lg mb-4">${readonly?'Details':(editing?'Edit':'New')} · ${R.label}</h3>
+    <fieldset ${readonly?'disabled':''} class="${readonly?'opacity-90':''}">${body}</fieldset>
+    <div class="flex justify-end gap-2 mt-2">${readonly?`<button class="btn px-5 py-2.5 text-sm" onclick="closeModal()">Close</button>`:`<button class="btn-ghost px-4 py-2.5 text-sm" onclick="closeModal()">Cancel</button><button id="fm-save" class="btn px-5 py-2.5 text-sm">${editing?'Save changes':'Create'}</button>`}</div></div>`);
+  if(readonly)return;
+  $('fm-save').addEventListener('click',async()=>{
+    const b=$('fm-save'); b.disabled=true; b.innerHTML='<span class="btn-spin"></span>';
+    const payload={};
+    R.fields.forEach(f=>{ const n=$('f-'+f.name); if(!n)return; let val;
+      if(f.type==='bool')val=n.checked; else if(f.type==='num')val=n.value===''?null:parseFloat(n.value); else if(f.type==='tags')val=n.value.split(',').map(s=>s.trim()).filter(Boolean); else val=n.value===''?null:n.value; payload[f.name]=val; });
+    if(!editing&&R.stampBy)payload[R.stampBy]=ME.id;
+    try{ if(editing){ await db.from(R.table).update(payload).eq('id',row.id); } else { await db.from(R.table).insert(payload); } closeModal(); if(LISTCTX)renderList(LISTCTX.key,LISTCTX.c,LISTCTX.nb); }
+    catch(e){ toast(e.message||'Could not save',false); b.disabled=false; b.textContent=editing?'Save changes':'Create'; }
+  });
+}
+
+/* ============ TABBED MODULES ============ */
+function renderTabs(c,nb,keys){
+  c.innerHTML='<div class="flex gap-2 overflow-x-auto no-scrollbar mb-5 pb-1" id="tabbar"></div><div id="tabc"></div>';
+  const bar=$('tabbar');
+  const on='tabpill shrink-0 flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-semibold bg-bright/15 text-bright';
+  const off='tabpill shrink-0 flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-semibold text-mist hover:text-white glass';
+  keys.forEach((k,i)=>{ const R=RES[k]; const b=el(`<button class="${i===0?on:off}"><i class="fa-solid ${R.icon}"></i>${R.label}</button>`);
+    b.addEventListener('click',()=>{ bar.querySelectorAll('.tabpill').forEach(x=>x.className=off); b.className=on; renderList(k,$('tabc'),nb); });
+    bar.appendChild(b); if(i===0)renderList(k,$('tabc'),nb); });
+}
+
+window.addEventListener('DOMContentLoaded',()=>{ if(window.supabase)boot(); else { const s=document.querySelector('script[src*="supabase-js"]'); s&&s.addEventListener('load',boot); } });
+</script>
+</body>
+</html>
