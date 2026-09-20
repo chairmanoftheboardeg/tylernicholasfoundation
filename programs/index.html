@@ -141,11 +141,11 @@
   <main class="flex-grow w-full">
 
     <!-- HERO -->
-    <header class="page-hero w-full py-24 md:py-28 px-4">
-      <div class="max-w-3xl mx-auto text-center text-white" data-aos="fade-up">
-        <h1 class="text-4xl md:text-6xl font-extrabold mb-6 leading-tight">Our programmes</h1>
-        <p class="text-lg md:text-xl text-white/85 max-w-2xl mx-auto font-light leading-relaxed">We don't only share opportunities made by others, we build our own, so young Seychellois can do things that were out of reach before.</p>
-        <nav class="mt-8 text-sm text-white/60 font-medium"><a href="/" class="hover:text-white">Home</a> <span class="mx-2">/</span> <span class="text-white">Programmes</span></nav>
+    <header class="w-full pt-14 md:pt-20 pb-4 px-4">
+      <div class="max-w-6xl mx-auto" data-aos="fade-up">
+        <nav class="text-sm text-gray-400 mb-4"><a href="/" class="hover:text-tnf-green transition-colors">Home</a> <span class="mx-1.5">/</span> <span class="text-tnf-ink font-semibold">Programmes</span></nav>
+        <h1 class="text-4xl md:text-5xl font-extrabold text-tnf-ink leading-tight mb-4">Our programmes</h1>
+        <p class="text-lg text-gray-500 max-w-2xl leading-relaxed">We don't only share opportunities made by others, we build our own, so young Seychellois can do things that were out of reach before.</p>
       </div>
     </header>
 
@@ -251,15 +251,15 @@
     function progCard(p,deptName){
       const media=p.cover_url
         ? `<div class="h-44 overflow-hidden"><img src="${esc(p.cover_url)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt=""></div>`
-        : `<div class="card-ph h-44 flex items-center justify-center p-6"><span class="text-white/90 font-extrabold text-lg text-center leading-tight">${esc(p.title)}</span></div>`;
+        : `<div class="h-44 bg-gradient-to-br from-tnf-green to-emerald-700 flex items-center justify-center relative overflow-hidden"><i class="fa-solid fa-compass text-white/25 text-6xl group-hover:scale-110 transition-transform duration-500"></i></div>`;
       const badge = p.is_flagship ? `<span class="absolute top-3 right-3 bg-white/95 text-tnf-greenDark text-[11px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full shadow-sm">Flagship</span>` : '';
-      return `<a href="/programs/program?slug=${encodeURIComponent(p.slug)}" data-dept="${p.department_id||'none'}" class="prog-card group block bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-lg transition-all transform hover:-translate-y-1">
+      return `<a href="/programs/program?slug=${encodeURIComponent(p.slug)}" data-dept="${p.department_id||'none'}" class="prog-card group flex flex-col bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all">
         <div class="relative">${media}${badge}</div>
-        <div class="p-6">
-          ${deptName?`<p class="text-xs text-tnf-greenDark font-bold uppercase tracking-wider mb-2">${esc(deptName)}</p>`:''}
+        <div class="p-6 flex flex-col flex-1">
+          ${deptName?`<p class="text-xs font-bold text-tnf-green mb-2">${esc(deptName)}</p>`:''}
           <h3 class="text-lg font-bold text-tnf-ink mb-2 group-hover:text-tnf-green transition-colors leading-snug">${esc(p.title)}</h3>
-          ${p.summary?`<p class="text-gray-500 text-sm leading-relaxed line-clamp-3 mb-4">${esc(p.summary)}</p>`:'<div class="mb-4"></div>'}
-          <span class="text-tnf-green font-bold text-sm inline-flex items-center">Learn more <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i></span>
+          ${p.summary?`<p class="text-gray-500 text-sm leading-relaxed line-clamp-3 mb-5">${esc(p.summary)}</p>`:'<div class="mb-5"></div>'}
+          <span class="mt-auto text-tnf-green font-bold text-sm inline-flex items-center">Learn more <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i></span>
         </div>
       </a>`;
     }

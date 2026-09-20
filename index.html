@@ -158,10 +158,15 @@
     </header>
 
     <!-- MISSION INTRO -->
-    <section class="w-full max-w-5xl px-4 py-24 text-center">
-      <div data-aos="fade-up">
-        <h2 id="mission-heading" class="text-3xl md:text-4xl font-bold text-tnf-ink mb-6 leading-tight">Empowering Young People. Creating Opportunities. Building Seychelles.</h2>
-        <p id="mission-text" class="text-lg text-gray-600 leading-relaxed max-w-3xl mx-auto">The Tyler Nicholas Foundation is a national youth platform. We find and share real opportunities, run our own programs, and give young Seychellois across every island the skills, confidence and doors they need, so the next generation can lead.</p>
+    <section class="w-full max-w-6xl px-4 py-24 md:py-28">
+      <div class="grid md:grid-cols-12 gap-8 md:gap-14 items-start">
+        <div class="md:col-span-7" data-aos="fade-up">
+          <div class="w-14 h-1.5 bg-gradient-to-r from-tnf-green to-emerald-400 rounded-full mb-7"></div>
+          <h2 id="mission-heading" class="text-3xl md:text-5xl font-extrabold text-tnf-ink leading-[1.1] tracking-tight">Empowering Young People. Creating Opportunities. Building Seychelles.</h2>
+        </div>
+        <div class="md:col-span-5 md:pt-3" data-aos="fade-up" data-aos-delay="100">
+          <p id="mission-text" class="text-lg text-gray-500 leading-relaxed">The Tyler Nicholas Foundation is a national youth platform. We find and share real opportunities, run our own programs, and give young Seychellois across every island the skills, confidence and doors they need, so the next generation can lead.</p>
+        </div>
       </div>
     </section>
 
@@ -206,21 +211,8 @@
       </div>
     </section>
 
-    <!-- OPPORTUNITY HUB -->
-    <section class="w-full bg-tnf-greenLight py-24 border-y border-gray-100">
-      <div class="max-w-3xl mx-auto px-4 text-center">
-        <h2 class="text-3xl md:text-5xl font-bold text-tnf-ink mb-4" data-aos="fade-up">What are you looking for?</h2>
-        <p class="text-gray-500 text-lg mb-9 max-w-xl mx-auto" data-aos="fade-up">One place to find verified scholarships, internships, exchanges, competitions and more, search, or browse by category.</p>
-        <form id="hub-search" class="flex flex-col sm:flex-row gap-3 max-w-2xl mx-auto mb-9" data-aos="fade-up">
-          <div class="flex-1 flex items-center gap-3 bg-white border border-gray-200 rounded-xl px-5 shadow-sm focus-within:border-tnf-green focus-within:ring-4 focus-within:ring-tnf-green/10 transition-all">
-            <i class="fa-solid fa-magnifying-glass text-tnf-green text-lg"></i>
-            <input id="hub-q" type="search" placeholder="Search scholarships, internships, exchanges…" class="flex-1 py-4 bg-transparent outline-none text-base" aria-label="Search opportunities" />
-          </div>
-          <button type="submit" class="bg-tnf-green hover:bg-tnf-greenDark text-white font-bold py-4 px-9 rounded-xl transition-colors shadow-sm">Search</button>
-        </form>
-        <div id="cat-pills" class="flex flex-wrap justify-center gap-2.5" data-aos="fade-up"></div>
-      </div>
-    </section>
+    <!-- OPPORTUNITY HUB removed -->
+
 
     <!-- WHAT WE DO / PILLARS -->
     <section id="pillars-section" class="w-full bg-gradient-to-b from-white to-tnf-greenLight/40 py-24 hidden">
@@ -282,7 +274,7 @@
     </section>
 
     <!-- UPCOMING EVENTS -->
-    <section class="w-full bg-white border-y border-gray-100 py-24">
+    <section id="upcoming-events-section" class="w-full bg-white border-y border-gray-100 py-24">
       <div class="max-w-6xl mx-auto px-4">
         <div class="flex flex-col md:flex-row justify-between items-end mb-12 border-b-2 border-gray-100 pb-4" data-aos="fade-right">
           <div>
@@ -290,7 +282,7 @@
           </div>
           <a href="/events" class="mt-4 md:mt-0 text-sm font-bold text-tnf-green hover:text-tnf-greenDark transition-colors flex items-center group">All events <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i></a>
         </div>
-        <div id="events-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"><p class="text-gray-400 italic col-span-full py-8 text-center" id="events-status">Loading…</p></div>
+        <div id="events-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"><p class="text-gray-400 italic py-8 text-center" id="events-status">Loading…</p></div>
       </div>
     </section>
 
@@ -405,8 +397,7 @@
 
     function countUp(node,val){const m=String(val).match(/^(\d[\d,]*)(.*)$/);if(!m){node.innerText=val;return;}const end=parseInt(m[1].replace(/,/g,''),10),suf=m[2]||'';let c=0;const inc=Math.max(1,Math.round(end/40));const up=()=>{c+=inc;if(c>=end){node.innerText=end.toLocaleString()+suf;}else{node.innerText=c.toLocaleString()+suf;requestAnimationFrame(()=>setTimeout(up,26));}};up();}
 
-    (function(){const g=document.getElementById('cat-pills');CATS.forEach(([slug,label])=>{const a=document.createElement('a');a.href=`/opportunities?category=${slug}`;a.className='inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-200 rounded-full font-semibold text-sm text-tnf-ink hover:bg-tnf-green hover:text-white hover:border-tnf-green transition-all';a.innerHTML=`${label}<span class="hidden text-xs font-bold rounded-full px-2 py-0.5 bg-tnf-greenLight text-tnf-greenDark" data-cat="${slug}"></span>`;g.appendChild(a);});})();
-    document.getElementById('hub-search').addEventListener('submit',e=>{e.preventDefault();const q=document.getElementById('hub-q').value.trim();location.href='/opportunities'+(q?`?q=${encodeURIComponent(q)}`:'');});
+    // (opportunity hub search removed)
 
     document.addEventListener('DOMContentLoaded',()=>{
       const wait=setInterval(()=>{
@@ -434,27 +425,26 @@
           data.forEach((s,i)=>{const d=document.createElement('div');d.setAttribute('data-aos','fade-up');d.setAttribute('data-aos-delay',i*100);d.innerHTML=`<p class="text-4xl md:text-5xl font-extrabold text-tnf-green mb-3 num">${esc(s.value)}</p><p class="text-xs text-gray-500 uppercase tracking-widest font-bold">${esc(s.label)}</p>`;g.appendChild(d);const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){countUp(en.target.querySelector('.num'),s.value);io.unobserve(en.target);}}),{threshold:.5});io.observe(d);});
         }catch(e){}})();
 
-        // OPPORTUNITY COUNTS (per-category badges only)
-        (async()=>{try{const{data}=await db.from('opportunities').select('category').eq('is_published',true).eq('status','open');if(!data)return;const t={};data.forEach(r=>t[r.category]=(t[r.category]||0)+1);Object.entries(t).forEach(([c,n])=>{const b=document.querySelector(`[data-cat="${c}"]`);if(b&&n>0){b.innerText=n;b.classList.remove('hidden');}});}catch(e){}})();
+        // (per-category badge counts removed with the hub section)
 
         // PILLARS (departments) — modern card grid
         (async()=>{try{const{data}=await db.from('departments').select('name,slug,description,icon,sort_order').order('sort_order');
           if(!data||!data.length)return;document.getElementById('pillars-section').classList.remove('hidden');const g=document.getElementById('pillars-list');
           const DIC=['fa-graduation-cap','fa-handshake-angle','fa-people-group','fa-lightbulb','fa-leaf','fa-star'];
-          g.innerHTML=data.map((p,i)=>{const ic=(p.icon&&/^fa-/.test(p.icon))?p.icon:(DIC[i]||'fa-star');return `<div class="group relative bg-white rounded-2xl border border-gray-100 p-7 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all overflow-hidden" data-aos="fade-up" data-aos-delay="${(i%3)*90}"><div class="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-tnf-green to-emerald-400 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500"></div><div class="flex items-center justify-between mb-5"><div class="w-12 h-12 rounded-xl bg-tnf-greenLight text-tnf-green grid place-items-center text-xl group-hover:bg-tnf-green group-hover:text-white transition-colors"><i class="fa-solid ${ic}"></i></div><span class="text-5xl font-extrabold text-gray-100 group-hover:text-tnf-greenLight transition-colors leading-none select-none">0${i+1}</span></div><h3 class="text-xl font-bold text-tnf-ink mb-2">${esc(p.name)}</h3>${p.description?`<p class="text-gray-500 leading-relaxed text-sm">${esc(p.description)}</p>`:''}</div>`;}).join('');
+          g.innerHTML=data.map((p,i)=>{const ic=(p.icon&&/^fa-/.test(p.icon))?p.icon:(DIC[i]||'fa-star');return `<div class="group relative bg-white rounded-2xl border border-gray-100 p-7 shadow-sm hover:shadow-2xl hover:-translate-y-1.5 hover:border-tnf-green/40 transition-all overflow-hidden" data-aos="fade-up" data-aos-delay="${(i%3)*90}"><div class="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-tnf-greenLight blur-2xl opacity-70 group-hover:opacity-100 transition-opacity"></div><div class="relative flex items-start justify-between mb-5"><div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-tnf-green to-emerald-600 text-white grid place-items-center text-xl shadow-lg shadow-tnf-green/30 group-hover:scale-105 transition-transform"><i class="fa-solid ${ic}"></i></div><span class="text-4xl font-extrabold leading-none" style="color:rgba(46,158,68,.22)">0${i+1}</span></div><h3 class="relative text-xl font-bold text-tnf-ink mb-2">${esc(p.name)}</h3>${p.description?`<p class="relative text-gray-500 leading-relaxed text-sm">${esc(p.description)}</p>`:''}</div>`;}).join('');
         }catch(e){}})();
 
         // LATEST OPPORTUNITIES
         (async()=>{const box=document.getElementById('opps-container'),st=document.getElementById('opps-status');
           try{const{data,error}=await db.from('opportunities').select('title,slug,category,organization,location,deadline,funding,is_featured').eq('is_published',true).order('is_featured',{ascending:false}).order('created_at',{ascending:false}).limit(6);
             if(error)throw error;if(!data||!data.length){st.innerText='New opportunities are being verified, check back soon.';return;}
-            box.innerHTML=data.map((o,i)=>{const fund=FUND[o.funding]||'';const meta=[o.organization,o.location].filter(Boolean).map(esc).join(' · ');return `<a href="/opportunities/opportunity?slug=${encodeURIComponent(o.slug)}" class="block bg-white rounded-2xl border border-gray-100 p-7 shadow-sm hover:shadow-lg transition-all transform hover:-translate-y-1 border-t-4 border-t-tnf-green group" data-aos="fade-up" data-aos-delay="${(i%3)*100}"><p class="text-xs text-tnf-greenDark font-bold uppercase tracking-wider mb-3">${CATLABEL[o.category]||esc(o.category)}</p><h3 class="text-lg font-bold text-tnf-ink mb-2 group-hover:text-tnf-green transition-colors leading-snug">${esc(o.title)}</h3><p class="text-gray-500 text-sm mb-4">${meta}</p><div class="flex items-center justify-between text-sm pt-3 border-t border-gray-100">${o.deadline?`<span class="text-gray-400"><i class="fa-regular fa-clock mr-1"></i>${fmtDate(o.deadline)}</span>`:'<span></span>'}${fund?`<span class="font-semibold text-tnf-green">${fund}</span>`:''}</div></a>`;}).join('');
+            box.innerHTML=data.map((o,i)=>{const fund=FUND[o.funding]||'';const meta=[o.organization,o.location].filter(Boolean).map(esc).join(' · ');return `<a href="/opportunities/opportunity?slug=${encodeURIComponent(o.slug)}" class="group relative flex flex-col bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:border-tnf-green/30 transition-all overflow-hidden" data-aos="fade-up" data-aos-delay="${(i%3)*90}"><div class="absolute -top-8 -right-8 w-24 h-24 bg-tnf-greenLight rounded-full blur-2xl opacity-0 group-hover:opacity-80 transition-opacity"></div><div class="relative flex items-center gap-2 mb-4"><span class="inline-flex items-center text-xs font-bold text-tnf-greenDark bg-tnf-greenLight rounded-full px-3 py-1">${CATLABEL[o.category]||esc(o.category)}</span>${o.is_featured?`<span class="text-xs font-bold text-amber-600 bg-amber-50 rounded-full px-2.5 py-1">Featured</span>`:''}</div><h3 class="relative text-lg font-bold text-tnf-ink mb-2 group-hover:text-tnf-green transition-colors leading-snug">${esc(o.title)}</h3><p class="relative text-gray-500 text-sm mb-5">${meta}</p><div class="relative mt-auto flex items-center justify-between text-sm pt-4 border-t border-gray-100">${o.deadline?`<span class="text-gray-400 font-medium"><i class="fa-regular fa-clock mr-1.5"></i>${fmtDate(o.deadline)}</span>`:'<span class="text-gray-300 font-medium">Rolling</span>'}${fund?`<span class="font-bold text-tnf-green">${fund}</span>`:`<i class="fa-solid fa-arrow-right text-tnf-green opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all"></i>`}</div></a>`;}).join('');
           }catch(e){st.innerText='Opportunities will appear here soon.';}})();
 
         // FLAGSHIP PROGRAMS
-        (async()=>{try{const{data}=await db.from('programs').select('title,slug,summary,is_flagship').eq('is_flagship',true).eq('is_published',true).order('sort_order').limit(6);
+        (async()=>{try{const{data}=await db.from('programs').select('title,slug,summary,cover_url,is_flagship').eq('is_flagship',true).eq('is_published',true).order('sort_order').limit(6);
           if(!data||!data.length)return;document.getElementById('programs-section').classList.remove('hidden');const g=document.getElementById('programs-grid');
-          g.innerHTML=data.map((p,i)=>`<a href="/programs/program?slug=${encodeURIComponent(p.slug)}" class="block bg-white rounded-2xl border border-gray-100 p-8 shadow-sm hover:shadow-lg transition-all transform hover:-translate-y-1 group" data-aos="fade-up" data-aos-delay="${(i%3)*100}"><h3 class="text-xl font-bold text-tnf-ink mb-3 group-hover:text-tnf-green transition-colors">${esc(p.title)}</h3><p class="text-gray-500 text-sm leading-relaxed mb-4">${esc(p.summary||'')}</p><span class="text-tnf-green font-bold text-sm flex items-center">Learn more <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i></span></a>`).join('');
+          g.innerHTML=data.map((p,i)=>`<a href="/programs/program?slug=${encodeURIComponent(p.slug)}" class="group flex flex-col bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all" data-aos="fade-up" data-aos-delay="${(i%3)*90}">${p.cover_url?`<div class="h-44 overflow-hidden"><img src="${esc(p.cover_url)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt=""></div>`:`<div class="h-44 bg-gradient-to-br from-tnf-green to-emerald-700 relative overflow-hidden flex items-center justify-center"><i class="fa-solid fa-compass text-white/25 text-6xl group-hover:scale-110 transition-transform duration-500"></i></div>`}<div class="p-7 flex flex-col flex-1"><h3 class="text-xl font-bold text-tnf-ink mb-3 group-hover:text-tnf-green transition-colors leading-snug">${esc(p.title)}</h3><p class="text-gray-500 text-sm leading-relaxed mb-5 flex-1">${esc(p.summary||'')}</p><span class="text-tnf-green font-bold text-sm inline-flex items-center">Learn more <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i></span></div></a>`).join('');
         }catch(e){}})();
 
         // NEWS
@@ -466,18 +456,17 @@
 
         // EVENTS
         (async()=>{const box=document.getElementById('events-container'),st=document.getElementById('events-status');
-          try{const{data,error}=await db.from('events').select('title,slug,starts_at,location,cover_url').eq('is_published',true).gte('starts_at',new Date().toISOString()).order('starts_at').limit(6);
-            if(error)throw error;if(!data||!data.length){st.innerText='No upcoming events yet, check back soon.';return;}
-            box.innerHTML=data.map((ev,i)=>{const dt=new Date(ev.starts_at);return `<a href="/events/event?slug=${encodeURIComponent(ev.slug)}" class="block bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-lg transition-all transform hover:-translate-y-1 group" data-aos="fade-up" data-aos-delay="${(i%3)*100}"><div class="flex gap-4 items-center"><div class="text-center flex-none bg-tnf-greenLight rounded-xl w-16 py-2"><div class="text-2xl font-extrabold text-tnf-green leading-none">${dt.getDate()}</div><div class="text-xs font-bold text-tnf-greenDark uppercase">${dt.toLocaleString('en-GB',{month:'short'})}</div></div><div><h3 class="font-bold text-tnf-ink group-hover:text-tnf-green transition-colors leading-snug">${esc(ev.title)}</h3><p class="text-gray-400 text-sm mt-1"><i class="fa-regular fa-clock mr-1"></i>${dt.toLocaleString('en-GB',{hour:'2-digit',minute:'2-digit'})}${ev.location?' · '+esc(ev.location):''}</p></div></div></a>`;}).join('');
+          try{const today=new Date();today.setHours(0,0,0,0);const{data,error}=await db.from('events').select('title,slug,starts_at,location,cover_url').eq('is_published',true).gte('starts_at',today.toISOString()).order('starts_at').limit(6);
+            if(error)throw error;if(!data||!data.length){const s=document.getElementById('upcoming-events-section');if(s)s.classList.add('hidden');return;}
+            box.innerHTML=data.map((ev,i)=>{const dt=new Date(ev.starts_at);return `<a href="/events/event?slug=${encodeURIComponent(ev.slug)}" class="group flex items-center gap-4 bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-tnf-green/30 transition-all" data-aos="fade-up" data-aos-delay="${(i%2)*90}"><div class="text-center flex-none bg-gradient-to-br from-tnf-green to-emerald-700 text-white rounded-2xl w-16 py-3 shadow-lg shadow-tnf-green/25"><div class="text-2xl font-extrabold leading-none">${dt.getDate()}</div><div class="text-[11px] font-bold uppercase tracking-wide mt-0.5">${dt.toLocaleString('en-GB',{month:'short'})}</div></div><div class="min-w-0 flex-1"><h3 class="font-bold text-tnf-ink group-hover:text-tnf-green transition-colors leading-snug truncate">${esc(ev.title)}</h3><p class="text-gray-400 text-sm mt-1"><i class="fa-regular fa-clock mr-1.5"></i>${dt.toLocaleString('en-GB',{hour:'2-digit',minute:'2-digit'})}${ev.location?' · '+esc(ev.location):''}</p></div><i class="fa-solid fa-arrow-right text-gray-300 group-hover:text-tnf-green group-hover:translate-x-1 transition-all flex-none"></i></a>`;}).join('');
           }catch(e){st.innerText='Events will appear here soon.';}})();
 
-        // CAREERS (max 4) — clean rows
-        (async()=>{try{const{data}=await db.from('job_postings').select('title,slug,location,type,department_id').eq('is_published',true).order('created_at',{ascending:false}).limit(4);
+        // CAREERS (max 3) — rich cards with descriptions
+        (async()=>{try{const{data}=await db.from('job_postings').select('title,slug,location,type,description,department_id').eq('is_published',true).order('created_at',{ascending:false}).limit(3);
           if(!data||!data.length)return;
           let depMap={};try{const{data:d}=await db.from('departments').select('id,name');(d||[]).forEach(x=>depMap[x.id]=x.name);}catch(e){}
           document.getElementById('careers-section').classList.remove('hidden');const g=document.getElementById('careers-grid');
-          const pill=(ic,t)=>`<span class="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-500 bg-gray-100 rounded-full px-3 py-1"><i class="fa-solid ${ic} text-tnf-green"></i>${esc(t)}</span>`;
-          g.innerHTML=data.map((j,i)=>`<a href="/careers/job?slug=${encodeURIComponent(j.slug||'')}" class="flex items-center gap-4 bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:border-tnf-green hover:shadow-md transition-all group" data-aos="fade-up" data-aos-delay="${i*70}"><div class="w-12 h-12 rounded-xl bg-tnf-greenLight text-tnf-green grid place-items-center flex-none group-hover:bg-tnf-green group-hover:text-white transition-colors"><i class="fa-solid fa-briefcase"></i></div><div class="flex-1 min-w-0"><h3 class="font-bold text-tnf-ink group-hover:text-tnf-green transition-colors leading-snug">${esc(j.title)}</h3><div class="flex flex-wrap gap-2 mt-2">${j.department_id&&depMap[j.department_id]?pill('fa-sitemap',depMap[j.department_id]):''}${j.location?pill('fa-location-dot',j.location):''}${j.type?pill('fa-clock',j.type):''}</div></div><i class="fa-solid fa-arrow-right text-gray-300 group-hover:text-tnf-green group-hover:translate-x-1 transition-all flex-none"></i></a>`).join('');
+          g.innerHTML=data.map((j,i)=>{const meta=[j.department_id&&depMap[j.department_id],j.location,j.type].filter(Boolean).map(esc).join(' &middot; ');return `<a href="/careers/job?slug=${encodeURIComponent(j.slug||'')}" class="group block bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-tnf-green/30 transition-all" data-aos="fade-up" data-aos-delay="${i*80}"><div class="flex items-start justify-between gap-3"><h3 class="text-lg font-bold text-tnf-ink group-hover:text-tnf-green transition-colors leading-snug">${esc(j.title)}</h3><span class="w-9 h-9 rounded-full bg-tnf-greenLight text-tnf-green grid place-items-center flex-none group-hover:bg-tnf-green group-hover:text-white transition-colors"><i class="fa-solid fa-arrow-right text-sm group-hover:translate-x-0.5 transition-transform"></i></span></div>${meta?`<p class="text-xs font-semibold text-tnf-green mt-1.5">${meta}</p>`:''}${j.description?`<p class="text-gray-500 text-sm leading-relaxed mt-3 line-clamp-3">${esc(j.description)}</p>`:''}</a>`;}).join('');
         }catch(e){}})();
 
         // PARTNERS
