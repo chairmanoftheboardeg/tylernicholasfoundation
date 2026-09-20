@@ -1,57 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin | Tyler Nicholas Foundation</title>
-  <meta name="robots" content="noindex" />
-  <link rel="icon" href="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
-  <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Plus Jakarta Sans','sans-serif']},colors:{tnf:{green:'#2E9E44',greenDark:'#26863A',ink:'#152219',charcoal:'#0E1A13'}}}}}</script>
-  <style>
-    html{overflow-x:hidden}body{overflow-x:clip}
-    body{background:linear-gradient(120deg,#0E1A13 0%,#152219 45%,#26863A 130%)}
-    .spin{border:4px solid rgba(255,255,255,.2);border-left-color:#fff;border-radius:50%;width:48px;height:48px;animation:s 1s linear infinite}
-    @keyframes s{to{transform:rotate(360deg)}}
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Redirecting… | Tyler Nicholas Foundation</title>
+<meta name="robots" content="noindex" />
+<link rel="icon" href="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" />
+<meta http-equiv="refresh" content="0; url=/board" />
+<script>location.replace('/board');</script>
+<style>body{font-family:system-ui,-apple-system,sans-serif;background:#071310;color:#E9F2EC;min-height:100vh;margin:0;display:grid;place-items:center;text-align:center;padding:24px}a{color:#40D368;font-weight:600}</style>
 </head>
-<body class="font-sans text-white min-h-screen flex flex-col items-center justify-center px-6 text-center">
-  <img src="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" alt="TNF" class="h-16 w-16 object-contain rounded-2xl mb-7" />
-  <div class="spin mb-6"></div>
-  <h1 class="text-lg font-bold mb-1" id="msg">Opening the admin area…</h1>
-  <p class="text-white/70 text-sm mb-8">Checking your access.</p>
-  <a href="/login" id="fallback" class="text-white/80 hover:text-white text-sm underline">Continue to sign in</a>
-
-  <script>
-    const SB_URL='https://mcnemlwalcgdlmclijxc.supabase.co';
-    const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jbmVtbHdhbGNnZGxtY2xpanhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5NDMzNTAsImV4cCI6MjEwMjUxOTM1MH0.jVPTsfz7Htho4EZKvHzlgr1vSkj41EuVpMBgaHzLm-Q';
-    const STAFF_ROLES=['staff','board','admin','superadmin'];
-    // hard fallback: never leave the user stuck on the loader
-    const bail=setTimeout(()=>{location.replace('/login');},6000);
-    document.addEventListener('DOMContentLoaded',()=>{
-      const wait=setInterval(()=>{ if(!window.supabase)return; clearInterval(wait);
-        const db=window.supabase.createClient(SB_URL,SB_KEY);
-        (async()=>{
-          try{
-            const {data:{session}}=await db.auth.getSession();
-            if(!session){ clearTimeout(bail); location.replace('/login'); return; }
-            const {data:profile}=await db.from('profiles').select('role,is_active').eq('id',session.user.id).maybeSingle();
-            clearTimeout(bail);
-            if(!profile || profile.is_active===false){ await db.auth.signOut(); location.replace('/login'); return; }
-            if(STAFF_ROLES.includes(profile.role)){
-              document.getElementById('msg').textContent='Welcome back, loading your back office…';
-              location.replace('/staff');
-            } else {
-              // logged-in member/volunteer: send them to their own portal
-              document.getElementById('msg').textContent='Taking you to your portal…';
-              location.replace('/portal');
-            }
-          }catch(e){ clearTimeout(bail); location.replace('/login'); }
-        })();
-      },80);
-    });
-  </script>
+<body>
+  <div>
+    <img src="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" alt="TNF" style="height:56px;border-radius:12px;margin-bottom:18px" />
+    <p style="font-weight:600;margin:0 0 6px">Taking you to the Board Console…</p>
+    <p style="font-size:14px;opacity:.7;margin:0">If nothing happens, <a href="/board">continue here</a>.</p>
+  </div>
 </body>
 </html>
