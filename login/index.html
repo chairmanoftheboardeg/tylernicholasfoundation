@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Sign In | Tyler Nicholas Foundation</title>
-  <meta name="description" content="Staff and volunteer login for the Tyler Nicholas Foundation portal." />
+  <title>BOD Login | Tyler Nicholas Foundation</title>
+  <meta name="description" content="Board of Directors login for the Tyler Nicholas Foundation." />
   <meta name="robots" content="noindex" />
   <link rel="icon" href="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" />
 
@@ -68,7 +68,7 @@
           <p id="si-msg" class="text-sm font-semibold text-red-600 min-h-[1em]"></p>
           <button type="submit" id="si-submit" class="w-full bg-tnf-green hover:bg-tnf-greenDark text-white font-bold py-3.5 rounded-xl transition-colors">Sign in</button>
         </form>
-        <p class="text-center text-gray-400 text-xs mt-7 leading-relaxed">Accounts are created by the Foundation. If you're a volunteer or staff member and need access, please <a href="/contact" class="font-semibold text-tnf-green hover:text-tnf-greenDark">contact us</a>.</p>
+        <p class="text-center text-gray-400 text-xs mt-7 leading-relaxed">Accounts are created by the Foundation. Board members who need access, please <a href="/contact" class="font-semibold text-tnf-green hover:text-tnf-greenDark">contact us</a>.</p>
       </div>
 
       <!-- FORGOT -->
@@ -109,7 +109,7 @@
         <h2 class="text-2xl font-bold text-tnf-ink mb-1">You're signed in</h2>
         <p class="text-gray-500 mb-1">Welcome, <span id="wi-name" class="font-semibold text-tnf-ink"></span>.</p>
         <p class="mb-7"><span id="wi-role" class="inline-block text-xs font-bold uppercase tracking-wide bg-tnf-greenLight text-tnf-greenDark px-3 py-1.5 rounded-full"></span></p>
-        <a id="wi-continue" href="/portal" class="block w-full bg-tnf-green hover:bg-tnf-greenDark text-white font-bold py-3.5 rounded-xl transition-colors mb-3">Continue to your dashboard</a>
+        <a id="wi-continue" href="/board" class="block w-full bg-tnf-green hover:bg-tnf-greenDark text-white font-bold py-3.5 rounded-xl transition-colors mb-3">Continue to the Board Console</a>
         <button id="wi-signout" class="w-full border border-gray-200 text-tnf-ink font-bold py-3.5 rounded-xl hover:border-red-300 hover:text-red-600 transition-colors">Sign out</button>
       </div>
 
@@ -129,8 +129,7 @@
     document.querySelectorAll('.toggle-pass').forEach(btn=>btn.addEventListener('click',()=>{ const inp=$(btn.dataset.target); const show=inp.type==='password'; inp.type=show?'text':'password'; btn.innerHTML=show?'<i class="fa-regular fa-eye-slash"></i>':'<i class="fa-regular fa-eye"></i>'; }));
     function busy(btn,txt){ btn.disabled=true; btn.dataset.old=btn.innerHTML; btn.innerHTML=`<span class="btn-spin"></span> ${txt}`; }
     function unbusy(btn){ btn.disabled=false; btn.innerHTML=btn.dataset.old; }
-    const STAFF_ROLES=['staff','board','admin','superadmin'];
-    const destFor=r=>STAFF_ROLES.includes(r)?'/staff':'/portal';
+    const destFor=r=>'/board';
     const roleLabel=r=>({member:'Member',volunteer:'Volunteer',staff:'Staff',board:'Board Member',admin:'Administrator',superadmin:'Administrator'}[r]||'Member');
 
     document.addEventListener('DOMContentLoaded',()=>{

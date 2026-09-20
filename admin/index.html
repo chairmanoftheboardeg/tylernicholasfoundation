@@ -40,14 +40,8 @@
             const {data:profile}=await db.from('profiles').select('role,is_active').eq('id',session.user.id).maybeSingle();
             clearTimeout(bail);
             if(!profile || profile.is_active===false){ await db.auth.signOut(); location.replace('/login'); return; }
-            if(STAFF_ROLES.includes(profile.role)){
-              document.getElementById('msg').textContent='Welcome back, loading your back office…';
-              location.replace('/staff');
-            } else {
-              // logged-in member/volunteer: send them to their own portal
-              document.getElementById('msg').textContent='Taking you to your portal…';
-              location.replace('/portal');
-            }
+            document.getElementById('msg').textContent='Welcome back, taking you to the Board Console…';
+            location.replace('/board');
           }catch(e){ clearTimeout(bail); location.replace('/login'); }
         })();
       },80);

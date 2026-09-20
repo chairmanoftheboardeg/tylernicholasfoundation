@@ -224,12 +224,13 @@
 
     <!-- WHAT WE DO / PILLARS -->
     <section id="pillars-section" class="w-full bg-white py-24 hidden">
-      <div class="max-w-5xl mx-auto px-4">
-        <div class="text-center mb-8" data-aos="fade-up">
-          <h2 class="text-3xl md:text-4xl font-bold text-tnf-ink mb-4">Five pillars, one mission</h2>
+      <div class="max-w-6xl mx-auto px-4">
+        <div class="text-center mb-14" data-aos="fade-up">
+          <span class="inline-block text-xs font-bold uppercase tracking-[.2em] text-tnf-green mb-3">What we do</span>
+          <h2 class="text-3xl md:text-5xl font-extrabold text-tnf-ink mb-4">Five pillars, one mission</h2>
           <p class="text-lg text-gray-500 max-w-2xl mx-auto">Everything we do sits under five areas of work, each led by our Directors General.</p>
         </div>
-        <div id="pillars-list"></div>
+        <div id="pillars-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
       </div>
     </section>
 
@@ -295,16 +296,15 @@
     </section>
 
     <!-- CAREERS -->
-    <section id="careers-section" class="w-full py-24 hidden">
-      <div class="max-w-6xl mx-auto px-4">
-        <div class="flex flex-col md:flex-row justify-between items-end mb-12 border-b-2 border-gray-100 pb-4" data-aos="fade-up">
-          <div>
-            <h2 class="text-3xl font-bold text-tnf-ink">Join our team</h2>
-            <p class="text-gray-500 mt-1">Open roles and ways to build Seychelles with us.</p>
-          </div>
-          <a href="/careers" class="mt-4 md:mt-0 text-sm font-bold text-tnf-green hover:text-tnf-greenDark transition-colors flex items-center group">All roles <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i></a>
+    <section id="careers-section" class="w-full py-24 bg-tnf-ink hidden">
+      <div class="max-w-6xl mx-auto px-4 grid lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+        <div class="lg:col-span-5" data-aos="fade-right">
+          <span class="inline-block text-xs font-bold uppercase tracking-[.2em] text-tnf-green mb-3">Careers</span>
+          <h2 class="text-3xl md:text-4xl font-extrabold text-white mb-4 leading-tight">Join our team</h2>
+          <p class="text-white/60 text-lg leading-relaxed mb-8">Help build a brighter future for young Seychellois. Explore our open roles and find where you fit.</p>
+          <a href="/careers" class="inline-flex items-center gap-2 bg-tnf-green hover:bg-tnf-greenDark text-white font-bold py-3.5 px-7 rounded-xl transition-colors">See all roles <i class="fa-solid fa-arrow-right"></i></a>
         </div>
-        <div id="careers-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+        <div id="careers-grid" class="lg:col-span-7 space-y-4"></div>
       </div>
     </section>
 
@@ -320,17 +320,16 @@
     </section>
 
     <!-- ALERTS -->
-    <section class="w-full bg-white py-20">
-      <div class="max-w-3xl mx-auto px-4">
-        <div class="bg-tnf-greenLight rounded-3xl px-8 py-12 text-center" data-aos="fade-up">
-          <h2 class="text-3xl md:text-4xl font-bold text-tnf-ink mb-4">Never miss an opportunity</h2>
-          <p class="text-gray-600 mb-8 max-w-lg mx-auto">Get new scholarships, internships and exchanges in your inbox as soon as we verify them.</p>
-          <form id="alert-form" class="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
-            <input id="alert-email" type="email" required placeholder="Your email address" class="flex-1 rounded-xl px-5 py-4 text-gray-900 bg-white border border-gray-200 outline-none focus:border-tnf-green" aria-label="Your email" />
-            <button type="submit" class="bg-tnf-green hover:bg-tnf-greenDark text-white font-bold py-4 px-8 rounded-xl transition-colors">Get alerts</button>
-          </form>
-          <p id="alert-msg" class="mt-4 font-semibold text-tnf-greenDark min-h-[1.2em]"></p>
-        </div>
+    <section class="w-full py-24 px-4">
+      <div class="max-w-5xl mx-auto relative overflow-hidden rounded-[2rem] px-6 py-16 md:px-16 md:py-20 text-center" style="background:radial-gradient(circle at 20% 20%,rgba(46,158,68,.35),transparent 55%),linear-gradient(135deg,#0E1A13 0%,#152219 55%,#1d3a27 100%)" data-aos="fade-up">
+        <span class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[.18em] text-tnf-green bg-tnf-green/10 ring-1 ring-tnf-green/30 rounded-full px-4 py-1.5 mb-6"><i class="fa-regular fa-bell"></i>Opportunity alerts</span>
+        <h2 class="text-3xl md:text-5xl font-extrabold text-white mb-4 leading-tight">Never miss an opportunity</h2>
+        <p class="text-white/70 text-lg mb-10 max-w-xl mx-auto font-light">New scholarships, internships and exchanges, sent to your inbox the moment we verify them.</p>
+        <form id="alert-form" class="flex flex-col sm:flex-row items-stretch gap-3 max-w-xl mx-auto sm:bg-white/5 sm:ring-1 sm:ring-white/10 sm:rounded-2xl sm:p-2 sm:backdrop-blur">
+          <input id="alert-email" type="email" required placeholder="Your email address" class="flex-1 rounded-xl px-5 py-4 text-gray-900 bg-white border border-transparent outline-none focus:ring-2 focus:ring-tnf-green" aria-label="Your email" />
+          <button type="submit" class="bg-tnf-green hover:bg-tnf-greenDark text-white font-bold py-4 px-8 rounded-xl transition-colors whitespace-nowrap">Get alerts</button>
+        </form>
+        <p id="alert-msg" class="mt-5 font-semibold text-tnf-green min-h-[1.2em]"></p>
       </div>
     </section>
 
@@ -366,7 +365,7 @@
         <a href="/donate" class="text-gray-400 hover:text-tnf-green transition-colors">Donate</a>
         <a href="/resources" class="text-gray-400 hover:text-tnf-green transition-colors">Resources</a>
         <a href="/faq" class="text-gray-400 hover:text-tnf-green transition-colors">FAQ</a>
-        <a href="/login" class="text-gray-400 hover:text-tnf-green transition-colors">Staff &amp; Volunteer Login</a>
+        <a href="/login" class="text-gray-400 hover:text-tnf-green transition-colors">BOD Login</a>
       </div>
     </div>
     <div class="max-w-7xl mx-auto border-t border-white/10 pt-8 text-center text-xs text-gray-500">
@@ -429,7 +428,7 @@
         // PILLARS (departments), alternating left/right, no numbers
         (async()=>{try{const{data}=await db.from('departments').select('name,slug,description,sort_order').order('sort_order');
           if(!data||!data.length)return;document.getElementById('pillars-section').classList.remove('hidden');const g=document.getElementById('pillars-list');
-          g.innerHTML=data.map((p,i)=>{const right=i%2===1;return `<div class="border-t border-gray-100 py-10" data-aos="${right?'fade-left':'fade-right'}"><div class="md:max-w-2xl ${right?'md:ml-auto md:text-right':'md:mr-auto'} text-left"><div class="w-10 h-1 bg-tnf-green mb-4 ${right?'md:ml-auto':''}"></div><h3 class="text-2xl md:text-3xl font-bold text-tnf-ink mb-3">${esc(p.name)}</h3>${p.description?`<p class="text-gray-500 leading-relaxed text-lg">${esc(p.description)}</p>`:''}</div></div>`;}).join('');
+          g.innerHTML=data.map((p,i)=>`<div class="group relative bg-white rounded-2xl border border-gray-100 p-8 shadow-sm hover:shadow-xl hover:border-tnf-green/40 transition-all duration-300 transform hover:-translate-y-1.5 overflow-hidden" data-aos="fade-up" data-aos-delay="${(i%3)*100}"><span class="absolute -top-4 right-1 text-7xl font-extrabold text-tnf-greenLight select-none leading-none group-hover:text-tnf-green/20 transition-colors">${String(i+1).padStart(2,'0')}</span><div class="relative"><div class="w-11 h-1.5 rounded-full bg-tnf-green mb-5"></div><h3 class="text-xl font-bold text-tnf-ink mb-3 leading-snug">${esc(p.name)}</h3>${p.description?`<p class="text-gray-500 leading-relaxed">${esc(p.description)}</p>`:''}</div></div>`).join('');
         }catch(e){}})();
 
         // LATEST OPPORTUNITIES
@@ -464,7 +463,7 @@
           if(!data||!data.length)return;
           let depMap={};try{const{data:d}=await db.from('departments').select('id,name');(d||[]).forEach(x=>depMap[x.id]=x.name);}catch(e){}
           document.getElementById('careers-section').classList.remove('hidden');const g=document.getElementById('careers-grid');
-          g.innerHTML=data.map((j,i)=>`<a href="/careers/job?slug=${encodeURIComponent(j.slug||'')}" class="block bg-white rounded-2xl border border-gray-100 p-7 shadow-sm hover:shadow-lg transition-all transform hover:-translate-y-1 border-t-4 border-t-tnf-green group" data-aos="fade-up" data-aos-delay="${i*100}"><div class="w-11 h-11 rounded-xl bg-tnf-greenLight text-tnf-green grid place-items-center mb-4"><i class="fa-solid fa-briefcase"></i></div><h3 class="text-lg font-bold text-tnf-ink mb-2 group-hover:text-tnf-green transition-colors leading-snug">${esc(j.title)}</h3><div class="text-sm text-gray-400 space-y-1 mb-4">${j.department_id&&depMap[j.department_id]?`<div><i class="fa-solid fa-sitemap w-4 text-tnf-green"></i> ${esc(depMap[j.department_id])}</div>`:''}${j.location?`<div><i class="fa-solid fa-location-dot w-4 text-tnf-green"></i> ${esc(j.location)}</div>`:''}${j.type?`<div><i class="fa-solid fa-clock w-4 text-tnf-green"></i> ${esc(j.type)}</div>`:''}</div><span class="text-tnf-green font-bold text-sm flex items-center">View role <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i></span></a>`).join('');
+          g.innerHTML=data.map((j,i)=>`<a href="/careers/job?slug=${encodeURIComponent(j.slug||'')}" class="group flex items-center gap-5 bg-white/5 hover:bg-white/10 ring-1 ring-white/10 hover:ring-tnf-green/50 rounded-2xl p-5 md:p-6 transition-all" data-aos="fade-left" data-aos-delay="${i*100}"><div class="flex-none w-12 h-12 rounded-xl bg-tnf-green/15 text-tnf-green grid place-items-center text-lg"><i class="fa-solid fa-briefcase"></i></div><div class="min-w-0 flex-1"><h3 class="text-lg font-bold text-white mb-1 truncate group-hover:text-tnf-green transition-colors">${esc(j.title)}</h3><div class="text-sm text-white/50 flex flex-wrap gap-x-4 gap-y-1">${j.department_id&&depMap[j.department_id]?`<span><i class="fa-solid fa-sitemap mr-1.5 text-tnf-green"></i>${esc(depMap[j.department_id])}</span>`:''}${j.location?`<span><i class="fa-solid fa-location-dot mr-1.5 text-tnf-green"></i>${esc(j.location)}</span>`:''}${j.type?`<span><i class="fa-solid fa-clock mr-1.5 text-tnf-green"></i>${esc(j.type)}</span>`:''}</div></div><i class="fa-solid fa-arrow-right text-white/30 group-hover:text-tnf-green group-hover:translate-x-1 transition-all flex-none"></i></a>`).join('');
         }catch(e){}})();
 
         // PARTNERS
