@@ -222,24 +222,13 @@ async function boot(){
   db=supabase.createClient(SB_URL,SB_KEY);
   const {data:{session}}=await db.auth.getSession();
   if(session){ return afterAuth(session); }
-  $('gate-load').classList.add('hidden'); $('gate-form').classList.remove('hidden');
-  const go=async()=>{
-    const email=$('li-email').value.trim(), pass=$('li-pass').value, msg=$('li-msg'), b=$('li-go');
-    if(!email||!pass){ msg.textContent='Enter your email and password.'; return; }
-    b.disabled=true; b.innerHTML='<span class="btn-spin"></span>'; msg.textContent='';
-    const {data,error}=await db.auth.signInWithPassword({email,password:pass});
-    if(error){ msg.textContent=error.message||'Could not sign in.'; b.disabled=false; b.textContent='Sign in'; return; }
-    afterAuth(data.session);
-  };
-  $('li-go').addEventListener('click',go);
-  $('li-pass').addEventListener('keydown',e=>{if(e.key==='Enter')go();});
+  location.replace('/login');
 }
+function bounce(){ db.auth.signOut().finally(()=>location.replace('/login')); }
 async function afterAuth(session){
   let prof=null;
   try{ const {data}=await db.from('profiles').select('*').eq('id',session.user.id).maybeSingle(); prof=data; }catch(e){}
-  if(!prof){ $('gate-load').classList.add('hidden'); $('gate-form').classList.remove('hidden'); $('li-msg').textContent='No profile found. Contact the Chairman.'; return; }
-  if(prof.is_active===false){ await db.auth.signOut(); $('li-msg').textContent='This account is inactive.'; $('gate-load').classList.add('hidden'); $('gate-form').classList.remove('hidden'); return; }
-  if(!prof.post){ await db.auth.signOut(); $('gate-load').classList.add('hidden'); $('gate-form').classList.remove('hidden'); $('li-msg').textContent='This console is for board members only.'; return; }
+  if(!prof||prof.is_active===false||!prof.post){ return bounce(); }
   ME=prof; CAPS=prof.capabilities||[];
   $('gate').classList.add('hidden'); $('app').classList.remove('hidden');
   const av=$('h-av'); av.innerHTML=avatarInner(prof); if(prof.avatar_url)av.classList.remove('bg-brand');

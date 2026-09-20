@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>BOD Login | Tyler Nicholas Foundation</title>
+  <title>Sign In | Tyler Nicholas Foundation</title>
   <meta name="description" content="Board of Directors login for the Tyler Nicholas Foundation." />
   <meta name="robots" content="noindex" />
   <link rel="icon" href="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" />
@@ -68,7 +68,7 @@
           <p id="si-msg" class="text-sm font-semibold text-red-600 min-h-[1em]"></p>
           <button type="submit" id="si-submit" class="w-full bg-tnf-green hover:bg-tnf-greenDark text-white font-bold py-3.5 rounded-xl transition-colors">Sign in</button>
         </form>
-        <p class="text-center text-gray-400 text-xs mt-7 leading-relaxed">Accounts are created by the Foundation. Board members who need access, please <a href="/contact" class="font-semibold text-tnf-green hover:text-tnf-greenDark">contact us</a>.</p>
+        <p class="text-center text-gray-400 text-xs mt-7 leading-relaxed">Board accounts are created by the Foundation. If you're a board member and need access, please <a href="/contact" class="font-semibold text-tnf-green hover:text-tnf-greenDark">contact us</a>.</p>
       </div>
 
       <!-- FORGOT -->
@@ -109,7 +109,7 @@
         <h2 class="text-2xl font-bold text-tnf-ink mb-1">You're signed in</h2>
         <p class="text-gray-500 mb-1">Welcome, <span id="wi-name" class="font-semibold text-tnf-ink"></span>.</p>
         <p class="mb-7"><span id="wi-role" class="inline-block text-xs font-bold uppercase tracking-wide bg-tnf-greenLight text-tnf-greenDark px-3 py-1.5 rounded-full"></span></p>
-        <a id="wi-continue" href="/board" class="block w-full bg-tnf-green hover:bg-tnf-greenDark text-white font-bold py-3.5 rounded-xl transition-colors mb-3">Continue to the Board Console</a>
+        <a id="wi-continue" href="/board" class="block w-full bg-tnf-green hover:bg-tnf-greenDark text-white font-bold py-3.5 rounded-xl transition-colors mb-3">Continue to your dashboard</a>
         <button id="wi-signout" class="w-full border border-gray-200 text-tnf-ink font-bold py-3.5 rounded-xl hover:border-red-300 hover:text-red-600 transition-colors">Sign out</button>
       </div>
 
@@ -129,8 +129,7 @@
     document.querySelectorAll('.toggle-pass').forEach(btn=>btn.addEventListener('click',()=>{ const inp=$(btn.dataset.target); const show=inp.type==='password'; inp.type=show?'text':'password'; btn.innerHTML=show?'<i class="fa-regular fa-eye-slash"></i>':'<i class="fa-regular fa-eye"></i>'; }));
     function busy(btn,txt){ btn.disabled=true; btn.dataset.old=btn.innerHTML; btn.innerHTML=`<span class="btn-spin"></span> ${txt}`; }
     function unbusy(btn){ btn.disabled=false; btn.innerHTML=btn.dataset.old; }
-    const destFor=r=>'/board';
-    const roleLabel=r=>({member:'Member',volunteer:'Volunteer',staff:'Staff',board:'Board Member',admin:'Administrator',superadmin:'Administrator'}[r]||'Member');
+    const POSTLABEL={chairman:'Chairman',vice_chairman:'Vice Chairman',secretary_general:'Secretary General',treasurer:'Treasurer',director_general:'Director General'};
 
     document.addEventListener('DOMContentLoaded',()=>{
       const wait=setInterval(()=>{
@@ -141,12 +140,16 @@
         db.auth.onAuthStateChange((event)=>{ if(event==='PASSWORD_RECOVERY') showMode('recovery'); });
 
         async function showSignedIn(user){
-          let role='member', name=(user.user_metadata&&(user.user_metadata.full_name||user.user_metadata.name))||user.email;
-          try{ const{data:p}=await db.from('profiles').select('full_name,role,is_active').eq('id',user.id).maybeSingle(); if(p){ role=p.role||role; if(p.full_name) name=p.full_name; if(p.is_active===false){ await db.auth.signOut(); $('si-msg').textContent='Your account has been deactivated. Please contact an administrator.'; showMode('signin'); return; } } }catch(e){}
-          $('wi-name').textContent=name;
-          $('wi-role').textContent=roleLabel(role);
-          $('wi-continue').setAttribute('href',destFor(role));
+          let p=null;
+          try{ const{data}=await db.from('profiles').select('full_name,post,is_active').eq('id',user.id).maybeSingle(); p=data; }catch(e){}
+          if(!p){ await db.auth.signOut(); $('si-msg').textContent='No board profile is linked to this account. Please contact the Chairman.'; showMode('signin'); return; }
+          if(p.is_active===false){ await db.auth.signOut(); $('si-msg').textContent='This account is inactive. Please contact the Chairman.'; showMode('signin'); return; }
+          if(!p.post){ await db.auth.signOut(); $('si-msg').textContent='This login is for the Board of Directors only.'; showMode('signin'); return; }
+          $('wi-name').textContent=(p.full_name||user.email);
+          $('wi-role').textContent=POSTLABEL[p.post]||'Board Member';
+          $('wi-continue').setAttribute('href','/board');
           showMode('signedin');
+          location.replace('/board');
         }
 
         (async()=>{
