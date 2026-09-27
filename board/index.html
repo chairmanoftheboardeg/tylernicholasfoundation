@@ -98,6 +98,7 @@ tailwind.config={theme:{extend:{
       <img src="https://i.ibb.co/BKLps0Qx/TNF-LOGO.jpg" class="h-10 w-10 rounded-xl" alt="TNF" />
       <div class="leading-tight"><div class="font-display font-extrabold">Board Console</div><div class="text-bright text-[11px] font-bold">Tyler Nicholas Foundation</div></div>
       <div class="ml-auto flex items-center gap-2">
+        <a href="/" class="hidden sm:flex items-center gap-2 h-11 px-4 rounded-xl glass text-mist hover:text-white transition-colors text-sm font-semibold" title="Go to the public website"><i class="fa-solid fa-house"></i> Website</a>
         <button id="h-bell" class="relative w-11 h-11 rounded-xl glass grid place-items-center text-mist hover:text-white transition-colors"><i class="fa-solid fa-bell"></i><span id="h-bell-dot" class="hidden absolute top-2 right-2 min-w-[16px] h-4 px-1 rounded-full bg-bright text-ink text-[10px] font-extrabold grid place-items-center"></span></button>
         <button id="h-profile" class="flex items-center gap-2.5 pl-1.5 pr-3 py-1.5 rounded-xl glass hover:bg-white/10 transition-colors">
           <span id="h-av" class="w-8 h-8 rounded-lg bg-brand grid place-items-center font-bold text-sm overflow-hidden"></span>
@@ -170,6 +171,7 @@ tailwind.config={theme:{extend:{
         </button>
         <div id="m-nav" class="flex items-center gap-1 overflow-x-auto no-scrollbar flex-1 px-1"></div>
         <button id="m-bell" class="relative w-10 h-10 rounded-lg glass grid place-items-center text-mist hover:text-white shrink-0"><i class="fa-solid fa-bell"></i><span id="m-bell-dot" class="hidden absolute top-1.5 right-1.5 min-w-[15px] h-3.5 px-1 rounded-full bg-bright text-ink text-[9px] font-extrabold grid place-items-center"></span></button>
+        <a href="/" class="w-10 h-10 rounded-lg glass grid place-items-center text-mist hover:text-white shrink-0" title="Go to the public website"><i class="fa-solid fa-house"></i></a>
         <button id="m-menu" class="w-10 h-10 rounded-lg glass grid place-items-center text-mist hover:text-white shrink-0" title="Back to menu"><i class="fa-solid fa-grip"></i></button>
       </div>
     </header>
@@ -206,6 +208,12 @@ const esc=s=>(s==null?'':String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt
 const el=h=>{const t=document.createElement('template');t.innerHTML=h.trim();return t.content.firstChild;};
 function toast(m,ok=true){const t=$('toast');t.textContent=m;t.className='fixed bottom-5 left-1/2 -translate-x-1/2 z-[90] px-4 py-2.5 rounded-xl text-sm font-semibold shadow-2xl '+(ok?'bg-brand text-white':'bg-red-600 text-white');t.classList.remove('hidden');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.add('hidden'),3200);}
 let db, ME={}, CAPS=[], NOTIFS=[], LISTCTX=null;
+function exportCSV(rows,cols,label){
+  const esc2=v=>{ if(v==null)return''; if(Array.isArray(v))v=v.join('; '); v=String(v).replace(/"/g,'""'); return /[",\n]/.test(v)?`"${v}"`:v; };
+  const csv=[cols.join(',')].concat((rows||[]).map(r=>cols.map(c=>esc2(r[c])).join(','))).join('\n');
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  a.download=(label||'export').replace(/\s+/g,'-').toLowerCase()+'-'+new Date().toISOString().slice(0,10)+'.csv'; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),1000); toast('Downloaded CSV');
+}
 const POSTLABEL={chairman:'Chairman',vice_chairman:'Vice Chairman',secretary_general:'Secretary General',treasurer:'Treasurer',director_general:'Director General'};
 function roleLabel(p){ let base=POSTLABEL[p.post]||p.title||'Board member'; if(p.post==='director_general'&&p.portfolio) base+=' — '+p.portfolio; return base; }
 function can(cap){ if(!cap) return true; if(cap.indexOf('safeguarding')===0) return CAPS.includes(cap); return CAPS.includes('board.admin')||CAPS.includes(cap); }
@@ -251,6 +259,9 @@ const MODULES=[
   {key:'hr',label:'People / HR',desc:'Staff & applications',icon:'fa-users-gear',cap:'hr.manage'},
   {key:'finance',label:'Finance',desc:'Budgets & expenses',icon:'fa-coins',cap:'finance.manage'},
   {key:'talent',label:'Talent',desc:'Recruitment pipeline',icon:'fa-user-plus',cap:'talent.manage'},
+  {key:'notepad',label:'Notepad',desc:'Your private notes',icon:'fa-note-sticky'},
+  {key:'email',label:'Email Access',desc:'Your Zoho inbox & login',icon:'fa-envelope'},
+  {key:'accounts',label:'Accounts',desc:'Manage board logins',icon:'fa-user-shield',cap:'board.admin'},
   {key:'profile',label:'My Profile',desc:'Your details',icon:'fa-id-card'},
 ];
 const allowed=()=>MODULES.filter(m=>can(m.cap));
@@ -386,6 +397,9 @@ function openModule(key){
   if(key==='calendar')return renderCalendar(c);
   if(key==='reports')return renderReports(c,nb);
   if(key==='profile')return renderProfile(c);
+  if(key==='notepad')return renderNotepad(c);
+  if(key==='email')return renderEmail(c);
+  if(key==='accounts')return renderAccounts(c,nb);
   if(key==='content')return renderTabs(c,nb,['ct_opportunities','ct_programs','ct_news','ct_events','ct_partners','ct_resources','ct_faqs','ct_impact','ct_team','ct_departments','notices']);
   if(key==='hr')return renderTabs(c,nb,['staff','vol_apps','job_posts','job_apps','leave']);
   if(key==='finance')return renderTabs(c,nb,['budgets','expenses','donations']);
@@ -581,10 +595,95 @@ async function renderProfile(c){
       catch(e){ m.className='text-sm font-semibold text-red-400 mb-2'; m.textContent=e.message||'Could not update'; b.disabled=false; b.textContent='Update'; } }); });
 }
 
+/* ============ NOTEPAD ============ */
+async function renderNotepad(c){
+  c.innerHTML=`<div class="max-w-3xl">
+    <div class="card p-5">
+      <div class="flex items-center justify-between mb-3"><span class="text-mist text-sm">Private to you. Saves automatically.</span><span id="np-status" class="text-xs text-faint"></span></div>
+      <textarea id="np-text" rows="16" class="fld resize-y font-sans" placeholder="Jot anything down — reminders, ideas, follow-ups…">${esc(ME.notepad||'')}</textarea>
+    </div></div>`;
+  const ta=$('np-text'), st=$('np-status'); let t=null;
+  const save=async()=>{ st.textContent='Saving…'; try{ await db.from('profiles').update({notepad:ta.value}).eq('id',ME.id); ME.notepad=ta.value; st.textContent='Saved'; setTimeout(()=>st.textContent==='Saved'&&(st.textContent=''),1500);}catch(e){ st.textContent='Could not save'; } };
+  ta.addEventListener('input',()=>{ st.textContent='Editing…'; clearTimeout(t); t=setTimeout(save,900); });
+}
+
+/* ============ EMAIL ACCESS (Zoho) ============ */
+async function renderEmail(c){
+  let rows=[]; try{ const {data}=await db.from('email_accounts').select('*').order('display_name'); rows=data||[]; }catch(e){}
+  const open=`<a href="https://www.zoho.com/mail/login.html" target="_blank" rel="noopener" class="btn inline-flex items-center gap-2 px-5 py-3 text-sm"><i class="fa-solid fa-arrow-up-right-from-square"></i> Open Zoho Mail</a>`;
+  if(!rows.length){ c.innerHTML=`<div class="max-w-xl"><div class="card p-8 text-center"><div class="w-12 h-12 rounded-xl bg-white/5 text-bright grid place-items-center text-xl mx-auto mb-4"><i class="fa-solid fa-envelope"></i></div><p class="text-mist mb-5">You don't have a Foundation email account assigned. Director Generals use their personal email.</p>${open}</div></div>`; return; }
+  const cpy=(v,l)=>`<button data-cp="${esc(v)}" class="cpy flex items-center gap-2 text-left w-full bg-black/20 rounded-lg px-3 py-2.5 hover:bg-black/30 transition-colors"><span class="min-w-0 flex-1"><span class="block text-[11px] text-faint font-bold">${l}</span><span class="block font-mono text-sm truncate">${esc(v)}</span></span><i class="fa-solid fa-copy text-mist text-sm flex-none"></i></button>`;
+  c.innerHTML=`<div class="mb-5">${open}<p class="text-mist text-sm mt-3">Sign in on Zoho with the details below — tap any field to copy it.</p></div>
+    <div class="grid sm:grid-cols-2 gap-4 max-w-3xl">${rows.map(r=>`<div class="card p-5">
+      <div class="flex items-center gap-3 mb-4"><span class="w-10 h-10 rounded-lg bg-bright/15 text-bright grid place-items-center"><i class="fa-solid fa-at"></i></span><div><div class="font-semibold">${esc(r.display_name||'')}</div><div class="text-faint text-xs">${esc(r.provider||'Email')}</div></div></div>
+      <div class="space-y-2">${cpy(r.email,'EMAIL')}${cpy(r.password,'PASSWORD')}</div>
+    </div>`).join('')}</div>`;
+  c.querySelectorAll('.cpy').forEach(b=>b.addEventListener('click',()=>{ navigator.clipboard&&navigator.clipboard.writeText(b.dataset.cp); const i=b.querySelector('i'); const old=i.className; i.className='fa-solid fa-check text-bright text-sm flex-none'; toast('Copied'); setTimeout(()=>i.className=old,1200); }));
+}
+
+/* ============ ACCOUNTS (board.admin) ============ */
+const POSTS=[['chairman','Chairman'],['vice_chairman','Vice Chairman'],['secretary_general','Secretary General'],['treasurer','Treasurer'],['director_general','Director General']];
+const CAPLIST=[['board.admin','Full admin'],['content.manage','Website'],['hr.manage','People / HR'],['finance.manage','Finance'],['talent.manage','Talent'],['meetings.manage','Meetings'],['comms.manage','Comms'],['documents.manage','Documents']];
+async function renderAccounts(c,nb){
+  nb.classList.remove('hidden'); nb.onclick=()=>accountForm();
+  c.innerHTML='<div class="text-center text-faint py-16"><div class="loader mx-auto"></div></div>';
+  let rows=[]; try{ const {data,error}=await db.rpc('admin_list_accounts'); if(error)throw error; rows=data||[]; }catch(e){ c.innerHTML=`<div class="card p-8 text-center text-red-300">Could not load accounts: ${esc(e.message)}</div>`; return; }
+  const plabel=p=>(POSTS.find(x=>x[0]===p)||[])[1]||p;
+  c.innerHTML='<div class="space-y-2">'+rows.map(r=>`<div class="card p-4 flex items-center gap-3">
+      <span class="w-10 h-10 rounded-lg ${r.is_active?'bg-bright/15 text-bright':'bg-white/5 text-faint'} grid place-items-center flex-none"><i class="fa-solid fa-user"></i></span>
+      <div class="flex-1 min-w-0"><div class="font-semibold truncate">${esc(r.full_name||'')} ${r.is_active?'':'<span class="text-[11px] text-faint">(inactive)</span>'}</div><div class="text-mist text-xs truncate">${esc(r.email)} · ${esc(plabel(r.post))}${r.portfolio?' · '+esc(r.portfolio):''}</div></div>
+      ${r.has_login?'<span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-bright/15 text-bright">Login</span>':'<span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-gold/15 text-gold">No login</span>'}
+      <button class="acc-menu text-faint hover:text-white px-2" data-email="${esc(r.email)}"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+    </div>`).join('')+'</div>';
+  c.querySelectorAll('.acc-menu').forEach(b=>b.addEventListener('click',()=>accountActions(rows.find(r=>r.email===b.dataset.email))));
+}
+function capChecks(sel){ return CAPLIST.map(([k,l])=>`<label class="flex items-center gap-2 text-sm"><input type="checkbox" class="acc-cap accent-bright" value="${k}" ${(sel||[]).includes(k)?'checked':''}>${l}</label>`).join(''); }
+function accountForm(existing){
+  const e=existing||{}; const editing=!!existing;
+  openModal(`<div class="p-6"><h3 class="font-display font-bold text-lg mb-4">${editing?'Edit account':'New account'}</h3>
+    <label class="block text-xs font-semibold text-mist mb-1.5">Full name</label><input id="ac-name" class="fld mb-3" value="${esc(e.full_name||'')}">
+    <label class="block text-xs font-semibold text-mist mb-1.5">Email (login)</label><input id="ac-email" type="email" class="fld mb-3" value="${esc(e.email||'')}" ${editing?'disabled':''} placeholder="name@email.com">
+    ${editing?'':'<label class="block text-xs font-semibold text-mist mb-1.5">Password</label><input id="ac-pass" class="fld mb-3" placeholder="At least 6 characters">'}
+    <div class="grid grid-cols-2 gap-3 mb-3"><div><label class="block text-xs font-semibold text-mist mb-1.5">Post</label><select id="ac-post" class="fld">${POSTS.map(([k,l])=>`<option value="${k}" ${e.post===k?'selected':''}>${l}</option>`).join('')}</select></div><div><label class="block text-xs font-semibold text-mist mb-1.5">Phone</label><input id="ac-phone" class="fld" value="${esc(e.phone||'')}"></div></div>
+    <label class="block text-xs font-semibold text-mist mb-1.5">Portfolio (Director Generals)</label><input id="ac-portfolio" class="fld mb-3" value="${esc(e.portfolio||'')}" placeholder="e.g. Environment & Sustainability">
+    <label class="block text-xs font-semibold text-mist mb-2">Permissions</label><div class="grid grid-cols-2 gap-2 mb-4">${capChecks(e.capabilities)}</div>
+    <div class="flex justify-end gap-2"><button class="btn-ghost px-4 py-2.5 text-sm" onclick="closeModal()">Cancel</button><button id="ac-save" class="btn px-5 py-2.5 text-sm">${editing?'Save changes':'Create account'}</button></div></div>`);
+  $('ac-save').addEventListener('click',async()=>{
+    const name=$('ac-name').value.trim(), email=(editing?e.email:$('ac-email').value.trim()), post=$('ac-post').value,
+      portfolio=$('ac-portfolio').value.trim()||null, phone=$('ac-phone').value.trim()||null,
+      caps=[...document.querySelectorAll('.acc-cap:checked')].map(x=>x.value);
+    if(!name||!email){ toast('Name and email are required',false); return; }
+    const b=$('ac-save'); b.disabled=true; b.innerHTML='<span class="btn-spin"></span>';
+    try{ let res;
+      if(editing){ res=await db.rpc('admin_update_account',{p_email:email,p_full_name:name,p_post:post,p_portfolio:portfolio,p_caps:caps,p_phone:phone}); }
+      else { const pass=$('ac-pass').value; if(pass.length<6){toast('Password must be at least 6 characters',false);b.disabled=false;b.textContent='Create account';return;}
+        res=await db.rpc('create_board_login',{p_email:email,p_password:pass,p_full_name:name,p_post:post,p_portfolio:portfolio,p_caps:caps,p_phone:phone}); }
+      if(res.error)throw res.error; const msg=res.data||'Saved';
+      if(String(msg).startsWith('ERROR')){ toast(msg,false); b.disabled=false; b.textContent=editing?'Save changes':'Create account'; return; }
+      closeModal(); openModule('accounts'); toast(editing?'Account updated':'Account created');
+    }catch(err){ toast(err.message||'Could not save',false); b.disabled=false; b.textContent=editing?'Save changes':'Create account'; }
+  });
+}
+function accountActions(r){
+  openModal(`<div class="p-6"><h3 class="font-display font-bold text-lg mb-1">${esc(r.full_name||'')}</h3><p class="text-mist text-sm mb-5">${esc(r.email)}</p>
+    <div class="space-y-2">
+      <button id="aa-edit" class="btn-ghost w-full text-left px-4 py-3 text-sm"><i class="fa-solid fa-pen w-5 text-bright"></i> Edit details & permissions</button>
+      <button id="aa-pass" class="btn-ghost w-full text-left px-4 py-3 text-sm"><i class="fa-solid fa-key w-5 text-bright"></i> Reset password</button>
+      <button id="aa-active" class="btn-ghost w-full text-left px-4 py-3 text-sm"><i class="fa-solid fa-power-off w-5 text-bright"></i> ${r.is_active?'Deactivate':'Reactivate'} account</button>
+      <button id="aa-del" class="btn-ghost w-full text-left px-4 py-3 text-sm text-red-300"><i class="fa-solid fa-trash-can w-5"></i> Delete account</button>
+    </div>
+    <div class="flex justify-end mt-5"><button class="btn-ghost px-4 py-2.5 text-sm" onclick="closeModal()">Close</button></div></div>`);
+  $('aa-edit').addEventListener('click',()=>{ closeModal(); accountForm(r); });
+  $('aa-pass').addEventListener('click',()=>{ openModal(`<div class="p-6"><h3 class="font-display font-bold text-lg mb-4">Reset password</h3><p class="text-mist text-sm mb-3">${esc(r.email)}</p><input id="rp" class="fld mb-3" placeholder="New password (min 6)"><div class="flex justify-end gap-2"><button class="btn-ghost px-4 py-2.5 text-sm" onclick="closeModal()">Cancel</button><button id="rp-go" class="btn px-5 py-2.5 text-sm">Update</button></div></div>`);
+    $('rp-go').addEventListener('click',async()=>{ const pw=$('rp').value; if(pw.length<6){toast('Too short',false);return;} const b=$('rp-go');b.disabled=true;b.innerHTML='<span class="btn-spin"></span>'; try{const {data,error}=await db.rpc('set_board_password',{p_email:r.email,p_password:pw}); if(error)throw error; if(String(data).startsWith('ERROR')){toast(data,false);b.disabled=false;b.textContent='Update';return;} closeModal(); toast('Password updated'); }catch(e){toast(e.message,false);b.disabled=false;b.textContent='Update';} }); });
+  $('aa-active').addEventListener('click',async()=>{ try{ const {data,error}=await db.rpc('admin_set_active',{p_email:r.email,p_active:!r.is_active}); if(error)throw error; closeModal(); openModule('accounts'); toast(String(data).replace('OK: ','')); }catch(e){toast(e.message,false);} });
+  $('aa-del').addEventListener('click',async()=>{ if(!confirm(`Delete ${r.email}? This removes their login and profile permanently.`))return; try{ const {data,error}=await db.rpc('admin_delete_account',{p_email:r.email}); if(error)throw error; if(String(data).startsWith('ERROR')){toast(data,false);return;} closeModal(); openModule('accounts'); toast('Account deleted'); }catch(e){toast(e.message,false);} });
+}
+
 /* ============ GENERIC CRUD ENGINE ============ */
 const F=(name,label,type,extra)=>Object.assign({name,label,type},extra||{});
 const RES={
-  notices:{table:'announcements',label:'Notices',icon:'fa-bullhorn',order:['is_pinned',false,'created_at'],primary:'title',fields:[F('title','Title','text'),F('body','Message','area'),F('audience','Audience','sel',{options:['all','board']}),F('is_pinned','Pin to top','bool')]},
+  notices:{table:'announcements',label:'Notices',icon:'fa-bullhorn',order:['is_pinned',false,'created_at'],primary:'title',fields:[F('title','Title','text'),F('body','Message','area'),F('audience','Audience','sel',{options:['all','board']}),F('is_pinned','Pin to top','bool'),F('is_public','Show on public website','bool'),F('link','Link (optional)','text')]},
   documents:{table:'board_documents',label:'Documents',icon:'fa-folder-open',cap:'documents.manage',order:['created_at'],primary:'title',writeCap:'documents.manage',fields:[F('title','Title','text'),F('category','Category','text'),F('file_url','File / link URL','text')]},
   // finance
   budgets:{table:'budgets',label:'Budgets',icon:'fa-wallet',cap:'finance.manage',order:['created_at'],primary:'name',fields:[F('name','Name','text'),F('amount','Amount (SCR)','num'),F('period','Period','text'),F('notes','Notes','area')]},
@@ -621,7 +720,7 @@ async function renderList(key,c,nb){
   if(!rows.length){ c.innerHTML=`<div class="card p-10 text-center text-faint">Nothing here yet.${readonly?'':' Use New to add the first one.'}</div>`; return; }
   const sub=R.fields.find(f=>f.name!==R.primary&&['text','sel','num'].includes(f.type));
   const pub=R.fields.find(f=>f.name==='is_published'); const pin=R.fields.find(f=>f.name==='is_pinned');
-  c.innerHTML='<div class="space-y-2">'+rows.map(r=>`<div class="card p-4 flex items-center gap-3">
+  c.innerHTML='<div class="flex justify-end mb-3"><button id="csv-x" class="btn-ghost text-xs font-semibold px-3 py-1.5"><i class="fa-solid fa-file-arrow-down mr-1.5"></i>Export CSV</button></div><div class="space-y-2">'+rows.map(r=>`<div class="card p-4 flex items-center gap-3">
       <span class="w-10 h-10 rounded-lg bg-white/5 text-bright grid place-items-center flex-none"><i class="fa-solid ${R.icon}"></i></span>
       <div class="flex-1 min-w-0"><div class="font-semibold truncate">${esc(r[R.primary]||'(untitled)')}</div>${sub&&r[sub.name]?`<div class="text-mist text-xs truncate">${esc(String(r[sub.name]))}</div>`:''}</div>
       ${pin&&r.is_pinned?'<i class="fa-solid fa-thumbtack text-bright text-xs"></i>':''}
@@ -630,6 +729,7 @@ async function renderList(key,c,nb){
       <button class="ed text-faint hover:text-white px-1.5" data-id="${r.id}"><i class="fa-solid ${readonly?'fa-eye':'fa-pen'} text-sm"></i></button>
       ${readonly?'':`<button class="rm text-faint hover:text-red-400 px-1.5" data-id="${r.id}"><i class="fa-solid fa-trash-can text-sm"></i></button>`}
     </div>`).join('')+'</div>';
+  { const xb=$('csv-x'); if(xb)xb.onclick=()=>exportCSV(rows,R.fields.map(f=>f.name),R.label); }
   c.querySelectorAll('.ed').forEach(b=>b.addEventListener('click',()=>openForm(key,rows.find(r=>r.id===b.dataset.id),readonly)));
   c.querySelectorAll('.rm').forEach(b=>b.addEventListener('click',async()=>{ if(!confirm('Delete this item?'))return; try{await db.from(R.table).delete().eq('id',b.dataset.id); renderList(key,c,nb);}catch(e){toast(e.message,false);} }));
 }

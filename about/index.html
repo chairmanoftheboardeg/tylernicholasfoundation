@@ -288,6 +288,7 @@
     <div class="max-w-7xl mx-auto border-t border-white/10 pt-8 text-center text-xs text-gray-500">
       <p class="font-bold text-white text-sm mb-2">Tyler Nicholas Foundation</p>
       <p>&copy; <span id="current-year"></span> Tyler Nicholas Foundation · Republic of Seychelles</p>
+      <p class="mt-2 text-xs text-gray-500"><a href="/privacy" class="hover:text-tnf-green transition-colors">Privacy Policy</a> <span class="mx-1.5">|</span> <a href="/terms" class="hover:text-tnf-green transition-colors">Terms of Use</a></p>
     </div>
   </footer>
 
@@ -351,5 +352,27 @@
       },80);
     });
   </script>
+<!-- ROTATING ANNOUNCEMENT BAR -->
+<script>
+(function(){
+  var U='https://mcnemlwalcgdlmclijxc.supabase.co',K='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jbmVtbHdhbGNnZGxtY2xpanhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5NDMzNTAsImV4cCI6MjEwMjUxOTM1MH0.jVPTsfz7Htho4EZKvHzlgr1vSkj41EuVpMBgaHzLm-Q';
+  var bar=document.getElementById('announcement-bar'); if(!bar)return;
+  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  function go(){
+    if(!window.supabase)return setTimeout(go,150);
+    var db=window.supabase.createClient(U,K);
+    db.from('announcements').select('title,body,is_pinned,link,created_at').eq('is_public',true).order('is_pinned',{ascending:false}).order('created_at',{ascending:false}).limit(8).then(function(r){
+      var rows=(r&&r.data)||[]; if(!rows.length)return;
+      function html(a){ var t=(a.title||'')+(a.body?' — '+a.body:''); return a.link?'<a href="'+esc(a.link)+'" class="hover:underline block w-full">'+esc(t)+'</a>':esc(t); }
+      var i=0; bar.classList.remove('hidden'); bar.style.transition='opacity .4s'; bar.innerHTML=html(rows[0]);
+      if(rows.length>1){ setInterval(function(){ bar.style.opacity='0'; setTimeout(function(){ i=(i+1)%rows.length; bar.innerHTML=html(rows[i]); bar.style.opacity='1'; },400); },6000); }
+    });
+  }
+  setTimeout(go,600);
+})();
+</script>
+<!-- Elfsight AI Chatbot -->
+<script src="https://elfsightcdn.com/platform.js" async></script>
+<div class="elfsight-app-a5e64f50-7e55-4524-ad9b-420aa1626474" data-elfsight-app-lazy></div>
 </body>
 </html>
