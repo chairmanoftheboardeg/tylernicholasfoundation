@@ -66,6 +66,7 @@ tailwind.config={theme:{extend:{
   <div class="absolute inset-0" style="background:radial-gradient(120% 90% at 50% 0%,rgba(7,19,16,.55),rgba(7,19,16,.96))"></div>
   <div id="gate-load" class="relative text-center">
     <div class="loader mx-auto mb-4"></div><p class="text-mist text-sm font-semibold">Securing your console…</p>
+    <p id="gate-delay" class="hidden text-faint text-xs mt-3 max-w-xs mx-auto leading-relaxed px-4">We apologise for the delay. We are still preparing your console — thank you for your patience.</p>
   </div>
   <div id="gate-form" class="relative hidden w-[92%] max-w-sm glass-strong rounded-3xl p-8 ring-glow anim">
     <div class="flex items-center gap-3 mb-6">
@@ -208,6 +209,7 @@ const esc=s=>(s==null?'':String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt
 const el=h=>{const t=document.createElement('template');t.innerHTML=h.trim();return t.content.firstChild;};
 function toast(m,ok=true){const t=$('toast');t.textContent=m;t.className='fixed bottom-5 left-1/2 -translate-x-1/2 z-[90] px-4 py-2.5 rounded-xl text-sm font-semibold shadow-2xl '+(ok?'bg-brand text-white':'bg-red-600 text-white');t.classList.remove('hidden');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.add('hidden'),3200);}
 let db, ME={}, CAPS=[], NOTIFS=[], LISTCTX=null;
+function spin(c){ c.innerHTML='<div class="text-center text-faint py-16"><div class="loader mx-auto"></div><p id="ld-slow" class="hidden text-xs mt-4 max-w-xs mx-auto leading-relaxed px-4 text-mist">We apologise for the delay. We are still loading this section \u2014 thank you for your patience.</p></div>'; setTimeout(()=>{const m=document.getElementById('ld-slow'); if(m)m.classList.remove('hidden');},3000); }
 function exportCSV(rows,cols,label){
   const esc2=v=>{ if(v==null)return''; if(Array.isArray(v))v=v.join('; '); v=String(v).replace(/"/g,'""'); return /[",\n]/.test(v)?`"${v}"`:v; };
   const csv=[cols.join(',')].concat((rows||[]).map(r=>cols.map(c=>esc2(r[c])).join(','))).join('\n');
@@ -227,6 +229,7 @@ function band(){ const h=new Date().getHours(); if(h>=5&&h<12)return['morning','
 
 /* ============ AUTH ============ */
 async function boot(){
+  setTimeout(()=>{ const g=$('gate-load'),d=$('gate-delay'); if(g&&d&&!g.classList.contains('hidden'))d.classList.remove('hidden'); },3000);
   db=supabase.createClient(SB_URL,SB_KEY);
   const {data:{session}}=await db.auth.getSession();
   if(session){ return afterAuth(session); }
@@ -260,6 +263,7 @@ const MODULES=[
   {key:'finance',label:'Finance',desc:'Budgets & expenses',icon:'fa-coins',cap:'finance.manage'},
   {key:'talent',label:'Talent',desc:'Recruitment pipeline',icon:'fa-user-plus',cap:'talent.manage'},
   {key:'notepad',label:'Notepad',desc:'Your private notes',icon:'fa-note-sticky'},
+  {key:'settings',label:'Site Settings',desc:'Edit the public website',icon:'fa-sliders',cap:'content.manage'},
   {key:'email',label:'Email Access',desc:'Your Zoho inbox & login',icon:'fa-envelope'},
   {key:'accounts',label:'Accounts',desc:'Manage board logins',icon:'fa-user-shield',cap:'board.admin'},
   {key:'profile',label:'My Profile',desc:'Your details',icon:'fa-id-card'},
@@ -390,7 +394,7 @@ function openModule(key){
   document.querySelectorAll('#m-nav .navpill').forEach(n=>n.classList.toggle('on',n.dataset.k===key));
   const m=MODULES.find(x=>x.key===key)||{}; $('m-title').textContent=m.label||''; $('m-sub').textContent=m.desc||'';
   const nb=$('m-new'); nb.classList.add('hidden'); nb.onclick=null;
-  const c=$('content'); c.innerHTML='<div class="text-center text-faint py-16"><div class="loader mx-auto"></div></div>';
+  const c=$('content'); spin(c);
   if(key==='directory')return renderDirectory(c);
   if(key==='tasks')return renderTasks(c,nb);
   if(key==='meetings')return renderMeetings(c,nb);
@@ -398,6 +402,7 @@ function openModule(key){
   if(key==='reports')return renderReports(c,nb);
   if(key==='profile')return renderProfile(c);
   if(key==='notepad')return renderNotepad(c);
+  if(key==='settings')return renderSiteSettings(c);
   if(key==='email')return renderEmail(c);
   if(key==='accounts')return renderAccounts(c,nb);
   if(key==='content')return renderTabs(c,nb,['ct_opportunities','ct_programs','ct_news','ct_events','ct_partners','ct_resources','ct_faqs','ct_impact','ct_team','ct_departments','notices']);
@@ -486,8 +491,9 @@ async function meetingDetail(m){
     ${m.location?`<div class="text-mist text-sm mt-1"><i class="fa-solid fa-location-dot mr-1.5"></i>${esc(m.location)}</div>`:''}
     ${m.agenda?`<div class="mt-4"><div class="text-faint text-xs font-bold mb-1">AGENDA</div><div class="text-sm whitespace-pre-wrap text-mist">${esc(m.agenda)}</div></div>`:''}
     ${m.minutes?`<div class="mt-4"><div class="text-faint text-xs font-bold mb-1">MINUTES</div><div class="text-sm whitespace-pre-wrap text-mist">${esc(m.minutes)}</div></div>`:''}
-    <div class="flex gap-2 mt-6">${g?`<a href="${g}" target="_blank" rel="noopener" class="btn-ghost px-4 py-2.5 text-sm font-semibold"><i class="fa-brands fa-google mr-1.5"></i>Add to Google Calendar</a>`:''}<button class="btn-ghost px-4 py-2.5 text-sm ml-auto" onclick="closeModal()">Close</button></div>
+    <div class="flex gap-2 mt-6 items-center">${g?`<a href="${g}" target="_blank" rel="noopener" class="btn-ghost px-4 py-2.5 text-sm font-semibold"><i class="fa-brands fa-google mr-1.5"></i>Add to Google Calendar</a>`:''}${(can('meetings.manage')||can('board.admin'))?`<button id="mtg-del" class="btn-ghost px-4 py-2.5 text-sm text-red-300"><i class="fa-solid fa-trash-can mr-1.5"></i>Delete</button>`:''}<button class="btn-ghost px-4 py-2.5 text-sm ml-auto" onclick="closeModal()">Close</button></div>
   </div>`);
+  const md=$('mtg-del'); if(md)md.addEventListener('click',async()=>{ if(!confirm('Delete this meeting permanently?'))return; try{ await db.from('meetings').delete().eq('id',m.id); closeModal(); openModule('meetings'); toast('Meeting deleted'); }catch(e){ toast(e.message,false); } });
 }
 async function meetingForm(){
   let people=[]; try{ const {data}=await db.from('profiles').select('id,full_name').not('post','is',null); people=data||[]; }catch(e){}
@@ -540,7 +546,7 @@ async function renderReports(c,nb){
   let names={}; try{ const {data}=await db.from('profiles').select('id,full_name'); (data||[]).forEach(p=>names[p.id]=p.full_name); }catch(e){}
   if(!rows.length){ c.innerHTML='<div class="card p-10 text-center text-faint">No reports yet. Directors can post an update.</div>'; return; }
   c.innerHTML='<div class="space-y-3">'+rows.map(r=>`<div class="card p-5">
-    <div class="flex items-center justify-between gap-3"><div><div class="font-display font-bold">${esc(r.title)}</div><div class="text-mist text-xs">${esc(r.portfolio||'')}${r.period?' · '+esc(r.period):''} · ${esc(names[r.author_id]||'')}</div></div>${r.author_id===ME.id?`<button class="rdel text-faint hover:text-red-400 px-1" data-id="${r.id}"><i class="fa-solid fa-trash-can text-sm"></i></button>`:''}</div>
+    <div class="flex items-center justify-between gap-3"><div><div class="font-display font-bold">${esc(r.title)}</div><div class="text-mist text-xs">${esc(r.portfolio||'')}${r.period?' · '+esc(r.period):''} · ${esc(names[r.author_id]||'')}</div></div>${(r.author_id===ME.id||can('board.admin'))?`<button class="rdel text-faint hover:text-red-400 px-1" data-id="${r.id}"><i class="fa-solid fa-trash-can text-sm"></i></button>`:''}</div>
     ${r.highlights?`<div class="mt-3 text-sm"><span class="text-bright font-semibold">Highlights: </span><span class="text-mist">${esc(r.highlights)}</span></div>`:''}
     ${r.challenges?`<div class="mt-1 text-sm"><span class="text-gold font-semibold">Challenges: </span><span class="text-mist">${esc(r.challenges)}</span></div>`:''}
     ${r.needs?`<div class="mt-1 text-sm"><span class="text-aqua font-semibold">Needs: </span><span class="text-mist">${esc(r.needs)}</span></div>`:''}
@@ -595,6 +601,33 @@ async function renderProfile(c){
       catch(e){ m.className='text-sm font-semibold text-red-400 mb-2'; m.textContent=e.message||'Could not update'; b.disabled=false; b.textContent='Update'; } }); });
 }
 
+/* ============ SITE SETTINGS ============ */
+async function renderSiteSettings(c){
+  spin(c);
+  let s={}; try{ const {data}=await db.from('site_settings').select('*').maybeSingle(); s=data||{}; }catch(e){}
+  const sl=s.social_links||{};
+  const IN=(id,label,val,ph)=>`<label class="block text-xs font-semibold text-mist mb-1.5">${label}</label><input id="${id}" class="fld mb-4" value="${esc(val||'')}" placeholder="${ph||''}">`;
+  const TA=(id,label,val)=>`<label class="block text-xs font-semibold text-mist mb-1.5">${label}</label><textarea id="${id}" rows="4" class="fld mb-4">${esc(val||'')}</textarea>`;
+  c.innerHTML=`<div class="max-w-3xl space-y-5">
+    <div class="card p-6"><div class="font-display font-bold mb-4">Hero</div>${IN('s-hh','Headline',s.hero_headline)}${TA('s-hs','Sub-headline',s.hero_subheadline)}</div>
+    <div class="card p-6"><div class="font-display font-bold mb-4">Mission &amp; vision</div>${IN('s-mh','Mission heading',s.mission_heading)}${TA('s-mt','Mission text',s.mission_text)}${TA('s-vt','Vision text',s.vision_text)}</div>
+    <div class="card p-6"><div class="font-display font-bold mb-4">Founder message</div>${IN('s-fn','Name',s.founder_name)}${IN('s-fr','Role',s.founder_role)}${IN('s-fi','Photo URL',s.founder_image)}${TA('s-fm','Message (one paragraph per line)',s.founder_message)}</div>
+    <div class="card p-6"><div class="font-display font-bold mb-4">Contact</div>${IN('s-ce','Email',s.contact_email)}${IN('s-cp','Phone',s.contact_phone)}${IN('s-ca','Address',s.contact_address)}${IN('s-oh','Office hours',s.office_hours)}</div>
+    <div class="card p-6"><div class="font-display font-bold mb-4">Social links</div>${IN('s-fb','Facebook URL',sl.facebook)}${IN('s-ig','Instagram URL',sl.instagram)}${IN('s-x','X / Twitter URL',sl.twitter||sl.x)}${IN('s-li','LinkedIn URL',sl.linkedin)}${IN('s-yt','YouTube URL',sl.youtube)}${IN('s-tt','TikTok URL',sl.tiktok)}</div>
+    <div class="card p-6"><div class="font-display font-bold mb-4">SEO</div>${IN('s-st','SEO title',s.seo_title)}${TA('s-sd','SEO description',s.seo_description)}</div>
+    <div class="flex justify-end items-center gap-3"><span id="s-status" class="text-mist text-sm"></span><button id="s-save" class="btn px-6 py-3 text-sm">Save changes</button></div>
+  </div>`;
+  $('s-save').addEventListener('click',async()=>{
+    const v=id=>$(id).value.trim()||null, social={};
+    [['facebook','s-fb'],['instagram','s-ig'],['twitter','s-x'],['linkedin','s-li'],['youtube','s-yt'],['tiktok','s-tt']].forEach(([k,id])=>{const val=$(id).value.trim(); if(val)social[k]=val;});
+    const payload={id:true,hero_headline:v('s-hh'),hero_subheadline:v('s-hs'),mission_heading:v('s-mh'),mission_text:v('s-mt'),vision_text:v('s-vt'),founder_name:v('s-fn'),founder_role:v('s-fr'),founder_image:v('s-fi'),founder_message:v('s-fm'),contact_email:v('s-ce'),contact_phone:v('s-cp'),contact_address:v('s-ca'),office_hours:v('s-oh'),social_links:social,seo_title:v('s-st'),seo_description:v('s-sd'),updated_at:new Date().toISOString()};
+    const b=$('s-save'); b.disabled=true; b.innerHTML='<span class="btn-spin"></span>';
+    try{ const {error}=await db.from('site_settings').upsert(payload,{onConflict:'id'}); if(error)throw error; $('s-status').textContent='Saved just now'; toast('Website updated'); }
+    catch(e){ toast(e.message||'Could not save',false); }
+    finally{ b.disabled=false; b.textContent='Save changes'; }
+  });
+}
+
 /* ============ NOTEPAD ============ */
 async function renderNotepad(c){
   c.innerHTML=`<div class="max-w-3xl">
@@ -626,7 +659,7 @@ const POSTS=[['chairman','Chairman'],['vice_chairman','Vice Chairman'],['secreta
 const CAPLIST=[['board.admin','Full admin'],['content.manage','Website'],['hr.manage','People / HR'],['finance.manage','Finance'],['talent.manage','Talent'],['meetings.manage','Meetings'],['comms.manage','Comms'],['documents.manage','Documents']];
 async function renderAccounts(c,nb){
   nb.classList.remove('hidden'); nb.onclick=()=>accountForm();
-  c.innerHTML='<div class="text-center text-faint py-16"><div class="loader mx-auto"></div></div>';
+  spin(c);
   let rows=[]; try{ const {data,error}=await db.rpc('admin_list_accounts'); if(error)throw error; rows=data||[]; }catch(e){ c.innerHTML=`<div class="card p-8 text-center text-red-300">Could not load accounts: ${esc(e.message)}</div>`; return; }
   const plabel=p=>(POSTS.find(x=>x[0]===p)||[])[1]||p;
   c.innerHTML='<div class="space-y-2">'+rows.map(r=>`<div class="card p-4 flex items-center gap-3">
@@ -727,7 +760,7 @@ async function renderList(key,c,nb){
       ${r.status?`<span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-white/5 text-mist">${esc(r.status)}</span>`:''}
       ${pub?`<span class="text-[11px] font-bold px-2 py-0.5 rounded-full ${r.is_published?'bg-bright/15 text-bright':'bg-white/5 text-faint'}">${r.is_published?'Live':'Draft'}</span>`:''}
       <button class="ed text-faint hover:text-white px-1.5" data-id="${r.id}"><i class="fa-solid ${readonly?'fa-eye':'fa-pen'} text-sm"></i></button>
-      ${readonly?'':`<button class="rm text-faint hover:text-red-400 px-1.5" data-id="${r.id}"><i class="fa-solid fa-trash-can text-sm"></i></button>`}
+      <button class="rm text-faint hover:text-red-400 px-1.5" data-id="${r.id}"><i class="fa-solid fa-trash-can text-sm"></i></button>
     </div>`).join('')+'</div>';
   { const xb=$('csv-x'); if(xb)xb.onclick=()=>exportCSV(rows,R.fields.map(f=>f.name),R.label); }
   c.querySelectorAll('.ed').forEach(b=>b.addEventListener('click',()=>openForm(key,rows.find(r=>r.id===b.dataset.id),readonly)));
